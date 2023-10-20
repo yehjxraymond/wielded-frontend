@@ -10,8 +10,10 @@ export const HomeHero = () => {
   };
   return (
     <div className="container flex-grow flex flex-col justify-center items-center">
-      <h1 className="text-3xl font-semibold">Supercharge your team with AI</h1>
-      <h2 className="text-muted-foreground font-medium mt-2">
+      <h1 className="text-3xl font-semibold text-center max-w-sm md:max-w-none">
+        Supercharge your team with AI
+      </h1>
+      <h2 className="text-muted-foreground font-medium mt-2 text-center">
         Join the early access waitlist
       </h2>
 
