@@ -43,7 +43,7 @@ export const HomeHero = () => {
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    mutation.mutate({ email });
+    mutation.mutate({ email, source: "wielded_waitlist_hero" });
   };
   return (
     <div className="container flex-grow flex flex-col justify-center items-center">
