@@ -1,5 +1,6 @@
 "use client";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { AuthProvider } from "@/context/AuthContext";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { FunctionComponent, ReactNode } from "react";
@@ -17,7 +18,7 @@ export const Providers: FunctionComponent<{ children: ReactNode }> = ({
         enableSystem
         disableTransitionOnChange
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

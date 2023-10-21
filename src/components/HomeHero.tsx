@@ -1,12 +1,11 @@
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FormEvent, useState } from "react";
-import axios, { AxiosError } from "axios";
-import { config } from "../config";
 import { useMutation } from "@tanstack/react-query";
+import axios, { AxiosError } from "axios";
 import { AlertCircle } from "lucide-react";
-
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { FormEvent, useState } from "react";
+import { config } from "../config";
 
 interface LeadData {
   email: string;
