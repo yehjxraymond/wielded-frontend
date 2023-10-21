@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { config } from "../config";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { useRouter } from "next/navigation";
 
 interface LoginData {
   email: string;
@@ -54,7 +55,8 @@ const postLogin = async (loginData: LoginData) => {
 };
 
 const RightPanel = () => {
-  const { setToken } = useAuth();
+  const { replace } = useRouter();
+  const { setToken, isLoggedIn } = useAuth();
   const [mode, setMode] = useState<"login" | "register">("register");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -84,6 +86,11 @@ const RightPanel = () => {
       });
     }
   };
+  useEffect(() => {
+    if (isLoggedIn) {
+      replace("/");
+    }
+  }, [isLoggedIn]);
 
   return (
     <div className="lg:basis-2/3 basis-full min-h-screen flex flex-col">

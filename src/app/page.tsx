@@ -1,15 +1,10 @@
 "use client";
-import { Header } from "@/components/Header";
-import { HomeHero } from "@/components/HomeHero";
+import { Home } from "@/components/Home";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <main>
-      {/* Hack for both component to fill entire screen */}
-      <div className="flex flex-col h-screen">
-        <Header />
-        <HomeHero />
-      </div>
+      <Home />
     </main>
   );
 }

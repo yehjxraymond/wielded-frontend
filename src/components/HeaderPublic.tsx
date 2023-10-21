@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
 
-export const Header = () => {
+export const HeaderPublic = () => {
   return (
     <nav className="w-full flex container justify-between my-5">
       <Link href="/">

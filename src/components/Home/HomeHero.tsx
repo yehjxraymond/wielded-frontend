@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { AlertCircle } from "lucide-react";
 import { FormEvent, useState } from "react";
-import { config } from "../config";
+import { config } from "../../config";
 
 interface LeadData {
   email: string;
