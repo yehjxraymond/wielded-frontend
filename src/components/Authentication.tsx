@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { config } from "../config";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -199,14 +199,140 @@ const RightPanel = () => {
   );
 };
 
+const quotes = [
+  {
+    quote:
+      "Artificial Intelligence is not man versus machines. It is man with machines. ",
+    person: "Satya Nadella",
+  },
+  {
+    quote:
+      "The key to artificial intelligence has always been the representation. ",
+    person: "Jeff Hawkins",
+  },
+  {
+    quote:
+      "Machine intelligence is the last invention that humanity will ever need to make. ",
+    person: "Nick Bostrom",
+  },
+  {
+    quote:
+      "Artificial Intelligence, deep learning, machine learning — whatever you're doing if you don't understand it — learn it. Because otherwise you're going to be a dinosaur within 3 years. ",
+    person: "Mark Cuban",
+  },
+  {
+    quote:
+      "AI does not keep me up at night. Car accidents keep me up at night. ",
+    person: "Andrew Ng",
+  },
+  {
+    quote:
+      "The advent of AI is not a disaster, but rather a great opportunity for humanity. ",
+    person: "Fei-Fei Li",
+  },
+  {
+    quote:
+      "The ability of AI to improve over time as it ingests more data will create a virtuosity cycle. ",
+    person: "Satya Nadella",
+  },
+  {
+    quote:
+      "The question of whether a computer can think is no more interesting than the question of whether a submarine can swim. ",
+    person: "Edsger W. Dijkstra",
+  },
+  {
+    quote:
+      "AI is going to be extremely beneficial, and already is, to the field of healthcare. ",
+    person: "Mark Zuckerberg",
+  },
+  {
+    quote:
+      "If you don't have an AI strategy, you are going to die in the world that's coming. ",
+    person: "Devin Wenig",
+  },
+  {
+    quote:
+      "Rule-based systems are useful for straightforward or simple tasks but quickly become unmanageable for more complex problems. ",
+    person: "John McCarthy",
+  },
+  {
+    quote: "AI is like magic, and who doesn't like magic? ",
+    person: "Yann LeCun",
+  },
+  {
+    quote:
+      "Creating a digital twin is only the beginning of the journey toward an intelligent system. ",
+    person: "Stephen P. Boyd",
+  },
+  {
+    quote:
+      "If we can keep the cost of AI low, we can make its benefits universal. ",
+    person: "Reid Hoffman",
+  },
+  {
+    quote: "The most powerful element of AI is that it can learn and adapt. ",
+    person: "Sundar Pichai",
+  },
+  {
+    quote: "Preparing ourselves for the future means understanding AI. ",
+    person: "Sebastian Thrun",
+  },
+  {
+    quote:
+      "Human intelligence combined with AI will be significantly more powerful than either alone. ",
+    person: "Elon Musk",
+  },
+  {
+    quote:
+      "Never underestimate the power of a few committed people to change the world. Indeed, it is the only thing that ever has. ",
+    person: "Margaret Mead, AI version",
+  },
+  {
+    quote:
+      "The future is not something we enter. The future is something we create. ",
+    person: "Leonard I. Sweet, AI version",
+  },
+  {
+    quote:
+      "AI will touch everybody, enabling new levels of productivity, enhancing creativity and creating new fields of work. ",
+    person: "Rana el Kaliouby",
+  },
+];
+
+const useRandomQuote = () => {
+  const [quote, setQuote] = useState({
+    quote: "Loading...",
+    person: "Loading...",
+  });
+  const setRandomQuote = () => {
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    setQuote(randomQuote);
+  };
+  useEffect(() => {
+    setRandomQuote();
+    const interval = setInterval(() => {
+      setRandomQuote();
+    }, 10000);
+    return () => clearInterval(interval);
+  });
+  return quote;
+};
+
 const LeftPanel = () => {
+  const quote = useRandomQuote();
   return (
-    <div className="basis-1/3 bg-accent min-h-screen hidden lg:block">
+    <div className="basis-1/3 bg-accent min-h-screen hidden lg:flex flex-col justify-between pb-8">
       <nav className="w-full flex container justify-between my-5">
         <Link href="/">
           <div className="font-semibold text-xl">wielded_</div>
         </Link>
       </nav>
+      <div className="container text-muted-foreground text-right flex flex-col items-end w-full">
+        <div className="text-xl font-medium max-w-lg">
+          &quot;{quote.quote}&quot;
+        </div>
+        <div className="text-sm mt-2">{quote.person}</div>
+      </div>
     </div>
   );
 };
