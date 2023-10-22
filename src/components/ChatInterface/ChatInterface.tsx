@@ -4,10 +4,14 @@ import { Menu, Send } from "lucide-react";
 import { FunctionComponent, ReactNode, useState } from "react";
 import Link from "next/link";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
+import { useWorkspace } from "@/context/WorkspaceContext";
 
 const SidebarContent = () => {
   const { logout } = useAuth();
+  const workspaces = useWorkspace();
+  console.log(workspaces);
+
   return (
     <div>
       <div className="h-12 flex items-center px-4">
@@ -88,8 +92,8 @@ export const ChatInterface = () => {
       
       Suspendisse sed nisi lacus sed viverra tellus in hac habitasse. Sagittis purus sit amet volutpat consequat mauris nunc congue nisi. Elementum tempus egestas sed sed risus pretium quam. Pulvinar sapien et ligula ullamcorper. Ultrices in iaculis nunc sed augue. Feugiat nibh sed pulvinar proin. Lorem dolor sed viverra ipsum nunc aliquet bibendum enim facilisis. At imperdiet dui accumsan sit amet nulla facilisi. Elit ut aliquam purus sit amet luctus venenatis lectus magna. Augue lacus viverra vitae congue eu consequat ac. Dignissim cras tincidunt lobortis feugiat vivamus at augue eget. At consectetur lorem donec massa. Facilisis gravida neque convallis a cras semper. Pulvinar etiam non quam lacus suspendisse faucibus. Massa vitae tortor condimentum lacinia quis vel eros. Etiam erat velit scelerisque in.
       
-      Eget egestas purus viverra accumsan in nisl nisi scelerisque. Turpis egestas maecenas pharetra convallis posuere morbi leo. Egestas tellus rutrum tellus pellentesque eu tincidunt tortor aliquam. Egestas tellus rutrum tellus pellentesque eu tincidunt. Dolor sit amet consectetur adipiscing elit duis. Sit amet commodo nulla facilisi nullam vehicula ipsum. Amet nulla facilisi morbi tempus iaculis urna. Varius quam quisque id diam vel. Amet porttitor eget dolor morbi non arcu risus quis varius. Enim neque volutpat ac tincidunt vitae. Sit amet tellus cras adipiscing enim eu turpis. Sem fringilla ut morbi tincidunt augue interdum velit euismod. Lacus laoreet non curabitur gravida arcu. Ante in nibh mauris cursus. Mauris a diam maecenas sed enim ut sem. Quam nulla porttitor massa id. Ut lectus arcu bibendum at varius vel pharetra.`
-    }
+      Eget egestas purus viverra accumsan in nisl nisi scelerisque. Turpis egestas maecenas pharetra convallis posuere morbi leo. Egestas tellus rutrum tellus pellentesque eu tincidunt tortor aliquam. Egestas tellus rutrum tellus pellentesque eu tincidunt. Dolor sit amet consectetur adipiscing elit duis. Sit amet commodo nulla facilisi nullam vehicula ipsum. Amet nulla facilisi morbi tempus iaculis urna. Varius quam quisque id diam vel. Amet porttitor eget dolor morbi non arcu risus quis varius. Enim neque volutpat ac tincidunt vitae. Sit amet tellus cras adipiscing enim eu turpis. Sem fringilla ut morbi tincidunt augue interdum velit euismod. Lacus laoreet non curabitur gravida arcu. Ante in nibh mauris cursus. Mauris a diam maecenas sed enim ut sem. Quam nulla porttitor massa id. Ut lectus arcu bibendum at varius vel pharetra.`,
+    },
   ]);
   const handleSubmit = () => {
     console.log("submit", text);
@@ -125,7 +129,7 @@ export const ChatInterface = () => {
               </div>
             ))}
           </div>
-          <div className="h-24"/>
+          <div className="h-24" />
         </div>
       </div>
       <div className="absolute bottom-0 left-0 right-0 w-full">
