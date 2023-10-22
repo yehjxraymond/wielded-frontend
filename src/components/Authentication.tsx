@@ -90,7 +90,7 @@ const RightPanel = () => {
     if (isLoggedIn) {
       replace("/");
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn,replace]);
 
   return (
     <div className="lg:basis-2/3 basis-full min-h-screen flex flex-col">

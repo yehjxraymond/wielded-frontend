@@ -1,25 +1,41 @@
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Send } from "lucide-react";
+import { Menu, Send, MessageSquare } from "lucide-react";
 import { FunctionComponent, ReactNode, useState } from "react";
 import Link from "next/link";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { useWorkspace } from "@/context/WorkspaceContext";
+import { useConversation } from "@/context/ConversationContext";
+
+const SidebarConversations = () => {
+  const conversationState = useConversation();
+  if (conversationState.state !== "success") return null;
+  return (
+    <div className="flex flex-col gap-2 my-2">
+      {conversationState.conversations.map((conversation) => (
+        <Link href={`/chat/${conversation.id}`} key={conversation.id}>
+          <div key={conversation.id} className="flex items-center rounded-lg">
+            <MessageSquare className="w-4 h-4 mr-2" />
+            <div className="flex-1">{conversation.name || "New Chat"}</div>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
+};
 
 const SidebarContent = () => {
   const { logout } = useAuth();
-  const workspaces = useWorkspace();
-  console.log(workspaces);
 
   return (
-    <div>
-      <div className="h-12 flex items-center px-4">
+    <div className=" px-4">
+      <div className="h-12 flex items-center">
         <Link href="/">
           <div className="font-semibold text-xl">wielded_</div>
         </Link>
       </div>
-      <div className="px-4">
+      <SidebarConversations />
+      <div className="">
         <button onClick={logout}>Logout</button>
       </div>
     </div>
