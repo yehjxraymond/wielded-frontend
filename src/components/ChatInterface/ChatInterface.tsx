@@ -6,14 +6,21 @@ import { useWorkspace } from "@/context/WorkspaceContext";
 import { cn } from "@/lib/utils";
 import { Menu, MessageSquare, Send } from "lucide-react";
 import Link from "next/link";
-import { FunctionComponent, ReactNode, useState } from "react";
-import { useConversationMessages } from "./useConversationMessages";
+import { FunctionComponent, ReactNode, useState, memo } from "react";
+import { Message, useConversationMessages } from "./useConversationMessages";
+import ReactMarkdown from "react-markdown";
+
+import rehypeKatex from "rehype-katex";
+import rehypeHighlight from "rehype-highlight";
+import remarkMath from "remark-math";
+import remarkGfm from "remark-gfm";
+import { codeLanguageSubset } from "@/constants";
 
 const SidebarConversations = () => {
   const conversationState = useConversation();
   if (conversationState.state !== "success") return null;
   return (
-    <div className="flex flex-col gap-2 my-2">
+    <div className="flex flex-col gap-2 my-2 max-h-screen overflow-scroll">
       {conversationState.conversations.map((conversation) => (
         <Link href={`/chat/${conversation.id}`} key={conversation.id}>
           <div key={conversation.id} className="flex items-center rounded-lg">
@@ -30,14 +37,17 @@ const SidebarContent = () => {
   const { logout } = useAuth();
 
   return (
-    <div className=" px-4">
-      <div className="h-12 flex items-center">
-        <Link href="/">
-          <div className="font-semibold text-xl">wielded_</div>
-        </Link>
+    <div className="px-4 max-h-screen min-h-screen flex flex-col justify-between">
+      <Link href="/">
+        <div className="font-semibold text-xl h-12 flex items-center">
+          wielded_
+        </div>
+      </Link>
+
+      <div className="flex-grow overflow-auto">
+        <SidebarConversations />
       </div>
-      <SidebarConversations />
-      <div className="">
+      <div className="mt-4 px-4 bg-accent mb-10 lg:mb-4">
         <button onClick={logout}>Logout</button>
       </div>
     </div>
@@ -60,6 +70,38 @@ const ContentHeader = () => {
       <div className="hidden lg:block" />
       <div>{/* TODO Title */}</div>
       <div>{/* TODO Advanced Model Settings */}</div>
+    </div>
+  );
+};
+
+const MessageBubble: FunctionComponent<{ message: Message }> = ({
+  message,
+}) => {
+  return (
+    <div
+      className={cn(
+        "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm whitespace-pre-wrap",
+        message.role === "user"
+          ? "ml-auto bg-primary text-primary-foreground"
+          : "bg-muted"
+      )}
+    >
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm, [remarkMath]]}
+        rehypePlugins={[
+          rehypeKatex,
+          [
+            rehypeHighlight,
+            {
+              detect: true,
+              ignoreMissing: true,
+              subset: codeLanguageSubset,
+            },
+          ],
+        ]}
+      >
+        {message.content}
+      </ReactMarkdown>
     </div>
   );
 };
@@ -121,18 +163,19 @@ export const ChatInterfaceComponent: FunctionComponent<{
           {/* TODO Messages go here, use markdown + latex */}
           <div className="space-y-4 max-w-2xl w-full">
             {messages.map((message, index) => (
-              <div
-                key={index}
-                className={cn(
-                  "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm whitespace-pre",
-                  message.role === "user"
-                    ? "ml-auto bg-primary text-primary-foreground"
-                    : "bg-muted"
-                )}
-              >
-                {message.content}
-                {message.streaming && "..."}
-              </div>
+              // <div
+              //   key={index}
+              //   className={cn(
+              //     "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm whitespace-pre",
+              //     message.role === "user"
+              //       ? "ml-auto bg-primary text-primary-foreground"
+              //       : "bg-muted"
+              //   )}
+              // >
+              //   {message.content}
+              //   {message.streaming && "..."}
+              // </div>
+              <MessageBubble key={index} message={message} />
             ))}
           </div>
           <div className="h-24" />
