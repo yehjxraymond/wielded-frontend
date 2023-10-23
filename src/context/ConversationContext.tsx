@@ -1,6 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { ReactNode, createContext, useContext, useEffect } from "react";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
 import { config } from "../config";
 import { useAuth } from "./AuthContext";
 import { useWorkspace } from "./WorkspaceContext";
@@ -47,18 +53,26 @@ export const ConversationProvider: React.FC<{ children: ReactNode }> = ({
   const { token } = useAuth();
   const workspace = useWorkspace();
 
+  const currentWorkspaceId =
+    (workspace.state === "success" && workspace.currentWorkspace) || "NA";
+
   const fetchConversationsMutation = useMutation({
     mutationFn: fetchConversations,
-    mutationKey: ["conversations", token, workspace],
+    mutationKey: ["conversations", token, currentWorkspaceId],
   });
 
+  const memoisedFetch = useMemo(
+    () => fetchConversationsMutation.mutate,
+    [fetchConversationsMutation.mutate]
+  );
+
   useEffect(() => {
-    if (token && workspace.state === "success")
-      fetchConversationsMutation.mutate({
+    if (token && currentWorkspaceId !== "NA")
+      memoisedFetch({
         token,
-        workspaceId: workspace.currentWorkspace,
+        workspaceId: currentWorkspaceId,
       });
-  }, [token, workspace, fetchConversationsMutation]);
+  }, [token, memoisedFetch, currentWorkspaceId]);
 
   const getState = (): ConversationContextProps => {
     switch (fetchConversationsMutation.status) {

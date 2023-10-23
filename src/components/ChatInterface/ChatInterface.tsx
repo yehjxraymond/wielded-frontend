@@ -5,6 +5,7 @@ import { FunctionComponent, ReactNode, useState } from "react";
 import Link from "next/link";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { useWorkspace } from "@/context/WorkspaceContext";
 import { useConversation } from "@/context/ConversationContext";
 
 const SidebarConversations = () => {
@@ -79,6 +80,7 @@ const ChatLayout: FunctionComponent<{ children: ReactNode }> = ({
 };
 
 export const ChatInterface = () => {
+  const workspaceState = useWorkspace();
   const [rowNum, setRowNum] = useState(1);
   const [text, setText] = useState("");
   const [messages, setMessages] = useState([

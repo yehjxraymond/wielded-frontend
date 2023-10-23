@@ -1,6 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { ReactNode, createContext, useContext, useEffect } from "react";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
 import { config } from "../config";
 import { useAuth } from "./AuthContext";
 
@@ -46,9 +52,15 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({
     mutationKey: ["workspaces", token],
   });
 
+  const memoisedFetch = useMemo(
+    () => fetchWorkspacesMutation.mutate,
+    [fetchWorkspacesMutation.mutate]
+  );
+
   useEffect(() => {
-    if (token) fetchWorkspacesMutation.mutate(token);
-  }, [token, fetchWorkspacesMutation]);
+    console.log("running", token);
+    if (token) memoisedFetch(token);
+  }, [token, memoisedFetch]);
 
   const getState = (): WorkspaceContextProps => {
     switch (fetchWorkspacesMutation.status) {
