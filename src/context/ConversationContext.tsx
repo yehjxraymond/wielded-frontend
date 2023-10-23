@@ -24,6 +24,7 @@ interface ConversationOthers {
 interface ConversationSuccess {
   state: "success";
   conversations: Conversation[];
+  reloadConversations: () => void;
 }
 
 type ConversationContextProps = ConversationSuccess | ConversationOthers;
@@ -66,6 +67,14 @@ export const ConversationProvider: React.FC<{ children: ReactNode }> = ({
     [fetchConversationsMutation.mutate]
   );
 
+  const reloadConversations = () => {
+    if (token && currentWorkspaceId !== "NA")
+      memoisedFetch({
+        token,
+        workspaceId: currentWorkspaceId,
+      });
+  };
+
   useEffect(() => {
     if (token && currentWorkspaceId !== "NA")
       memoisedFetch({
@@ -82,7 +91,7 @@ export const ConversationProvider: React.FC<{ children: ReactNode }> = ({
         return { state: "pending" };
       case "success":
         const conversations = fetchConversationsMutation.data;
-        return { state: "success", conversations };
+        return { state: "success", conversations, reloadConversations };
       case "error":
         return { state: "error" };
     }

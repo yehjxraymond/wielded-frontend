@@ -1,10 +1,20 @@
 import { config } from "@/config";
 import { useAuth } from "@/context/AuthContext";
-import { useState } from "react";
+import { useConversation } from "@/context/ConversationContext";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useEffect, useMemo, useState } from "react";
 import { Readable } from "stream";
 
+export interface MessageDto {
+  id: string;
+  type: "system" | "user" | "assistant" | "function";
+  content: string;
+  created_at: string;
+}
+
 export interface Message {
-  role: "system" | "user" | "assistant" | "function";
+  type: "system" | "user" | "assistant" | "function";
   content: string;
   streaming?: boolean;
 }
@@ -31,95 +41,155 @@ const extractConversationId = (str: string) => {
   return match ? match[1] : null;
 };
 
+const fetchMessages = async ({
+  token,
+  workspaceId,
+  conversationId,
+}: {
+  token: string;
+  workspaceId: string;
+  conversationId: string;
+}) => {
+  const response = await axios.get<MessageDto[]>(
+    `${config.baseUrl}/workspace/${workspaceId}/conversation/${conversationId}/messages`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return response.data;
+};
+
 export const useConversationMessages = (
   workspaceId: string,
-  initialConversationId: string | null
+  initialConversationId?: string
 ) => {
+  const conversation = useConversation();
   const { token } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [conversationId, setConversationId] = useState<string | null>(
+  const [conversationId, setConversationId] = useState<string | undefined>(
     initialConversationId
   );
   const [isPending, setIsPending] = useState(false);
 
-  const fetchAndManageResponse = (url: string) => async (message: string) => {
-    const previousMessages: Message[] = [
-      ...messages,
-      {
-        role: "user",
-        content: message,
-      },
-    ];
+  const fetchMessagesMutation = useMutation({
+    mutationFn: fetchMessages,
+    mutationKey: ["conversations", token, initialConversationId],
+    onSuccess: (data) => {
+      setMessages(
+        data.map((message) => ({
+          type: message.type,
+          content: message.content,
+        }))
+      );
+    },
+    onError: (error) => {
+      setError(error.message);
+    },
+  });
 
-    setMessages([
-      ...previousMessages,
-      { role: "assistant", content: "", streaming: true },
-    ]);
+  const memoisedFetch = useMemo(
+    () => fetchMessagesMutation.mutate,
+    [fetchMessagesMutation.mutate]
+  );
 
-    setIsPending(true);
+  useEffect(() => {
+    if (token && initialConversationId)
+      memoisedFetch({
+        token,
+        workspaceId,
+        conversationId: initialConversationId,
+      });
+  }, [token, memoisedFetch, workspaceId, initialConversationId]);
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message }),
-    });
-    if (!response.ok) {
-      setError(response.statusText);
-      setIsPending(false);
-      return;
-    }
+  const fetchAndManageResponse =
+    ({
+      url,
+      reloadConversations,
+    }: {
+      url: string;
+      reloadConversations?: boolean;
+    }) =>
+    async (message: string) => {
+      const previousMessages: Message[] = [
+        ...messages,
+        {
+          type: "user",
+          content: message,
+        },
+      ];
 
-    const stream = readableStreamToStream(response.body as ReadableStream);
+      setMessages([
+        ...previousMessages,
+        { type: "assistant", content: "", streaming: true },
+      ]);
 
-    let conversationIdBuffer = "";
-    let buffer = "";
+      setIsPending(true);
 
-    stream.on("data", (chunk: Buffer) => {
-      const str = chunk.toString();
-      if (!conversationIdBuffer) {
-        const id = extractConversationId(str);
-        if (id) {
-          conversationIdBuffer = id;
-          setConversationId(id);
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message }),
+      });
+      if (!response.ok) {
+        setError(response.statusText);
+        setIsPending(false);
+        return;
+      }
+
+      const stream = readableStreamToStream(response.body as ReadableStream);
+
+      let conversationIdBuffer = "";
+      let buffer = "";
+
+      stream.on("data", (chunk: Buffer) => {
+        const str = chunk.toString();
+        if (!conversationIdBuffer) {
+          const id = extractConversationId(str);
+          if (id) {
+            conversationIdBuffer = id;
+            setConversationId(id);
+          }
+        } else {
+          buffer += str;
+
+          setMessages([
+            ...previousMessages,
+            {
+              type: "assistant",
+              content: buffer,
+              streaming: true,
+            },
+          ]);
         }
-      } else {
-        buffer += str;
+      });
 
+      stream.on("end", () => {
         setMessages([
           ...previousMessages,
           {
-            role: "assistant",
+            type: "assistant",
             content: buffer,
-            streaming: true,
+            streaming: false,
           },
         ]);
-      }
-    });
+        setIsPending(false);
+        if (reloadConversations && conversation.state === "success")
+          conversation.reloadConversations();
+      });
+    };
 
-    stream.on("end", () => {
-      setMessages([
-        ...previousMessages,
-        {
-          role: "assistant",
-          content: buffer,
-          streaming: false,
-        },
-      ]);
-      setIsPending(false);
-    });
-  };
+  const startConversation = fetchAndManageResponse({
+    url: `${config.baseUrl}/workspace/${workspaceId}/conversation/start`,
+    reloadConversations: true,
+  });
 
-  const startConversation = fetchAndManageResponse(
-    `${config.baseUrl}/workspace/${workspaceId}/conversation/start`
-  );
-
-  const continueConversation = fetchAndManageResponse(
-    `${config.baseUrl}/workspace/${workspaceId}/conversation/${conversationId}/continue`
-  );
+  const continueConversation = fetchAndManageResponse({
+    url: `${config.baseUrl}/workspace/${workspaceId}/conversation/${conversationId}/continue`,
+  });
 
   return {
     messages,
@@ -128,5 +198,6 @@ export const useConversationMessages = (
     startConversation,
     continueConversation,
     isPending,
+    error,
   };
 };

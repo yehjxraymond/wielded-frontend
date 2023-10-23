@@ -3,18 +3,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/context/AuthContext";
 import { useConversation } from "@/context/ConversationContext";
 import { useWorkspace } from "@/context/WorkspaceContext";
-import { cn } from "@/lib/utils";
 import { Menu, MessageSquare, Send } from "lucide-react";
 import Link from "next/link";
-import { FunctionComponent, ReactNode, useState, memo } from "react";
-import { Message, useConversationMessages } from "./useConversationMessages";
-import ReactMarkdown from "react-markdown";
-
-import rehypeKatex from "rehype-katex";
-import rehypeHighlight from "rehype-highlight";
-import remarkMath from "remark-math";
-import remarkGfm from "remark-gfm";
-import { codeLanguageSubset } from "@/constants";
+import {
+  FunctionComponent,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { MessageBubble } from "./MessageBubble";
+import { useConversationMessages } from "./useConversationMessages";
 
 const SidebarConversations = () => {
   const conversationState = useConversation();
@@ -74,38 +73,6 @@ const ContentHeader = () => {
   );
 };
 
-const MessageBubble: FunctionComponent<{ message: Message }> = ({
-  message,
-}) => {
-  return (
-    <div
-      className={cn(
-        "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm whitespace-pre-wrap",
-        message.role === "user"
-          ? "ml-auto bg-primary text-primary-foreground"
-          : "bg-muted"
-      )}
-    >
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm, [remarkMath]]}
-        rehypePlugins={[
-          rehypeKatex,
-          [
-            rehypeHighlight,
-            {
-              detect: true,
-              ignoreMissing: true,
-              subset: codeLanguageSubset,
-            },
-          ],
-        ]}
-      >
-        {message.content}
-      </ReactMarkdown>
-    </div>
-  );
-};
-
 const ChatLayout: FunctionComponent<{ children: ReactNode }> = ({
   children,
 }) => {
@@ -124,7 +91,8 @@ const ChatLayout: FunctionComponent<{ children: ReactNode }> = ({
 
 export const ChatInterfaceComponent: FunctionComponent<{
   workspaceId: string;
-}> = ({ workspaceId }) => {
+  conversationId?: string;
+}> = ({ workspaceId, conversationId: initialConversationId }) => {
   const [rowNum, setRowNum] = useState(1);
   const [text, setText] = useState("");
   const {
@@ -133,7 +101,51 @@ export const ChatInterfaceComponent: FunctionComponent<{
     conversationId,
     continueConversation,
     isPending,
-  } = useConversationMessages(workspaceId, null);
+  } = useConversationMessages(workspaceId, initialConversationId);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isScrollLocked, setScrollLocked] = useState(true);
+  const scrollObserverRef = useRef<IntersectionObserver | null>(null);
+  const lastMessageRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const currentLastMessage = lastMessageRef.current;
+    scrollObserverRef.current = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        setScrollLocked(entry.isIntersecting);
+      },
+      { threshold: 1 }
+    );
+
+    if (lastMessageRef.current) {
+      scrollObserverRef.current.observe(lastMessageRef.current);
+    }
+
+    return () => {
+      if (scrollObserverRef.current && currentLastMessage) {
+        scrollObserverRef.current.unobserve(currentLastMessage);
+      }
+    };
+  }, [messages]);
+
+  useEffect(() => {
+    if (isInitialLoad && messages.length > 0) {
+      setTimeout(() => {
+        const container = document.querySelector(".messages-container");
+        if (container && container.lastChild) {
+          (container.lastChild as any).scrollIntoView({ behavior: "smooth" });
+        }
+      }, 300); // delay for smooth scroll
+      setIsInitialLoad(false); // update the state so the next message won't cause a scroll
+    }
+  }, [messages, isInitialLoad]);
+
+  useEffect(() => {
+    if (isScrollLocked && lastMessageRef.current) {
+      lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isScrollLocked]);
+
   const handleSubmit = () => {
     if (isPending) return;
     if (!conversationId) {
@@ -161,22 +173,11 @@ export const ChatInterfaceComponent: FunctionComponent<{
         {/* mt-12 to clear header */}
         <div className="container flex flex-col items-center mt-12">
           {/* TODO Messages go here, use markdown + latex */}
-          <div className="space-y-4 max-w-2xl w-full">
+          <div className="space-y-4 max-w-2xl w-full messages-container">
             {messages.map((message, index) => (
-              // <div
-              //   key={index}
-              //   className={cn(
-              //     "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm whitespace-pre",
-              //     message.role === "user"
-              //       ? "ml-auto bg-primary text-primary-foreground"
-              //       : "bg-muted"
-              //   )}
-              // >
-              //   {message.content}
-              //   {message.streaming && "..."}
-              // </div>
               <MessageBubble key={index} message={message} />
             ))}
+            <div ref={lastMessageRef}>&nbsp;</div>
           </div>
           <div className="h-24" />
         </div>
@@ -209,11 +210,16 @@ export const ChatInterfaceComponent: FunctionComponent<{
   );
 };
 
-export const ChatInterface = () => {
+export const ChatInterface: FunctionComponent<{ conversationId?: string }> = ({
+  conversationId,
+}) => {
   const workspaceState = useWorkspace();
   // TODO Skeleton loader
   if (workspaceState.state !== "success") return null;
   return (
-    <ChatInterfaceComponent workspaceId={workspaceState.currentWorkspace} />
+    <ChatInterfaceComponent
+      workspaceId={workspaceState.currentWorkspace}
+      conversationId={conversationId}
+    />
   );
 };
