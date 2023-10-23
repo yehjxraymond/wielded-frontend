@@ -17,14 +17,18 @@ import { useConversationMessages } from "./useConversationMessages";
 
 const SidebarConversations = () => {
   const conversationState = useConversation();
+
   if (conversationState.state !== "success") return null;
+
   return (
     <div className="flex flex-col gap-2 my-2 max-h-screen overflow-scroll">
       {conversationState.conversations.map((conversation) => (
         <Link href={`/chat/${conversation.id}`} key={conversation.id}>
-          <div key={conversation.id} className="flex items-center rounded-lg">
-            <MessageSquare className="w-4 h-4 mr-2" />
-            <div className="flex-1">{conversation.name || "New Chat"}</div>
+          <div key={conversation.id} className="flex items-center rounded-lg ">
+            <div className="overflow-hidden whitespace-nowrap overflow-ellipsis">
+              <MessageSquare className="w-4 h-4 inline-block" />{" "}
+              {conversation.name || "New Chat"}
+            </div>
           </div>
         </Link>
       ))}
