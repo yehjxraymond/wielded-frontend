@@ -58,7 +58,6 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({
   );
 
   useEffect(() => {
-    console.log("running", token);
     if (token) memoisedFetch(token);
   }, [token, memoisedFetch]);
 
