@@ -85,15 +85,19 @@ export const ChatInterfaceComponent: FunctionComponent<{
 }> = ({ workspaceId }) => {
   const [rowNum, setRowNum] = useState(1);
   const [text, setText] = useState("");
-  const { startConversation, messages, conversationId, continueConversation } =
-    useConversationMessages(workspaceId, null);
+  const {
+    startConversation,
+    messages,
+    conversationId,
+    continueConversation,
+    isPending,
+  } = useConversationMessages(workspaceId, null);
   const handleSubmit = () => {
+    if (isPending) return;
     if (!conversationId) {
-      console.log("new conv", text);
       startConversation(text);
       setText("");
     } else {
-      console.log("existing conv", text);
       continueConversation(text);
       setText("");
     }
@@ -146,7 +150,12 @@ export const ChatInterfaceComponent: FunctionComponent<{
                 rows={rowNum}
                 value={text}
               />
-              <div className="cursor-pointer" onClick={handleSubmit}>
+              <div
+                className={
+                  isPending ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+                }
+                onClick={handleSubmit}
+              >
                 <Send className="h-6 w-6" />
               </div>
             </div>
