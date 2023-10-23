@@ -116,5 +116,85 @@ export const useConversationMessages = (
     });
   };
 
-  return { messages, conversationId, setConversationId, startConversation };
+  const continueConversation = async (message: string) => {
+    const previousMessages: Message[] = [
+      ...messages,
+      {
+        role: "user",
+        content: message,
+      },
+    ];
+
+    setMessages([
+      ...previousMessages,
+      { role: "assistant", content: "", streaming: true },
+    ]);
+
+    setIsPending(true);
+
+    const response = await fetch(
+      `${config.baseUrl}/workspace/${workspaceId}/conversation/${conversationId}/continue}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message }),
+      }
+    );
+    if (!response.ok) {
+      setError(response.statusText);
+      setIsPending(false);
+      return;
+    }
+
+    const stream = readableStreamToStream(response.body as ReadableStream);
+
+    let conversationIdBuffer = "";
+    let buffer = "";
+
+    stream.on("data", (chunk: Buffer) => {
+      const str = chunk.toString();
+      if (!conversationIdBuffer) {
+        const id = extractConversationId(str);
+        if (id) {
+          conversationIdBuffer = id;
+          setConversationId(id);
+        }
+      } else {
+        buffer += str;
+
+        setMessages([
+          ...previousMessages,
+          {
+            role: "assistant",
+            content: buffer,
+            streaming: true,
+          },
+        ]);
+      }
+    });
+
+    stream.on("end", () => {
+      setMessages([
+        ...previousMessages,
+        {
+          role: "assistant",
+          content: buffer,
+          streaming: false,
+        },
+      ]);
+      setIsPending(false);
+    });
+  };
+
+  return {
+    messages,
+    conversationId,
+    setConversationId,
+    startConversation,
+    continueConversation,
+    isPending,
+  };
 };

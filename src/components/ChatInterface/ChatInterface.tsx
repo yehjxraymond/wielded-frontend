@@ -85,14 +85,17 @@ export const ChatInterfaceComponent: FunctionComponent<{
 }> = ({ workspaceId }) => {
   const [rowNum, setRowNum] = useState(1);
   const [text, setText] = useState("");
-  const { startConversation, messages, conversationId } =
+  const { startConversation, messages, conversationId, continueConversation } =
     useConversationMessages(workspaceId, null);
   const handleSubmit = () => {
     if (!conversationId) {
       console.log("new conv", text);
       startConversation(text);
-    }else{
+      setText("");
+    } else {
       console.log("existing conv", text);
+      continueConversation(text);
+      setText("");
     }
   };
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -117,7 +120,7 @@ export const ChatInterfaceComponent: FunctionComponent<{
               <div
                 key={index}
                 className={cn(
-                  "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
+                  "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm whitespace-pre",
                   message.role === "user"
                     ? "ml-auto bg-primary text-primary-foreground"
                     : "bg-muted"
