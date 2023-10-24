@@ -1,13 +1,13 @@
+import { codeLanguageSubset } from "@/constants";
 import { cn } from "@/lib/utils";
 import { FunctionComponent } from "react";
 import ReactMarkdown from "react-markdown";
-import { Message } from "./useConversationMessages";
-
-import { codeLanguageSubset } from "@/constants";
 import rehypeHighlight from "rehype-highlight";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
+import { Message } from "../useConversationMessages";
+import { code } from "./CodeBlock";
 
 export const MessageBubble: FunctionComponent<{
   message: Message;
@@ -34,6 +34,7 @@ export const MessageBubble: FunctionComponent<{
             },
           ],
         ]}
+        components={{ code: code }}
       >
         {message.streaming ? `${message.content}...` : message.content}
       </ReactMarkdown>

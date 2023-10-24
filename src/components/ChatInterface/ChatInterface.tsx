@@ -93,12 +93,74 @@ const ChatLayout: FunctionComponent<{ children: ReactNode }> = ({
   );
 };
 
+interface MessageBarProps {
+  isPending: boolean;
+  startConversation: (text: string) => void;
+  continueConversation: (text: string) => void;
+  conversationId?: string;
+}
+
+const MessageBar: FunctionComponent<MessageBarProps> = ({
+  isPending,
+  startConversation,
+  continueConversation,
+  conversationId,
+}) => {
+  const [rowNum, setRowNum] = useState(1);
+  const [text, setText] = useState("");
+
+  const handleSubmit = () => {
+    if (isPending) return;
+    if (!conversationId) {
+      startConversation(text);
+      setText("");
+    } else {
+      continueConversation(text);
+      setText("");
+    }
+  };
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const lineCount = (e.target.value.match(/\n/g) || []).length + 1;
+    setRowNum(Math.min(10, Math.max(lineCount, 1)));
+    setText(e.target.value);
+  };
+
+  return (
+    <div className="flex justify-center">
+      <div className="w-full max-w-3xl mb-8">
+        <div className="flex items-center border border-input px-3 py-2 rounded-md bg-background mx-4">
+          <Textarea
+            className="focus-visible:ring-0 focus-visible:ring-offset-0 border-0 resize-none min-h-0"
+            placeholder="Send a message"
+            onChange={handleTextChange}
+            onKeyDown={handleKeyDown}
+            rows={rowNum}
+            value={text}
+          />
+          <div
+            className={
+              isPending ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+            }
+            onClick={handleSubmit}
+          >
+            <Send className="h-6 w-6" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const ChatInterfaceComponent: FunctionComponent<{
   workspaceId: string;
   conversationId?: string;
 }> = ({ workspaceId, conversationId: initialConversationId }) => {
-  const [rowNum, setRowNum] = useState(1);
-  const [text, setText] = useState("");
   const {
     startConversation,
     messages,
@@ -150,27 +212,6 @@ export const ChatInterfaceComponent: FunctionComponent<{
     }
   }, [messages, isScrollLocked, isInitialLoad]);
 
-  const handleSubmit = () => {
-    if (isPending) return;
-    if (!conversationId) {
-      startConversation(text);
-      setText("");
-    } else {
-      continueConversation(text);
-      setText("");
-    }
-  };
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit();
-    }
-  };
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const lineCount = (e.target.value.match(/\n/g) || []).length + 1;
-    setRowNum(Math.min(10, Math.max(lineCount, 1)));
-    setText(e.target.value);
-  };
   return (
     <ChatLayout>
       <div className="flex flex-col max-h-dhv overflow-y-auto">
@@ -181,34 +222,20 @@ export const ChatInterfaceComponent: FunctionComponent<{
             {messages.map((message, index) => (
               <MessageBubble key={index} message={message} />
             ))}
-            <div ref={lastMessageRef}>&nbsp;</div>
           </div>
+          <div ref={lastMessageRef} className="inline-block" />
           <div className="h-24" />
         </div>
       </div>
       <div className="absolute bottom-0 left-0 right-0 w-full">
-        <div className="flex justify-center">
-          <div className="w-full max-w-3xl mb-8">
-            <div className="flex items-center border border-input px-3 py-2 rounded-md bg-background mx-4">
-              <Textarea
-                className="focus-visible:ring-0 focus-visible:ring-offset-0 border-0 resize-none min-h-0"
-                placeholder="Send a message"
-                onChange={handleTextChange}
-                onKeyDown={handleKeyDown}
-                rows={rowNum}
-                value={text}
-              />
-              <div
-                className={
-                  isPending ? "cursor-not-allowed opacity-50" : "cursor-pointer"
-                }
-                onClick={handleSubmit}
-              >
-                <Send className="h-6 w-6" />
-              </div>
-            </div>
-          </div>
-        </div>
+        <MessageBar
+          {...{
+            isPending,
+            startConversation,
+            continueConversation,
+            conversationId,
+          }}
+        />
       </div>
     </ChatLayout>
   );

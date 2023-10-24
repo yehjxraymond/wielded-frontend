@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import localForage from "localforage";
 import jwtDecode from "jwt-decode";
+import { useRouter } from "next/navigation";
 
 interface AuthContextProps {
   token: string | null;
@@ -32,6 +33,7 @@ const isTokenExpired = (token: string) => {
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const { push } = useRouter();
   const [token, setToken] = useState<string | null>(null);
 
   // Load the token from the storage on mount
@@ -53,7 +55,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   }, [token]);
 
   const isLoggedIn = !!token && !isTokenExpired(token);
-  const logout = () => setToken(null);
+  const logout = () => {
+    setToken(null);
+    push("/");
+  };
 
   return (
     <AuthContext.Provider value={{ token, setToken, isLoggedIn, logout }}>
