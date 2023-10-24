@@ -61,11 +61,16 @@ const CodeBarInternal: FunctionComponent<{
 };
 export const CodeBar = React.memo(CodeBarInternal);
 
-export const code: Components["code"] = (props: any) => {
+export const code: Components["code"] = (props) => {
   const { className, children } = props;
   const match = /language-(\w+)/.exec(className || "");
   const lang = match && match[1];
+  const isInlineCode = !className;
 
   // TODO Fix issue with <div> in <p>: https://github.com/remarkjs/react-markdown/issues/184
-  return <CodeBlock lang={lang || "text"} codeChildren={children} />;
+  return isInlineCode ? (
+    <code className="italic">{children}</code>
+  ) : (
+    <CodeBlock lang={lang || "text"} codeChildren={children} />
+  );
 };

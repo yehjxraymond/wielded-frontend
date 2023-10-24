@@ -86,3 +86,11 @@
     @apply h-[calc(100dvh)];
   }
 }
+
+ul {
+  @apply list-disc list-inside;
+}
+
+ol {
+  @apply list-decimal list-inside;
+}
