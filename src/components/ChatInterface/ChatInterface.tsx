@@ -21,7 +21,7 @@ const SidebarConversations = () => {
   if (conversationState.state !== "success") return null;
 
   return (
-    <div className="flex flex-col gap-2 my-2 max-h-screen overflow-scroll">
+    <div className="flex flex-col gap-2 my-2 max-h-dhv overflow-scroll">
       {conversationState.conversations.map((conversation) => (
         <Link href={`/chat/${conversation.id}`} key={conversation.id}>
           <div key={conversation.id} className="flex items-center rounded-lg ">
@@ -40,7 +40,7 @@ const SidebarContent = () => {
   const { logout } = useAuth();
 
   return (
-    <div className="px-4 max-h-screen min-h-screen flex flex-col justify-between">
+    <div className="px-4 max-h-dhv min-h-dhv flex flex-col justify-between">
       <Link href="/">
         <div className="font-semibold text-xl h-12 flex items-center">
           wielded_
@@ -85,7 +85,7 @@ const ChatLayout: FunctionComponent<{ children: ReactNode }> = ({
       <div className="hidden lg:block w-1/5 bg-accent">
         <SidebarContent />
       </div>
-      <div className="flex-1 min-h-screen max-h-screen overflow-y-auto relative">
+      <div className="flex-1 min-h-dhv max-h-dhv overflow-y-auto relative">
         <ContentHeader />
         {children}
       </div>
@@ -139,16 +139,16 @@ export const ChatInterfaceComponent: FunctionComponent<{
         if (container && container.lastChild) {
           (container.lastChild as any).scrollIntoView({ behavior: "smooth" });
         }
-      }, 300); // delay for smooth scroll
+      }, 50); // delay for smooth scroll
       setIsInitialLoad(false); // update the state so the next message won't cause a scroll
     }
   }, [messages, isInitialLoad]);
 
   useEffect(() => {
-    if (isScrollLocked && lastMessageRef.current) {
+    if (!isInitialLoad && isScrollLocked && lastMessageRef.current) {
       lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages, isScrollLocked]);
+  }, [messages, isScrollLocked, isInitialLoad]);
 
   const handleSubmit = () => {
     if (isPending) return;
@@ -173,7 +173,7 @@ export const ChatInterfaceComponent: FunctionComponent<{
   };
   return (
     <ChatLayout>
-      <div className="flex flex-col max-h-screen overflow-y-auto">
+      <div className="flex flex-col max-h-dhv overflow-y-auto">
         {/* mt-12 to clear header */}
         <div className="container flex flex-col items-center mt-12">
           {/* TODO Messages go here, use markdown + latex */}
