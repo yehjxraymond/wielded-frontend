@@ -114,9 +114,11 @@ const MessageBar: FunctionComponent<MessageBarProps> = ({
     if (!conversationId) {
       startConversation(text);
       setText("");
+      setRowNum(1);
     } else {
       continueConversation(text);
       setText("");
+      setRowNum(1);
     }
   };
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
