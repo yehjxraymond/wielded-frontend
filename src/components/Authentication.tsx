@@ -328,7 +328,7 @@ const useRandomQuote = () => {
 const LeftPanel = () => {
   const quote = useRandomQuote();
   return (
-    <div className="basis-1/3 bg-accent min-h-screen hidden lg:flex flex-col justify-between pb-8">
+    <div className="basis-1/3 bg-secondary min-h-screen hidden lg:flex flex-col justify-between pb-8">
       <nav className="w-full flex container justify-between my-5">
         <Link href="/">
           <div className="font-semibold text-xl">wielded_</div>

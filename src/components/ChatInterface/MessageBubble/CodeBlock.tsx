@@ -32,7 +32,7 @@ const CodeBarInternal: FunctionComponent<{
 }> = ({ lang, codeRef }) => {
   const [isCopied, setIsCopied] = useState<boolean>(false);
   return (
-    <div className="flex items-center relative text-accent bg-slate-800 px-4 py-2 text-xs font-sans rounded-t-md">
+    <div className="flex items-center relative bg-accent text-accent-foreground px-4 py-2 text-xs font-sans rounded-t-md">
       <span>{lang}</span>
       <button
         className="flex ml-auto gap-2"

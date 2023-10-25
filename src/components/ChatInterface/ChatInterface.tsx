@@ -3,7 +3,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/context/AuthContext";
 import { useConversation } from "@/context/ConversationContext";
 import { useWorkspace } from "@/context/WorkspaceContext";
-import { Menu, MessageSquare, Send } from "lucide-react";
+import {
+  Menu,
+  MessageSquare,
+  PlusCircle,
+  Search,
+  Send,
+  Settings,
+} from "lucide-react";
 import Link from "next/link";
 import {
   FunctionComponent,
@@ -14,24 +21,62 @@ import {
 } from "react";
 import { MessageBubble } from "./MessageBubble";
 import { useConversationMessages } from "./useConversationMessages";
+import { ThemeToggle } from "../ThemeToggle";
+import { cn } from "@/lib/utils";
 
+const sidebarHoverClass = "hover:bg-accent-foreground px-4";
+
+const MAX_CONVERSATIONS = 8;
 const SidebarConversations = () => {
   const conversationState = useConversation();
+  const [showAll, setShowAll] = useState(false);
 
   if (conversationState.state !== "success") return null;
 
+  // Get all conversations
+  const { conversations } = conversationState;
+
+  // Limit to MAX_CONVERSATIONS for sidebar and leave the rest
+  const sidebarConversations = showAll
+    ? conversations
+    : conversations.slice(0, MAX_CONVERSATIONS);
+  const remaining = conversations.length - MAX_CONVERSATIONS;
+
+  const onClickShowMore = () => setShowAll(true);
+
   return (
-    <div className="flex flex-col gap-2 my-2 max-h-dhv">
-      {conversationState.conversations.map((conversation) => (
+    <div className="flex flex-col my-2 max-h-dhv">
+      <div className="text-sm font-semibold px-4">Private</div>
+      {sidebarConversations.map((conversation) => (
         <Link href={`/chat/${conversation.id}`} key={conversation.id}>
-          <div key={conversation.id} className="flex items-center rounded-lg ">
-            <div className="overflow-hidden whitespace-nowrap overflow-ellipsis">
+          <div className={cn("flex items-center", sidebarHoverClass)}>
+            <div className="overflow-hidden whitespace-nowrap overflow-ellipsis py-1">
               <MessageSquare className="w-4 h-4 inline-block" />{" "}
               {conversation.name || "New Chat"}
             </div>
           </div>
         </Link>
       ))}
+      {!showAll && remaining > 0 && (
+        <button
+          className={cn(
+            "text-left font-medium text-sm mt-2",
+            sidebarHoverClass
+          )}
+          onClick={onClickShowMore}
+        >{`${remaining} more`}</button>
+      )}
+      {showAll && (
+        <button
+          className={cn(
+            "text-left font-medium text-sm mt-2",
+            sidebarHoverClass
+          )}
+          onClick={() => setShowAll(false)}
+        >
+          Show less
+        </button>
+      )}
     </div>
   );
 };
@@ -40,17 +85,33 @@ const SidebarContent = () => {
   const { logout } = useAuth();
 
   return (
-    <div className="px-4 max-h-dhv min-h-dhv flex flex-col justify-between">
-      <Link href="/">
+    <div className="max-h-dhv min-h-dhv flex flex-col justify-between">
+      <Link href="/" className="px-4">
         <div className="font-semibold text-xl h-12 flex items-center">
           wielded_
         </div>
       </Link>
+      {/* Main actions */}
+      <div className="my-4">
+        <div className={cn("hidden items-center py-1", sidebarHoverClass)}>
+          <Search className="w-5 h-5 mr-2" /> Search
+        </div>
+        <div className={cn("flex items-center py-1", sidebarHoverClass)}>
+          <Settings className="w-5 h-5 mr-2" /> Settings
+        </div>
+        <Link
+          href="/"
+          className={cn("flex items-center py-1", sidebarHoverClass)}
+        >
+          <PlusCircle className="w-5 h-5 mr-2" /> New Chat
+        </Link>
+      </div>
 
       <div className="flex-grow overflow-y-auto">
         <SidebarConversations />
       </div>
-      <div className="mt-4 px-4 bg-accent mb-10 lg:mb-4">
+      <div className="mt-4 bg-secondary mb-10 lg:mb-4 px-4">
+        <ThemeToggle />
         <button onClick={logout}>Logout</button>
       </div>
     </div>
@@ -65,7 +126,7 @@ const ContentHeader = () => {
           <SheetTrigger>
             <Menu className="h-8 w-8" />
           </SheetTrigger>
-          <SheetContent side="left" className="bg-accent">
+          <SheetContent side="left" className="bg-secondary">
             <SidebarContent />
           </SheetContent>
         </Sheet>
@@ -82,7 +143,7 @@ const ChatLayout: FunctionComponent<{ children: ReactNode }> = ({
 }) => {
   return (
     <div className="flex justify-stretch">
-      <div className="hidden lg:block w-1/5 bg-accent">
+      <div className="hidden lg:block w-1/5 bg-secondary">
         <SidebarContent />
       </div>
       <div className="flex-1 min-h-dhv max-h-dhv overflow-y-auto relative">
