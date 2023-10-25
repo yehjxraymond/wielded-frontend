@@ -21,7 +21,7 @@ const SidebarConversations = () => {
   if (conversationState.state !== "success") return null;
 
   return (
-    <div className="flex flex-col gap-2 my-2 max-h-dhv overflow-scroll">
+    <div className="flex flex-col gap-2 my-2 max-h-dhv">
       {conversationState.conversations.map((conversation) => (
         <Link href={`/chat/${conversation.id}`} key={conversation.id}>
           <div key={conversation.id} className="flex items-center rounded-lg ">
@@ -47,7 +47,7 @@ const SidebarContent = () => {
         </div>
       </Link>
 
-      <div className="flex-grow overflow-auto">
+      <div className="flex-grow overflow-y-auto">
         <SidebarConversations />
       </div>
       <div className="mt-4 px-4 bg-accent mb-10 lg:mb-4">
