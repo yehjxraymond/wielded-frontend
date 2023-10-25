@@ -3,13 +3,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/context/AuthContext";
 import { useConversation } from "@/context/ConversationContext";
 import { useWorkspace } from "@/context/WorkspaceContext";
+import { cn } from "@/lib/utils";
 import {
   Menu,
   MessageSquare,
   PlusCircle,
   Search,
-  Send,
-  Settings,
+  Send
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -19,10 +19,10 @@ import {
   useRef,
   useState,
 } from "react";
+import { SettingsOverlaySidebarTrigger } from "../SettingsOverlay";
+import { ThemeToggle } from "../ThemeToggle";
 import { MessageBubble } from "./MessageBubble";
 import { useConversationMessages } from "./useConversationMessages";
-import { ThemeToggle } from "../ThemeToggle";
-import { cn } from "@/lib/utils";
 
 const sidebarHoverClass = "hover:bg-accent-foreground px-4";
 
@@ -96,8 +96,8 @@ const SidebarContent = () => {
         <div className={cn("hidden items-center py-1", sidebarHoverClass)}>
           <Search className="w-5 h-5 mr-2" /> Search
         </div>
-        <div className={cn("flex items-center py-1", sidebarHoverClass)}>
-          <Settings className="w-5 h-5 mr-2" /> Settings
+        <div className={cn("flex", sidebarHoverClass)}>
+          <SettingsOverlaySidebarTrigger />
         </div>
         <Link
           href="/"
