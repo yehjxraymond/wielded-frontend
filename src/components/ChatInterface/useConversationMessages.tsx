@@ -3,6 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useConversation } from "@/context/ConversationContext";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Readable } from "stream";
 
@@ -71,6 +72,7 @@ export const useConversationMessages = (
     initialConversationId
   );
   const [isPending, setIsPending] = useState(false);
+  const { replace } = useRouter();
 
   const fetchMessagesMutation = useMutation({
     mutationFn: fetchMessages,
@@ -179,6 +181,7 @@ export const useConversationMessages = (
         setIsPending(false);
         if (reloadConversations && conversation.state === "success")
           conversation.reloadConversations();
+        replace(`/chat/${conversationIdBuffer}`);
       });
     };
 

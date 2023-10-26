@@ -1,4 +1,7 @@
-import { useMutation } from "@tanstack/react-query";
+import {
+  MutationStatus,
+  useMutation
+} from "@tanstack/react-query";
 import axios from "axios";
 import {
   ReactNode,
@@ -14,19 +17,29 @@ export interface Workspace {
   id: string;
   name: string;
   tier: string;
-  openAiApiKey: string | null;
-  created_at: string;
-  updated_at: string;
+  hasOpenAiApiKey: boolean;
+  role: "owner" | "admin" | "user";
+  openAiApiKey?: string;
+}
+
+export interface WorkspaceEditable {
+  name: string;
+  openAiApiKey: string;
 }
 
 interface WorkspaceOthers {
   state: "idle" | "pending" | "error";
 }
 
-interface WorkspaceSuccess {
+export interface WorkspaceSuccess {
   state: "success";
   workspaces: Workspace[];
   currentWorkspace: string;
+  updateWorkspace: (data: {
+    workspaceId: string;
+    workspace: Partial<WorkspaceEditable>;
+  }) => void;
+  updateWorkspaceStatus: MutationStatus;
 }
 
 type WorkspaceContextProps = WorkspaceOthers | WorkspaceSuccess;
@@ -39,6 +52,25 @@ const fetchWorkspaces = async (token: string) => {
   const response = await axios.get<Workspace[]>(`${config.baseUrl}/workspace`, {
     headers: { Authorization: `Bearer ${token}` },
   });
+  return response.data;
+};
+
+const putWorkspace = async ({
+  token,
+  workspaceId,
+  workspace,
+}: {
+  token: string;
+  workspaceId: string;
+  workspace: Partial<WorkspaceEditable>;
+}) => {
+  const response = await axios.put<Workspace>(
+    `${config.baseUrl}/workspace/${workspaceId}`,
+    workspace,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
   return response.data;
 };
 
@@ -57,6 +89,20 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({
     [fetchWorkspacesMutation.mutate]
   );
 
+  const updateWorkspaceMutation = useMutation({
+    mutationFn: putWorkspace,
+    mutationKey: ["workspace", token],
+  });
+
+  const updateWorkspace = (data: {
+    workspaceId: string;
+    workspace: Partial<WorkspaceEditable>;
+  }) => {
+    if (token) {
+      updateWorkspaceMutation.mutate({ ...data, token });
+    }
+  };
+
   useEffect(() => {
     if (token) memoisedFetch(token);
   }, [token, memoisedFetch]);
@@ -71,7 +117,13 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({
         const workspaces = fetchWorkspacesMutation.data;
         // TODO move workspace selection to user profile
         const currentWorkspace = workspaces[0].id;
-        return { state: "success", workspaces, currentWorkspace };
+        return {
+          state: "success",
+          workspaces,
+          currentWorkspace,
+          updateWorkspace,
+          updateWorkspaceStatus: updateWorkspaceMutation.status,
+        };
       case "error":
         return { state: "error" };
     }
