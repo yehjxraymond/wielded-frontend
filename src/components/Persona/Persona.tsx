@@ -1,6 +1,8 @@
 import { PersonaSuccess, usePersona } from "@/context/PersonaContext";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { User2 } from "lucide-react";
 import { FunctionComponent, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import z from "zod";
 import { SidebarLayout } from "../Layout";
 import { Button } from "../ui/button";
@@ -12,8 +14,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { set, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -37,13 +37,14 @@ const personaSchema = z.object({
 const PersonaForm: FunctionComponent<{
   formType: FormType;
   personas: PersonaSuccess["personas"];
+  createPersona: PersonaSuccess["createPersona"];
+  updatePersona: PersonaSuccess["updatePersona"];
   setIsOpen: (isOpen: boolean) => void;
-}> = ({ formType, personas, setIsOpen }) => {
+}> = ({ formType, personas, setIsOpen, createPersona, updatePersona }) => {
   const defaultValues =
     formType.type === "edit"
       ? personas.find((p) => p.id === formType.id)
       : undefined;
-  console.log(defaultValues);
   const form = useForm<z.infer<typeof personaSchema>>({
     resolver: zodResolver(personaSchema),
   });
@@ -59,7 +60,11 @@ const PersonaForm: FunctionComponent<{
     }
   }, [defaultValues, form]);
   function onSubmit(values: z.infer<typeof personaSchema>) {
-    console.log("submit", values);
+    if (formType.type === "create") {
+      createPersona(values);
+    } else {
+      updatePersona({ ...values, id: formType.id });
+    }
   }
   return (
     <DialogContent onPointerDownOutside={() => setIsOpen(false)}>
@@ -155,6 +160,8 @@ const PersonaForm: FunctionComponent<{
 
 export const PersonaInternal: FunctionComponent<PersonaSuccess> = ({
   personas,
+  createPersona,
+  updatePersona,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [formType, setFormType] = useState<FormType>({ type: "create" });
@@ -166,6 +173,8 @@ export const PersonaInternal: FunctionComponent<PersonaSuccess> = ({
           formType={formType}
           personas={personas}
           setIsOpen={setIsOpen}
+          createPersona={createPersona}
+          updatePersona={updatePersona}
         />
         <div className="lg:flex px-4 justify-between items-end mt-4">
           <div className="max-w-xl">
