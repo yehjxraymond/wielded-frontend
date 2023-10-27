@@ -2,6 +2,7 @@
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/context/AuthContext";
 import { ConversationProvider } from "@/context/ConversationContext";
+import { PersonaProvider } from "@/context/PersonaContext";
 import { WorkspaceProvider } from "@/context/WorkspaceContext";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -22,7 +23,9 @@ export const Providers: FunctionComponent<{ children: ReactNode }> = ({
       >
         <AuthProvider>
           <WorkspaceProvider>
-            <ConversationProvider>{children}</ConversationProvider>
+            <ConversationProvider>
+              <PersonaProvider>{children}</PersonaProvider>
+            </ConversationProvider>
           </WorkspaceProvider>
         </AuthProvider>
       </ThemeProvider>
