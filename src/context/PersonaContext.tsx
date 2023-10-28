@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
 } from "react";
 import { config } from "../config";
 import { useAuth } from "./AuthContext";
@@ -29,6 +30,8 @@ export interface PersonaSuccess {
   reloadPersonas: () => void;
   createPersona: (persona: Partial<Persona>) => void;
   updatePersona: (persona: Partial<Persona>) => void;
+  selectedPersona: Persona | undefined;
+  selectPersona: (personaId: string | undefined) => void;
 }
 
 type PersonaContextProps = PersonaSuccess | PersonaOthers;
@@ -95,6 +98,9 @@ export const PersonaProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const { token } = useAuth();
   const workspace = useWorkspace();
+  const [selectedPersonaId, setSelectedPersonaId] = useState<
+    string | undefined
+  >(undefined);
 
   const currentWorkspaceId =
     (workspace.state === "success" && workspace.currentWorkspace) || "NA";
@@ -159,6 +165,14 @@ export const PersonaProvider: React.FC<{ children: ReactNode }> = ({
       });
   }, [token, memoisedFetch, currentWorkspaceId]);
 
+  const selectedPersona = fetchPersonasMutation.data?.find(
+    (persona) => persona.id === selectedPersonaId
+  );
+
+  const selectPersona = (personaId: string) => {
+    setSelectedPersonaId(personaId);
+  };
+
   const getState = (): PersonaContextProps => {
     switch (fetchPersonasMutation.status) {
       case "idle":
@@ -173,6 +187,8 @@ export const PersonaProvider: React.FC<{ children: ReactNode }> = ({
           reloadPersonas,
           createPersona,
           updatePersona,
+          selectedPersona,
+          selectPersona,
         };
       case "error":
         return { state: "error" };

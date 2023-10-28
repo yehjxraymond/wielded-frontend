@@ -42,6 +42,32 @@ const extractConversationId = (str: string) => {
   return match ? match[1] : null;
 };
 
+type Model =
+  | "gpt-4"
+  | "gpt-4-0314"
+  | "gpt-4-0613"
+  | "gpt-4-32k"
+  | "gpt-4-32k-0314"
+  | "gpt-4-32k-0613"
+  | "gpt-3.5-turbo"
+  | "gpt-3.5-turbo-16k"
+  | "gpt-3.5-turbo-0301"
+  | "gpt-3.5-turbo-0613"
+  | "gpt-3.5-turbo-16k-0613";
+
+export interface ConversationPayload {
+  message: string;
+  persona?: string;
+  options?: {
+    model?: Model;
+    frequency_penalty?: number; // Positive values decreasing the model's likelihood to repeat the same line verbatim.
+    max_tokens?: number;
+    presence_penalty?: number; // Number between -2.0 and 2.0. Positive values increasing the model's likelihood to talk about new topics
+    temperature?: number; // between 0 and 2. Higher values like 0.8 will make the output more random. Set this or top_p
+    top_p?: number; // 0.1 means only the tokens comprising the top 10% probability mass
+  };
+}
+
 const fetchMessages = async ({
   token,
   workspaceId,
@@ -112,7 +138,7 @@ export const useConversationMessages = (
       url: string;
       reloadConversations?: boolean;
     }) =>
-    async (message: string) => {
+    async ({ message, persona }: ConversationPayload) => {
       const previousMessages: Message[] = [
         ...messages,
         {
@@ -134,7 +160,7 @@ export const useConversationMessages = (
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ message, persona }),
       });
       if (!response.ok) {
         setError(response.statusText);

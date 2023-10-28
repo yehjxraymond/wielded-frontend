@@ -132,8 +132,6 @@ const ContentHeader: FunctionComponent<{ title?: string }> = ({ title }) => {
         {title ? <div className="font-medium">{title}</div> : <div />}
         <div>{/* TODO Advanced Model Settings */}</div>
       </div>
-      {/* h-12 div to clear header */}
-      <div className="h-12" />
     </>
   );
 };

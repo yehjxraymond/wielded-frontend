@@ -1,16 +1,21 @@
 import { Textarea } from "@/components/ui/textarea";
+import { useConversation } from "@/context/ConversationContext";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { Send } from "lucide-react";
 import { FunctionComponent, useEffect, useRef, useState } from "react";
 import { SidebarLayout } from "../Layout";
 import { MessageBubble } from "./MessageBubble";
-import { useConversationMessages } from "./useConversationMessages";
-import { useConversation } from "@/context/ConversationContext";
+import { PersonaSelector } from "./PersonaSelector";
+import {
+  ConversationPayload,
+  useConversationMessages,
+} from "./useConversationMessages";
+import { usePersona } from "@/context/PersonaContext";
 
 interface MessageBarProps {
   isPending: boolean;
-  startConversation: (text: string) => void;
-  continueConversation: (text: string) => void;
+  startConversation: (opts: ConversationPayload) => void;
+  continueConversation: (opts: ConversationPayload) => void;
   conversationId?: string;
 }
 
@@ -20,17 +25,20 @@ const MessageBar: FunctionComponent<MessageBarProps> = ({
   continueConversation,
   conversationId,
 }) => {
+  const persona = usePersona();
   const [rowNum, setRowNum] = useState(1);
   const [text, setText] = useState("");
 
   const handleSubmit = () => {
     if (isPending) return;
+    const personaText =
+      persona.state === "success" ? persona.selectedPersona?.content : "";
     if (!conversationId) {
-      startConversation(text);
+      startConversation({ message: text, persona: personaText });
       setText("");
       setRowNum(1);
     } else {
-      continueConversation(text);
+      continueConversation({ message: text });
       setText("");
       setRowNum(1);
     }
@@ -137,8 +145,18 @@ export const ChatInterfaceComponent: FunctionComponent<{
   return (
     <SidebarLayout title={title}>
       <div className="flex flex-col max-h-dhv overflow-y-auto">
-        <div className="container flex flex-col items-center">
-          {/* TODO Messages go here, use markdown + latex */}
+        <div className="container flex flex-col items-center mt-12">
+          {messages.length === 0 && (
+            <div className="text-center mt-32 w-full">
+              <div className="text-xl font-semibold">
+                Start a new conversation
+              </div>
+              <div className="w-full mt-12 text-left">
+                <div className="font-semibold">Persona</div>
+                <PersonaSelector />
+              </div>
+            </div>
+          )}
           <div className="space-y-4 max-w-2xl w-full messages-container">
             {messages.map((message, index) => (
               <MessageBubble key={index} message={message} />

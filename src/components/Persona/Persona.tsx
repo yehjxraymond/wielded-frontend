@@ -168,7 +168,7 @@ export const PersonaInternal: FunctionComponent<PersonaSuccess> = ({
 
   return (
     <SidebarLayout>
-      <Dialog open={isOpen}>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <PersonaForm
           formType={formType}
           personas={personas}
@@ -176,7 +176,7 @@ export const PersonaInternal: FunctionComponent<PersonaSuccess> = ({
           createPersona={createPersona}
           updatePersona={updatePersona}
         />
-        <div className="lg:flex px-4 justify-between items-end mt-4">
+        <div className="lg:flex px-4 justify-between items-end mt-12">
           <div className="max-w-xl">
             <h1 className="text-2xl mb-2">Persona</h1>
             <p className="text-sm text-secondary-foreground">
