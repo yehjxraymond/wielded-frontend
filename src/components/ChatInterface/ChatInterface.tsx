@@ -88,7 +88,7 @@ export const ChatInterfaceComponent: FunctionComponent<{
   const conversation = useConversation();
   const {
     startConversation,
-    messages,
+    messages: messagesWithSystemMessage,
     conversationId,
     continueConversation,
     isPending,
@@ -97,6 +97,10 @@ export const ChatInterfaceComponent: FunctionComponent<{
   const [isScrollLocked, setScrollLocked] = useState(true);
   const scrollObserverRef = useRef<IntersectionObserver | null>(null);
   const lastMessageRef = useRef<HTMLDivElement | null>(null);
+
+  const messages = messagesWithSystemMessage.filter(
+    (message) => message.type !== "system"
+  );
 
   useEffect(() => {
     const currentLastMessage = lastMessageRef.current;
