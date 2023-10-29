@@ -137,7 +137,7 @@ const SidebarContent = () => {
 const ContentHeader: FunctionComponent<{ title?: string }> = ({ title }) => {
   return (
     <>
-      <div className="absolute flex justify-between items-center h-12 top-0 left-0 right-0 bg-background">
+      <div className="absolute flex justify-between items-center h-12 top-0 left-0 right-0 bg-background z-20">
         <div className="lg:hidden p-2 flex flex-col">
           <Sheet>
             <SheetTrigger>
