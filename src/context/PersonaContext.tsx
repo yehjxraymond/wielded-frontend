@@ -169,7 +169,7 @@ export const PersonaProvider: React.FC<{ children: ReactNode }> = ({
     (persona) => persona.id === selectedPersonaId
   );
 
-  const selectPersona = (personaId: string) => {
+  const selectPersona = (personaId?: string) => {
     setSelectedPersonaId(personaId);
   };
 
