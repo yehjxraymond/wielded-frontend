@@ -25,6 +25,7 @@ interface ConversationSuccess {
   state: "success";
   conversations: Conversation[];
   reloadConversations: () => void;
+  deleteConversation: (id: string) => void;
 }
 
 type ConversationContextProps = ConversationSuccess | ConversationOthers;
@@ -48,6 +49,23 @@ const fetchConversations = async ({
   return response.data;
 };
 
+const deleteConversationApi = async ({
+  token,
+  workspaceId,
+  conversationId,
+}: {
+  token: string;
+  workspaceId: string;
+  conversationId: string;
+}) => {
+  await axios.delete(
+    `${config.baseUrl}/workspace/${workspaceId}/conversation/${conversationId}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+};
+
 export const ConversationProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
@@ -62,6 +80,11 @@ export const ConversationProvider: React.FC<{ children: ReactNode }> = ({
     mutationKey: ["conversations", token, currentWorkspaceId],
   });
 
+  const deleteConversationMutation = useMutation({
+    mutationFn: deleteConversationApi,
+    onSuccess: () => reloadConversations()
+  });
+
   const memoisedFetch = useMemo(
     () => fetchConversationsMutation.mutate,
     [fetchConversationsMutation.mutate]
@@ -72,6 +95,15 @@ export const ConversationProvider: React.FC<{ children: ReactNode }> = ({
       memoisedFetch({
         token,
         workspaceId: currentWorkspaceId,
+      });
+  };
+
+  const deleteConversation = (id: string) => {
+    if (token && currentWorkspaceId !== "NA")
+      deleteConversationMutation.mutate({
+        token,
+        workspaceId: currentWorkspaceId,
+        conversationId: id,
       });
   };
 
@@ -91,7 +123,12 @@ export const ConversationProvider: React.FC<{ children: ReactNode }> = ({
         return { state: "pending" };
       case "success":
         const conversations = fetchConversationsMutation.data;
-        return { state: "success", conversations, reloadConversations };
+        return {
+          state: "success",
+          conversations,
+          reloadConversations,
+          deleteConversation,
+        };
       case "error":
         return { state: "error" };
     }

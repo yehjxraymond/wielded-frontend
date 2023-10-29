@@ -7,6 +7,7 @@ import {
   MessageSquare,
   PlusCircle,
   Search,
+  Trash,
   UserCircle,
 } from "lucide-react";
 import Link from "next/link";
@@ -24,7 +25,12 @@ const SidebarConversations = () => {
   if (conversationState.state !== "success") return null;
 
   // Get all conversations
-  const { conversations } = conversationState;
+  const { conversations, deleteConversation } = conversationState;
+
+  const onDelete = (id: string) => {
+    window.confirm("Are you sure you want to delete this conversation?") &&
+      deleteConversation(id);
+  };
 
   // Limit to MAX_CONVERSATIONS for sidebar and leave the rest
   const sidebarConversations = showAll
@@ -39,10 +45,24 @@ const SidebarConversations = () => {
       <div className="text-sm font-semibold px-4">Private</div>
       {sidebarConversations.map((conversation) => (
         <Link href={`/chat/${conversation.id}`} key={conversation.id}>
-          <div className={cn("flex items-center", sidebarHoverClass)}>
-            <div className="overflow-hidden whitespace-nowrap overflow-ellipsis py-1">
-              <MessageSquare className="w-4 h-4 inline-block" />{" "}
+          <div
+            className={cn(
+              "flex items-center justify-between group relative",
+              sidebarHoverClass
+            )}
+          >
+            <div className="overflow-hidden whitespace-nowrap text-ellipsis group-hover:text-clip py-1 group-hover:mr-8 duration-100 w-full">
+              <MessageSquare className="w-4 h-4 inline mr-1 group-hover:hidden" />
               {conversation.name || "New Chat"}
+            </div>
+            <div className="absolute right-4 opacity-0 group-hover:opacity-100 transition ease-in-out duration-100">
+              <Trash
+                className="w-4 h-4 inline-block text-gray-600"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onDelete(conversation.id);
+                }}
+              />
             </div>
           </div>
         </Link>
