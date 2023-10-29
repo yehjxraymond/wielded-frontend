@@ -30,6 +30,7 @@ export interface PersonaSuccess {
   reloadPersonas: () => void;
   createPersona: (persona: Partial<Persona>) => void;
   updatePersona: (persona: Partial<Persona>) => void;
+  deletePersona: (personaId: string) => void;
   selectedPersona: Persona | undefined;
   selectPersona: (personaId: string | undefined) => void;
 }
@@ -93,6 +94,24 @@ const putPersona = async ({
   return response.data;
 };
 
+const deletePersonaApi = async ({
+  token,
+  workspaceId,
+  personaId,
+}: {
+  token: string;
+  workspaceId: string;
+  personaId: string;
+}) => {
+  const response = await axios.delete<Persona>(
+    `${config.baseUrl}/workspace/${workspaceId}/persona/${personaId}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return response.data;
+};
+
 export const PersonaProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
@@ -115,6 +134,14 @@ export const PersonaProvider: React.FC<{ children: ReactNode }> = ({
 
   const updatePersonaMutation = useMutation({
     mutationFn: putPersona,
+    mutationKey: ["personas", token, currentWorkspaceId],
+    onSuccess: () => {
+      reloadPersonas();
+    },
+  });
+
+  const deletePersonaMutation = useMutation({
+    mutationFn: deletePersonaApi,
     mutationKey: ["personas", token, currentWorkspaceId],
     onSuccess: () => {
       reloadPersonas();
@@ -157,6 +184,15 @@ export const PersonaProvider: React.FC<{ children: ReactNode }> = ({
       });
   };
 
+  const deletePersona = async (personaId: string) => {
+    if (token && currentWorkspaceId !== "NA")
+      deletePersonaMutation.mutate({
+        token,
+        workspaceId: currentWorkspaceId,
+        personaId,
+      });
+  };
+
   useEffect(() => {
     if (token && currentWorkspaceId !== "NA")
       memoisedFetch({
@@ -187,6 +223,7 @@ export const PersonaProvider: React.FC<{ children: ReactNode }> = ({
           reloadPersonas,
           createPersona,
           updatePersona,
+          deletePersona,
           selectedPersona,
           selectPersona,
         };

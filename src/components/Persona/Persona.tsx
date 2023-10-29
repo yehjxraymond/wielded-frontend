@@ -39,8 +39,16 @@ const PersonaForm: FunctionComponent<{
   personas: PersonaSuccess["personas"];
   createPersona: PersonaSuccess["createPersona"];
   updatePersona: PersonaSuccess["updatePersona"];
+  deletePersona: PersonaSuccess["deletePersona"];
   setIsOpen: (isOpen: boolean) => void;
-}> = ({ formType, personas, setIsOpen, createPersona, updatePersona }) => {
+}> = ({
+  formType,
+  personas,
+  setIsOpen,
+  createPersona,
+  updatePersona,
+  deletePersona,
+}) => {
   const defaultValues =
     formType.type === "edit"
       ? personas.find((p) => p.id === formType.id)
@@ -66,6 +74,10 @@ const PersonaForm: FunctionComponent<{
       updatePersona({ ...values, id: formType.id });
     }
   }
+  const onDelete = (id: string) => {
+    window.confirm("Are you sure you want to delete this persona?") &&
+      deletePersona(id);
+  };
   return (
     <DialogContent onPointerDownOutside={() => setIsOpen(false)}>
       <DialogHeader>
@@ -147,9 +159,20 @@ const PersonaForm: FunctionComponent<{
                 )}
               />
 
-              <Button type="submit">
-                {formType.type == "create" ? "Create" : "Save"}
-              </Button>
+              <div className="flex justify-end space-x-4">
+                {formType.type === "edit" && (
+                  <Button
+                    variant="destructive"
+                    onClick={() => onDelete(formType.id)}
+                  >
+                    Delete
+                  </Button>
+                )}
+
+                <Button type="submit">
+                  {formType.type == "create" ? "Create" : "Save"}
+                </Button>
+              </div>
             </form>
           </Form>
         </DialogDescription>
@@ -162,6 +185,7 @@ export const PersonaInternal: FunctionComponent<PersonaSuccess> = ({
   personas,
   createPersona,
   updatePersona,
+  deletePersona,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [formType, setFormType] = useState<FormType>({ type: "create" });
@@ -175,6 +199,7 @@ export const PersonaInternal: FunctionComponent<PersonaSuccess> = ({
           setIsOpen={setIsOpen}
           createPersona={createPersona}
           updatePersona={updatePersona}
+          deletePersona={deletePersona}
         />
         <div className="lg:flex px-4 justify-between items-end mt-12">
           <div className="max-w-xl">
