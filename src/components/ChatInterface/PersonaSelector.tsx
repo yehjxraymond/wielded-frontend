@@ -12,7 +12,7 @@ export const PersonaSelector: FunctionComponent = () => {
     <div className="flex mt-8 gap-4 cursor-pointer overflow-y-auto">
       {personas.map((persona) => (
         <div
-          className="pt-6 relative w-[200px] md:w-[250px] pb-4"
+          className="pt-6 relative min-w-[200px] md:min-w-[250px] w-[200px] md:w-[250px] pb-4"
           key={persona.id}
           onClick={() => {
             if (persona.id === selectedPersona?.id) {
