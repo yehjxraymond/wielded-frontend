@@ -22,13 +22,13 @@ const SharedConversationContent: FunctionComponent<{
         <h1 className="text-3xl">{name || "Untitled Conversation"}</h1>
       </div>
       <div className="w-full flex justify-center">
-        <div className="space-y-4 max-w-4xl">
+        <div className="space-y-4 max-w-4xl w-full">
           {messages.map((message, index) => (
             <MessageBubble key={index} message={message} />
           ))}
         </div>
       </div>
-      <Separator className="mt-8 my-16"/>
+      <Separator className="mt-8 my-16" />
       <HomeHero />
     </div>
   );
