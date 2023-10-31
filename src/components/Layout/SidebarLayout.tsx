@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import {
   Menu,
   MessageSquare,
+  MoreHorizontal,
   PlusCircle,
   Search,
   Trash,
@@ -134,7 +135,10 @@ const SidebarContent = () => {
   );
 };
 
-const ContentHeader: FunctionComponent<{ title?: string }> = ({ title }) => {
+const ContentHeader: FunctionComponent<{
+  title?: string;
+  submenu?: ReactNode;
+}> = ({ title, submenu }) => {
   return (
     <>
       <div className="absolute flex justify-between items-center h-12 top-0 left-0 right-0 bg-background z-20">
@@ -150,7 +154,7 @@ const ContentHeader: FunctionComponent<{ title?: string }> = ({ title }) => {
         </div>
         <div className="hidden lg:block" />
         {title ? <div className="font-medium">{title}</div> : <div />}
-        <div>{/* TODO Advanced Model Settings */}</div>
+        <div className="mr-4 flex items-center">{submenu}</div>
       </div>
     </>
   );
@@ -159,14 +163,15 @@ const ContentHeader: FunctionComponent<{ title?: string }> = ({ title }) => {
 export const SidebarLayout: FunctionComponent<{
   children: ReactNode;
   title?: string;
-}> = ({ children, title }) => {
+  submenu?: ReactNode;
+}> = ({ children, title, submenu }) => {
   return (
     <div className="flex justify-stretch">
       <div className="hidden lg:block w-1/5 bg-secondary">
         <SidebarContent />
       </div>
       <div className="flex-1 min-h-dhv max-h-dhv overflow-y-auto relative">
-        <ContentHeader title={title} />
+        <ContentHeader title={title} submenu={submenu} />
         {children}
       </div>
     </div>

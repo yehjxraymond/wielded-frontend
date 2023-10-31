@@ -1,16 +1,17 @@
 import { Textarea } from "@/components/ui/textarea";
 import { useConversation } from "@/context/ConversationContext";
+import { usePersona } from "@/context/PersonaContext";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { Send } from "lucide-react";
 import { FunctionComponent, useEffect, useRef, useState } from "react";
 import { SidebarLayout } from "../Layout";
 import { MessageBubble } from "./MessageBubble";
 import { PersonaSelector } from "./PersonaSelector";
+import { ShareSubmenu } from "./ShareSubmenu";
 import {
   ConversationPayload,
   useConversationMessages,
 } from "./useConversationMessages";
-import { usePersona } from "@/context/PersonaContext";
 
 interface MessageBarProps {
   isPending: boolean;
@@ -147,7 +148,17 @@ export const ChatInterfaceComponent: FunctionComponent<{
     undefined;
 
   return (
-    <SidebarLayout title={title}>
+    <SidebarLayout
+      title={title}
+      submenu={
+        initialConversationId && (
+          <ShareSubmenu
+            workspaceId={workspaceId}
+            conversationId={initialConversationId}
+          />
+        )
+      }
+    >
       <div className="flex flex-col max-h-dhv overflow-y-auto">
         <div className="container flex flex-col items-center mt-12">
           {messages.length === 0 && (
