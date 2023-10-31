@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
 import { Share2 } from "lucide-react";
-import { FunctionComponent, useEffect, useRef } from "react";
+import { FunctionComponent } from "react";
 import { Button } from "../ui/button";
 import {
   NotSharedStatus,
