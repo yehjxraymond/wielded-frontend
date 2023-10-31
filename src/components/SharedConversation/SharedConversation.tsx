@@ -8,6 +8,7 @@ import {
 import { HomeHero } from "../Home/HomeHero";
 import { Separator } from "../ui/separator";
 
+// TODO Better loading state
 const Loading = () => <div>Loading...</div>;
 
 const SharedConversationContent: FunctionComponent<{

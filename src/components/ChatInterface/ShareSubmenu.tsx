@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
 import { Share2 } from "lucide-react";
-import { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import { Button } from "../ui/button";
 import {
   NotSharedStatus,
@@ -28,6 +28,7 @@ const ShareContent: FunctionComponent<ShareContentProps> = ({
   onTogglePersona,
   onToggleSnapshot,
 }) => {
+  const [isCopied, setIsCopied] = useState<boolean>(false);
   const isShared = status.state === "shared";
   const isShowingPersona = isShared ? status.shareSystemMessages : false;
   const isShowingNewMessages = isShared ? !status.snapshot : false;
@@ -37,7 +38,10 @@ const ShareContent: FunctionComponent<ShareContentProps> = ({
 
   const copyShareLink = () => {
     if (shareLink) {
-      navigator.clipboard.writeText(shareLink);
+      navigator.clipboard.writeText(shareLink).then(() => {
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 1500);
+      });
     }
   };
 
@@ -81,7 +85,7 @@ const ShareContent: FunctionComponent<ShareContentProps> = ({
               className="text-xs rounded-r-none focus-visible:ring-0 focus-visible:ring-offset-0"
             />
             <Button onClick={copyShareLink} className="rounded-l-none">
-              Copy
+              {isCopied ? "Copied!" : "Copy"}
             </Button>
           </div>
         </>
