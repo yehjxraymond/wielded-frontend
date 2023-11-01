@@ -1,5 +1,8 @@
+import {
+  SharedConversationDto
+} from "@/components/SharedConversation";
+import { config } from "@/config";
 import { ImageResponse } from "next/server";
-import { getSharedConversationData } from "./page";
 
 // Route segment config
 export const runtime = "edge";
@@ -12,6 +15,13 @@ export const size = {
 };
 
 export const contentType = "image/png";
+
+const getSharedConversationData = async (sharedConversationId: string) => {
+  const res = await fetch(`${config.baseUrl}/share/${sharedConversationId}`, {
+    next: { revalidate: 5000 },
+  });
+  return res.json() as Promise<SharedConversationDto>;
+};
 
 // Image generation
 export default async function Image({

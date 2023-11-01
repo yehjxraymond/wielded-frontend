@@ -6,7 +6,7 @@ import {
 import { config } from "@/config";
 import { Metadata } from "next";
 
-export const getSharedConversationData = async (sharedConversationId: string) => {
+const getSharedConversationData = async (sharedConversationId: string) => {
   const res = await fetch(`${config.baseUrl}/share/${sharedConversationId}`, {
     next: { revalidate: 5000 },
   });
