@@ -19,7 +19,8 @@ export async function generateMetadata({
   params: { sharedConversationId: string };
 }): Promise<Metadata> {
   const data = await getData(sharedConversationId);
-  let description = data.messages[0]?.content || "";
+  let description =
+    data.messages.filter((m) => m.type !== "system")[0]?.content || "";
 
   // Ensure that the description is less than or equal to 200 characters
   if (description.length > 200) {
