@@ -33,7 +33,7 @@ const ShareContent: FunctionComponent<ShareContentProps> = ({
   const isShowingPersona = isShared ? status.shareSystemMessages : false;
   const isShowingNewMessages = isShared ? !status.snapshot : false;
   const shareLink = isShared
-    ? `${window.location.origin}/share/${status.id}`
+    ? `${window.location.origin}/share/${status.id}/?utm_source=share&utm_medium=web&utm_campaign=share-${status.id}`
     : undefined;
 
   const copyShareLink = () => {
