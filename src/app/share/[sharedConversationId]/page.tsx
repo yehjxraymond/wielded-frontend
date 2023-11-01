@@ -1,16 +1,47 @@
-"use client";
 import { HeaderPublic } from "@/components/HeaderPublic";
-import { SharedConversation } from "@/components/SharedConversation";
+import {
+  SharedConversation,
+  SharedConversationDto,
+} from "@/components/SharedConversation";
+import { config } from "@/config";
+import { Metadata } from "next";
 
-export default function ConversationPage({
-  params,
+const getData = async (sharedConversationId: string) => {
+  const res = await fetch(`${config.baseUrl}/share/${sharedConversationId}`, {
+    next: { revalidate: 5000 },
+  });
+  return res.json() as Promise<SharedConversationDto>;
+};
+
+export async function generateMetadata({
+  params: { sharedConversationId },
+}: {
+  params: { sharedConversationId: string };
+}): Promise<Metadata> {
+  const data = await getData(sharedConversationId);
+  let description = data.messages[0]?.content || "";
+
+  // Ensure that the description is less than or equal to 200 characters
+  if (description.length > 200) {
+    description = description.substring(0, 200) + "...";
+  }
+
+  return {
+    title: data.name || "Untitled Conversation",
+    description,
+  };
+}
+
+export default async function ConversationPage({
+  params: { sharedConversationId },
 }: {
   params: { sharedConversationId: string };
 }) {
+  const data = await getData(sharedConversationId);
   return (
     <main>
       <HeaderPublic />
-      <SharedConversation sharedConversationId={params.sharedConversationId} />
+      <SharedConversation data={data} />
     </main>
   );
 }
