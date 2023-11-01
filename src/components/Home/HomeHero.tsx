@@ -6,6 +6,8 @@ import axios, { AxiosError } from "axios";
 import { AlertCircle } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { config } from "../../config";
+import { gtmEvent } from "../Analytics";
+import { useUTMParameters } from "@/context/UTMContext";
 
 interface LeadData {
   email: string;
@@ -21,6 +23,10 @@ const postLead = async (leadData: LeadData) => {
       `${config.baseUrl}/lead`,
       leadData
     );
+    await gtmEvent({
+      event: "early_access_waitlist_lead",
+      source: leadData.source,
+    });
     return res.data;
   } catch (e) {
     if (e instanceof AxiosError) {
@@ -34,16 +40,23 @@ const postLead = async (leadData: LeadData) => {
 };
 
 export const HomeHero = () => {
+  const { getUTMParameters } = useUTMParameters();
   const [email, setEmail] = useState("");
   const mutation = useMutation<{ success: boolean }, AxiosError, LeadData>({
     mutationFn: postLead,
   });
   const isSubmissionSuccessful = mutation.data?.success;
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    mutation.mutate({ email, source: "wielded_waitlist_hero" });
+    const utm_params = await getUTMParameters();
+    mutation.mutate({
+      email,
+      source: "wielded_waitlist_hero",
+      utm_parameters: utm_params,
+    });
   };
+
   return (
     <div className="container flex-grow flex flex-col justify-center items-center">
       <h1 className="text-3xl font-semibold text-center max-w-sm md:max-w-none">

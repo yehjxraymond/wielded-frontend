@@ -3,6 +3,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/context/AuthContext";
 import { ConversationProvider } from "@/context/ConversationContext";
 import { PersonaProvider } from "@/context/PersonaContext";
+import { UTMProvider } from "@/context/UTMContext";
 import { WorkspaceProvider } from "@/context/WorkspaceContext";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -15,20 +16,22 @@ export const Providers: FunctionComponent<{ children: ReactNode }> = ({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="light"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <AuthProvider>
-          <WorkspaceProvider>
-            <ConversationProvider>
-              <PersonaProvider>{children}</PersonaProvider>
-            </ConversationProvider>
-          </WorkspaceProvider>
-        </AuthProvider>
-      </ThemeProvider>
+      <UTMProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <WorkspaceProvider>
+              <ConversationProvider>
+                <PersonaProvider>{children}</PersonaProvider>
+              </ConversationProvider>
+            </WorkspaceProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </UTMProvider>
     </QueryClientProvider>
   );
 };
