@@ -9,7 +9,10 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "wielded_",
   description: "Supercharge your team with AI",
-  metadataBase: new URL("https://wielded.com"),
+  metadataBase:
+    process.env.NODE_ENV === "production"
+      ? new URL("https://wielded.com")
+      : undefined,
 };
 
 export default function RootLayout({
