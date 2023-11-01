@@ -6,7 +6,7 @@ import {
 import { config } from "@/config";
 import { Metadata } from "next";
 
-const getData = async (sharedConversationId: string) => {
+export const getSharedConversationData = async (sharedConversationId: string) => {
   const res = await fetch(`${config.baseUrl}/share/${sharedConversationId}`, {
     next: { revalidate: 5000 },
   });
@@ -18,7 +18,7 @@ export async function generateMetadata({
 }: {
   params: { sharedConversationId: string };
 }): Promise<Metadata> {
-  const data = await getData(sharedConversationId);
+  const data = await getSharedConversationData(sharedConversationId);
   let description =
     data.messages.filter((m) => m.type !== "system")[0]?.content || "";
 
@@ -38,7 +38,7 @@ export default async function ConversationPage({
 }: {
   params: { sharedConversationId: string };
 }) {
-  const data = await getData(sharedConversationId);
+  const data = await getSharedConversationData(sharedConversationId);
   return (
     <main>
       <HeaderPublic />
