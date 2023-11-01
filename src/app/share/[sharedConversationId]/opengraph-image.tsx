@@ -30,7 +30,6 @@ export default async function Image({
   params: { sharedConversationId: string };
 }) {
   // Font
-  console.log(import.meta.url);
   const interSemiBold = await fetch(
     new URL("Inter-SemiBold.ttf", import.meta.url)
   ).then((res) => res.arrayBuffer());

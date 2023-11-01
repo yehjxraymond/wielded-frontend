@@ -6,10 +6,10 @@ import { GtmBody, GtmHeader } from "@/components/Analytics";
 import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
   title: "wielded_",
   description: "Supercharge your team with AI",
+  metadataBase: new URL("https://wielded.com"),
 };
 
 export default function RootLayout({
