@@ -1,13 +1,12 @@
 import fs from "fs";
 import { globby } from "globby";
-import { join } from "path";
 
 const baseUrl = "https://wielded.com";
-const url = (path: string) => join(baseUrl, path);
+const url = (path: string) => `${baseUrl}/${path}`;
 const date = new Date().toISOString();
 
 const staticPaths = [
-  "/", // root
+  "", // root
   "login",
 ];
 
