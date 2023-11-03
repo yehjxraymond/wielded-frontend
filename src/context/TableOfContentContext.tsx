@@ -84,7 +84,7 @@ export const TocHeading: FunctionComponent<{
   const { addToTableOfContent } = useTableOfContent();
   useEffect(() => {
     addToTableOfContent(children, reactNodeHash(children), level);
-  }, [addToTableOfContent, children]);
+  }, [addToTableOfContent, children, level]);
 
   switch (level) {
     case 1:
@@ -100,6 +100,7 @@ export const TocHeading: FunctionComponent<{
 };
 
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export const TableOfContents = () => {
   const { tableOfContentItems } = useTableOfContent();
@@ -126,16 +127,29 @@ export const TableOfContents = () => {
 
   return (
     <div>
-      <h3>Table of Contents</h3>
-      {tableOfContentItems.map((item) => (
-        <Link
-          href={`#${reactNodeHash(item.content)}`}
-          key={item.id}
-          className={item.id === activeId ? "bg-black" : ""}
-        >
-          {item.content} - {item.level}
-        </Link>
-      ))}
+      <div className="font-semibold text-xl">Table of Contents</div>
+      <div className="space-y-2 mt-2">
+        {tableOfContentItems.map((item) => (
+          <div
+            key={item.id}
+            className={cn(
+              "ml-2",
+              item.level === 2 && "ml-4",
+              item.level === 3 && "ml-6"
+            )}
+          >
+            <Link
+              href={`#${reactNodeHash(item.content)}`}
+              className={cn(
+                "text-lg",
+                item.id === activeId ? "font-medium" : "text-accent-foreground"
+              )}
+            >
+              {item.content}
+            </Link>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
