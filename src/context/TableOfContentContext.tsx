@@ -128,27 +128,31 @@ export const TableOfContents = () => {
   return (
     <div>
       <div className="font-semibold text-xl">Table of Contents</div>
-      <div className="space-y-2 mt-2">
-        {tableOfContentItems.map((item) => (
-          <div
-            key={item.id}
-            className={cn(
-              "ml-2",
-              item.level === 2 && "ml-4",
-              item.level === 3 && "ml-6"
-            )}
-          >
-            <Link
-              href={`#${reactNodeHash(item.content)}`}
+      <div className="space-y-1 mt-2">
+        {tableOfContentItems.map((item) => {
+          const isHighlighted = activeId
+            ? item.id === activeId
+            : item.id === tableOfContentItems[0].id;
+          return (
+            <div
+              key={item.id}
               className={cn(
-                "text-lg",
-                item.id === activeId ? "font-medium" : "text-accent-foreground"
+                item.level === 2 && "ml-4",
+                item.level === 3 && "ml-8"
               )}
             >
-              {item.content}
-            </Link>
-          </div>
-        ))}
+              <Link
+                href={`#${reactNodeHash(item.content)}`}
+                className={cn(
+                  "text-lg",
+                  isHighlighted ? "font-medium" : "text-accent-foreground"
+                )}
+              >
+                {item.content}
+              </Link>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
