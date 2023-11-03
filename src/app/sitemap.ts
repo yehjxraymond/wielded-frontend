@@ -1,6 +1,8 @@
 import { MetadataRoute } from "next";
 import { join } from "path";
 import { globby } from "globby";
+import { readFileSync } from "fs";
+import { fetchArticlePaths } from "@/lib/fetchArticles";
 
 const baseUrl = "https://wielded.com";
 const url = (path: string) => join(baseUrl, path);
@@ -22,7 +24,7 @@ const staticSitemap: MetadataRoute.Sitemap = [
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const articlePaths = await globby(["**/article/**/page.mdx"]);
+  const articlePaths = await fetchArticlePaths();
   const articleSitemap: MetadataRoute.Sitemap = articlePaths.map((path) => {
     const match = path.match(/article\/(.*)\/page.mdx/);
     const slug = match?.[1] ?? "unknown";
