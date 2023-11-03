@@ -22,9 +22,10 @@ const staticSitemap: MetadataRoute.Sitemap = [
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const articlePaths = await globby(["src/app/article/**/page.mdx"]);
+  const articlePaths = await globby(["**/article/**/page.mdx"]);
   const articleSitemap: MetadataRoute.Sitemap = articlePaths.map((path) => {
-    const slug = path.replace("src/app/article/", "").replace("/page.mdx", "");
+    const match = path.match(/article\/(.*)\/page.mdx/);
+    const slug = match?.[1] ?? "unknown";
     const articlePath = url(`article/${slug}`);
     return {
       url: articlePath,
