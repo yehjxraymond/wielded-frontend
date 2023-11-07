@@ -86,13 +86,19 @@ const fetchMessages = async ({
   return response.data;
 };
 
+interface ApiError {
+  error?: string;
+  message?: string;
+  statusCode?: number | string;
+}
+
 export const useConversationMessages = (
   workspaceId: string,
   initialConversationId?: string
 ) => {
   const conversation = useConversation();
   const { token } = useAuth();
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ApiError | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversationId, setConversationId] = useState<string | undefined>(
     initialConversationId
@@ -112,7 +118,7 @@ export const useConversationMessages = (
       );
     },
     onError: (error) => {
-      setError(error.message);
+      setError(error);
     },
   });
 
@@ -163,8 +169,20 @@ export const useConversationMessages = (
         body: JSON.stringify({ message, persona }),
       });
       if (!response.ok) {
-        setError(response.statusText);
+        const error: ApiError = await response.json();
+        setError(error);
         setIsPending(false);
+        setMessages((messages) => {
+          const messagesWithoutStream = messages.map((message) => {
+            if (message.streaming) {
+              message.streaming = false;
+            }
+            return message;
+          });
+          return messagesWithoutStream.filter(
+            (message) => message.content !== ""
+          );
+        });
         return;
       }
 
@@ -205,6 +223,7 @@ export const useConversationMessages = (
           },
         ]);
         setIsPending(false);
+        setError(null);
         if (reloadConversations && conversation.state === "success")
           conversation.reloadConversations();
         replace(`/chat/${conversationIdBuffer}`);
