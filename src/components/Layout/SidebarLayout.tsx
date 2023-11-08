@@ -3,9 +3,9 @@ import { useAuth } from "@/context/AuthContext";
 import { useConversation } from "@/context/ConversationContext";
 import { cn } from "@/lib/utils";
 import {
+  Bell,
   Menu,
   MessageSquare,
-  MoreHorizontal,
   PlusCircle,
   Search,
   Trash,
@@ -15,6 +15,14 @@ import Link from "next/link";
 import { FunctionComponent, ReactNode, useState } from "react";
 import { SettingsOverlaySidebarTrigger } from "../SettingsOverlay";
 import { ThemeToggle } from "../ThemeToggle";
+import { WorkspaceInvite, useNotifications } from "./useNotifications";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "../ui/button";
+import { Separator } from "../ui/separator";
 
 const sidebarHoverClass = "hover:bg-accent-foreground px-4";
 
@@ -92,8 +100,44 @@ const SidebarConversations = () => {
   );
 };
 
+const NotificationContent: FunctionComponent<{
+  invites: WorkspaceInvite[];
+  acceptInvite: (inviteId: string, accept: boolean) => void;
+}> = ({ invites, acceptInvite }) => {
+  const handleAcceptInvite = (inviteId: string) => {
+    acceptInvite(inviteId, true);
+  };
+
+  const handleDeclineInvite = (inviteId: string) => {
+    window.confirm("Are you sure you want to decline this invite?") &&
+      acceptInvite(inviteId, false);
+  };
+  return (
+    <div className="space-y-4">
+      {invites.map((invite) => (
+        <div key={invite.id}>
+          <div className="font-semibold">Workspace Invitation</div>
+          <div className="text-sm mt-2">
+            {invite.email} has invited you to the following workspace:{" "}
+            {invite.workspaceName}.
+          </div>
+          <div className="flex mt-4 justify-end space-x-2">
+            <Button size="sm" onClick={() => handleDeclineInvite(invite.id)}>
+              Decline
+            </Button>
+            <Button size="sm" onClick={() => handleAcceptInvite(invite.id)}>
+              Accept
+            </Button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 const SidebarContent = () => {
   const { logout } = useAuth();
+  const { invites, acceptInvite } = useNotifications();
 
   return (
     <div className="max-h-dhv min-h-dhv flex flex-col justify-between">
@@ -110,6 +154,21 @@ const SidebarContent = () => {
         <div className={cn("flex", sidebarHoverClass)}>
           <SettingsOverlaySidebarTrigger />
         </div>
+        {invites.length > 0 && (
+          <Popover>
+            <PopoverTrigger
+              className={cn("flex items-center py-1 w-full", sidebarHoverClass)}
+            >
+              <Bell className="w-5 h-5 mr-2" /> Notifications
+            </PopoverTrigger>
+            <PopoverContent>
+              <NotificationContent
+                invites={invites}
+                acceptInvite={acceptInvite}
+              />
+            </PopoverContent>
+          </Popover>
+        )}
         <Link
           href="/persona"
           className={cn("flex items-center py-1", sidebarHoverClass)}
