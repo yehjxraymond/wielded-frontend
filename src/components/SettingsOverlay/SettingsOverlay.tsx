@@ -8,7 +8,7 @@ import { MembersSetting } from "./MembersSetting";
 type SettingMenu = "settings" | "members";
 
 export const SettingsContent = () => {
-  const [menuSelection, setMenuSelection] = useState<SettingMenu>("members");
+  const [menuSelection, setMenuSelection] = useState<SettingMenu>("settings");
 
   return (
     <DialogContent className="max-w-5xl flex p-0 h-[600px]">
