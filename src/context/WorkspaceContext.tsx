@@ -38,6 +38,7 @@ export interface WorkspaceSuccess {
     workspace: Partial<WorkspaceEditable>;
   }) => void;
   updateWorkspaceStatus: MutationStatus;
+  setActiveWorkspace: (workspaceId: string) => void;
 }
 
 type WorkspaceContextProps = WorkspaceOthers | WorkspaceSuccess;
@@ -50,6 +51,23 @@ const fetchWorkspaces = async (token: string) => {
   const response = await axios.get<Workspace[]>(`${config.baseUrl}/workspace`, {
     headers: { Authorization: `Bearer ${token}` },
   });
+  return response.data;
+};
+
+const postActiveWorkspace = async ({
+  token,
+  workspaceId,
+}: {
+  token: string;
+  workspaceId: string;
+}) => {
+  const response = await axios.post<Workspace>(
+    `${config.baseUrl}/user/active-workspace`,
+    { active_workspace_id: workspaceId },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
   return response.data;
 };
 
@@ -94,12 +112,26 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({
     mutationKey: ["workspace", token],
   });
 
+  const updateActiveWorkspaceMutation = useMutation({
+    mutationFn: postActiveWorkspace,
+    mutationKey: ["activeWorkspace", token],
+    onSuccess: () => {
+      window.location.reload();
+    },
+  });
+
   const updateWorkspace = (data: {
     workspaceId: string;
     workspace: Partial<WorkspaceEditable>;
   }) => {
     if (token) {
       updateWorkspaceMutation.mutate({ ...data, token });
+    }
+  };
+
+  const setActiveWorkspace = (workspaceId: string) => {
+    if (token) {
+      updateActiveWorkspaceMutation.mutate({ workspaceId, token });
     }
   };
 
@@ -128,6 +160,7 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({
           currentWorkspace,
           updateWorkspace,
           updateWorkspaceStatus: updateWorkspaceMutation.status,
+          setActiveWorkspace,
         };
       case "error":
         return { state: "error" };

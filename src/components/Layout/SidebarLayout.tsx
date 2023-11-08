@@ -1,4 +1,13 @@
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -6,9 +15,13 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/context/AuthContext";
 import { useConversation } from "@/context/ConversationContext";
+import { useWorkspace } from "@/context/WorkspaceContext";
 import { cn } from "@/lib/utils";
 import {
   Bell,
+  Building2,
+  ChevronsUpDown,
+  LogOut,
   Menu,
   MessageSquare,
   PlusCircle,
@@ -134,6 +147,52 @@ const NotificationContent: FunctionComponent<{
   );
 };
 
+const WorkspaceMenu: FunctionComponent<{
+  logout: () => void;
+}> = ({ logout }) => {
+  const workspace = useWorkspace();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" className="w-full justify-between">
+          <div>
+            {(workspace.state === "success" &&
+              workspace.workspaces.find(
+                (w) => w.id === workspace.currentWorkspace
+              )?.name) ||
+              "Loading..."}
+          </div>
+          <ChevronsUpDown className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56" align="end">
+        <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
+        <DropdownMenuGroup>
+          {workspace.state === "success" &&
+            workspace.workspaces.map((w) => (
+              <DropdownMenuItem
+                key={w.id}
+                onClick={() => workspace.setActiveWorkspace(w.id)}
+                className={cn(
+                  w.id === workspace.currentWorkspace ? "bg-muted" : "",
+                  "cursor-pointer"
+                )}
+              >
+                <Building2 className="mr-2 h-4 w-4" />
+                <span>{w.name}</span>
+              </DropdownMenuItem>
+            ))}
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={logout} className="cursor-pointer">
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Log out</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
 const SidebarContent = () => {
   const { logout } = useAuth();
   const { invites, acceptInvite } = useNotifications();
@@ -188,9 +247,9 @@ const SidebarContent = () => {
       <div className="flex-grow overflow-y-auto">
         <SidebarConversations />
       </div>
-      <div className="mt-4 bg-secondary mb-10 lg:mb-4 px-4">
-        <ThemeToggle />
-        <button onClick={logout}>Logout</button>
+      <div className="mt-4 bg-secondary mb-10 lg:mb-4 px-4 flex space-x-2">
+        <ThemeToggle align="start"/>
+        <WorkspaceMenu logout={logout} />
       </div>
     </div>
   );
