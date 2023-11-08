@@ -1,7 +1,4 @@
-import {
-  MutationStatus,
-  useMutation
-} from "@tanstack/react-query";
+import { MutationStatus, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import {
   ReactNode,
@@ -12,6 +9,7 @@ import {
 } from "react";
 import { config } from "../config";
 import { useAuth } from "./AuthContext";
+import { useUser } from "./UserContext";
 
 export interface Workspace {
   id: string;
@@ -78,6 +76,8 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const { token } = useAuth();
+  const user = useUser();
+  const userProfileState = user.state;
 
   const fetchWorkspacesMutation = useMutation({
     mutationFn: fetchWorkspaces,
@@ -104,8 +104,8 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   useEffect(() => {
-    if (token) memoisedFetch(token);
-  }, [token, memoisedFetch]);
+    if (token && userProfileState === "success") memoisedFetch(token);
+  }, [token, memoisedFetch, userProfileState]);
 
   const getState = (): WorkspaceContextProps => {
     switch (fetchWorkspacesMutation.status) {
@@ -115,8 +115,13 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({
         return { state: "pending" };
       case "success":
         const workspaces = fetchWorkspacesMutation.data;
-        // TODO move workspace selection to user profile
-        const currentWorkspace = workspaces[0].id;
+        const userActiveWorkspace =
+          user.state === "success" ? user.activeWorkspace : null;
+        const currentWorkspace =
+          userActiveWorkspace !== null &&
+          workspaces.findIndex((w) => w.id === userActiveWorkspace) >= 0
+            ? userActiveWorkspace
+            : workspaces[0].id;
         return {
           state: "success",
           workspaces,

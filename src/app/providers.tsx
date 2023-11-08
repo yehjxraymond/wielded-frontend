@@ -4,6 +4,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ConversationProvider } from "@/context/ConversationContext";
 import { PersonaProvider } from "@/context/PersonaContext";
 import { UTMProvider } from "@/context/UTMContext";
+import { UserProvider } from "@/context/UserContext";
 import { WorkspaceProvider } from "@/context/WorkspaceContext";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -24,11 +25,13 @@ export const Providers: FunctionComponent<{ children: ReactNode }> = ({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <WorkspaceProvider>
-              <ConversationProvider>
-                <PersonaProvider>{children}</PersonaProvider>
-              </ConversationProvider>
-            </WorkspaceProvider>
+            <UserProvider>
+              <WorkspaceProvider>
+                <ConversationProvider>
+                  <PersonaProvider>{children}</PersonaProvider>
+                </ConversationProvider>
+              </WorkspaceProvider>
+            </UserProvider>
           </AuthProvider>
         </ThemeProvider>
       </UTMProvider>

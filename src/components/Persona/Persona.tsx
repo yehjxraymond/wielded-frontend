@@ -11,8 +11,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  DialogTitle
 } from "../ui/dialog";
 import {
   Form,
@@ -212,16 +211,14 @@ export const PersonaInternal: FunctionComponent<PersonaSuccess> = ({
             </p>
           </div>
           <div className="mt-6 lg:mt-0">
-            <DialogTrigger>
-              <Button
-                onClick={() => {
-                  setIsOpen(true);
-                  setFormType({ type: "create" });
-                }}
-              >
-                Create a persona
-              </Button>
-            </DialogTrigger>
+            <Button
+              onClick={() => {
+                setIsOpen(true);
+                setFormType({ type: "create" });
+              }}
+            >
+              Create a persona
+            </Button>
           </div>
         </div>
 
