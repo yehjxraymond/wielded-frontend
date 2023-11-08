@@ -76,12 +76,12 @@ const RightPanel = () => {
     e.preventDefault();
     if (mode === "login") {
       loginMutation.mutate({
-        email,
+        email: email.toLowerCase(),
         password,
       });
     } else {
       registerMutation.mutate({
-        email,
+        email: email.toLowerCase(),
         password,
       });
     }
