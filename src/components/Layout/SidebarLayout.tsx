@@ -1,3 +1,8 @@
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/context/AuthContext";
 import { useConversation } from "@/context/ConversationContext";
@@ -15,14 +20,8 @@ import Link from "next/link";
 import { FunctionComponent, ReactNode, useState } from "react";
 import { SettingsOverlaySidebarTrigger } from "../SettingsOverlay";
 import { ThemeToggle } from "../ThemeToggle";
-import { WorkspaceInvite, useNotifications } from "./useNotifications";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Button } from "../ui/button";
-import { Separator } from "../ui/separator";
+import { WorkspaceInvite, useNotifications } from "./useNotifications";
 
 const sidebarHoverClass = "hover:bg-accent-foreground px-4";
 
@@ -159,7 +158,10 @@ const SidebarContent = () => {
             <PopoverTrigger
               className={cn("flex items-center py-1 w-full", sidebarHoverClass)}
             >
-              <Bell className="w-5 h-5 mr-2" /> Notifications
+              <Bell className="w-5 h-5 mr-2" /> Notifications{" "}
+              <span className="ml-2 border border-primary w-5 h-5 text-sm rounded-full text-center flex justify-center items-center">
+                {invites.length}
+              </span>
             </PopoverTrigger>
             <PopoverContent>
               <NotificationContent
