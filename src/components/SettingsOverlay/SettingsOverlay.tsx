@@ -37,7 +37,7 @@ export const SettingsContent = () => {
           </div>
         </div>
       </div>
-      <div className="flex-1 p-4">
+      <div className="flex-1 p-4 overflow-auto">
         {menuSelection === "settings" && <WorkspaceSetting />}
         {menuSelection === "members" && <MembersSetting />}
       </div>

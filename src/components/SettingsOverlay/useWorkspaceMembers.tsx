@@ -15,6 +15,14 @@ export interface Invite {
   status: "pending" | "accepted" | "rejected";
 }
 
+export interface Member {
+  membershipId: string;
+  userId: string;
+  role: Role;
+  created_at: string;
+  email: string;
+}
+
 const getWorkspaceInvites = async ({
   token,
   workspaceId,
@@ -24,6 +32,36 @@ const getWorkspaceInvites = async ({
 }) => {
   const response = await axios.get<Invite[]>(
     `${config.baseUrl}/workspace/${workspaceId}/invite`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return response.data;
+};
+
+const getWorkspaceMembers = async ({
+  token,
+  workspaceId,
+}: {
+  token: string;
+  workspaceId: string;
+}) => {
+  const response = await axios.get<Member[]>(
+    `${config.baseUrl}/workspace/${workspaceId}/member`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return response.data;
+};
+
+const deleteWorkspaceMember = async ({
+  token,
+  workspaceId,
+  membershipId,
+}: {
+  token: string;
+  workspaceId: string;
+  membershipId: string;
+}) => {
+  const response = await axios.delete(
+    `${config.baseUrl}/workspace/${workspaceId}/member/${membershipId}`,
     { headers: { Authorization: `Bearer ${token}` } }
   );
   return response.data;
@@ -48,15 +86,38 @@ const postWorkspaceInvite = async ({
   return response.data;
 };
 
+const deleteWorkspaceInvite = async ({
+  token,
+  workspaceId,
+  inviteId,
+}: {
+  token: string;
+  workspaceId: string;
+  inviteId: string;
+}) => {
+  const response = await axios.delete(
+    `${config.baseUrl}/workspace/${workspaceId}/invite/${inviteId}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return response.data;
+};
+
 export const useWorkspaceMembers = (workspaceId: string) => {
   const { token } = useAuth();
 
   const [invites, setInvites] = useState<Invite[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
 
   const fetchWorkspaceInviteMutation = useMutation({
     mutationFn: getWorkspaceInvites,
     onSuccess: (data) => {
       setInvites(data);
+    },
+  });
+  const fetchWorkspaceMemberMutation = useMutation({
+    mutationFn: getWorkspaceMembers,
+    onSuccess: (data) => {
+      setMembers(data);
     },
   });
   const createWorkspaceInviteMutation = useMutation({
@@ -65,17 +126,41 @@ export const useWorkspaceMembers = (workspaceId: string) => {
       setInvites((invites) => [...invites, data]);
     },
   });
-  const memoisedFetch = useMemo(
+  const deleteWorkspaceInviteMutation = useMutation({
+    mutationFn: deleteWorkspaceInvite,
+    onSuccess: (data) => {
+      setInvites((invites) => invites.filter((i) => i.id !== data));
+    },
+  });
+  const deleteWorkspaceMemberMutation = useMutation({
+    mutationFn: deleteWorkspaceMember,
+    onSuccess: (data) => {
+      setMembers((members) => members.filter((m) => m.membershipId !== data));
+    },
+  });
+  const memoisedFetchInvites = useMemo(
     () => fetchWorkspaceInviteMutation.mutate,
     [fetchWorkspaceInviteMutation.mutate]
   );
   useEffect(() => {
     if (token && workspaceId)
-      memoisedFetch({
+      memoisedFetchInvites({
         token,
         workspaceId,
       });
-  }, [token, memoisedFetch, workspaceId]);
+  }, [token, memoisedFetchInvites, workspaceId]);
+
+  const memoisedFetchMembers = useMemo(
+    () => fetchWorkspaceMemberMutation.mutate,
+    [fetchWorkspaceMemberMutation.mutate]
+  );
+  useEffect(() => {
+    if (token && workspaceId)
+      memoisedFetchMembers({
+        token,
+        workspaceId,
+      });
+  }, [token, memoisedFetchMembers, workspaceId]);
 
   const inviteMember = ({ email, role }: { email: string; role: Role }) => {
     if (token && workspaceId)
@@ -86,14 +171,35 @@ export const useWorkspaceMembers = (workspaceId: string) => {
         role,
       });
   };
+  const cancelInvite = (inviteId: string) => {
+    if (token && workspaceId)
+      deleteWorkspaceInviteMutation.mutate({
+        token,
+        workspaceId,
+        inviteId,
+      });
+  };
+  const removeMember = (membershipId: string) => {
+    if (token && workspaceId)
+      deleteWorkspaceMemberMutation.mutate({
+        token,
+        workspaceId,
+        membershipId,
+      });
+  };
 
   return {
     invites,
     fetchWorkspaceInviteMutation,
     createWorkspaceInviteMutation,
-
+    deleteWorkspaceInviteMutation,
     inviteMember,
     inviteMemberStatus: createWorkspaceInviteMutation.status,
     inviteMemberError: createWorkspaceInviteMutation.error,
+    cancelInvite,
+
+    members,
+    removeMember,
+    fetchWorkspaceMemberMutation,
   };
 };
