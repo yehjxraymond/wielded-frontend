@@ -250,7 +250,6 @@ export const ChatInterfaceComponent: FunctionComponent<{
                 Start a new conversation
               </div>
               <div className="w-full mt-12 text-left">
-                <div className="font-semibold">Persona</div>
                 <PersonaSelector />
               </div>
             </div>
