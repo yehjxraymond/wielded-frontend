@@ -8,6 +8,13 @@ const date = new Date().toISOString();
 const staticPaths = [
   "", // root
   "login",
+  "for-content-creator",
+  "for-customer-support",
+  "for-digital-marketer",
+  "for-educator",
+  "for-product-manager",
+  "for-produce-team",
+  "for-sales-team",
 ];
 
 const urlXml = (url: string, priority = 0.8) => `
