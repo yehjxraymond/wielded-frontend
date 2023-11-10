@@ -12,7 +12,7 @@ import { config } from "../config";
 import { useAuth } from "./AuthContext";
 import { useWorkspace } from "./WorkspaceContext";
 
-interface Persona {
+export interface Persona {
   id: string;
   name: string | null;
   description: string | null;
