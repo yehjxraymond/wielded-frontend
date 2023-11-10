@@ -218,7 +218,9 @@ export const CaseStudy: FunctionComponent<{ caseStudyData: CaseStudyData }> = ({
               .map((faq, index) => {
                 return (
                   <AccordionItem value={index.toString()} key={index}>
-                    <AccordionTrigger>{faq.question}</AccordionTrigger>
+                    <AccordionTrigger className="text-left">
+                      {faq.question}
+                    </AccordionTrigger>
                     <AccordionContent>{faq.answer}</AccordionContent>
                   </AccordionItem>
                 );
@@ -230,7 +232,9 @@ export const CaseStudy: FunctionComponent<{ caseStudyData: CaseStudyData }> = ({
               .map((faq, index) => {
                 return (
                   <AccordionItem value={index.toString()} key={index}>
-                    <AccordionTrigger>{faq.question}</AccordionTrigger>
+                    <AccordionTrigger className="text-left">
+                      {faq.question}
+                    </AccordionTrigger>
                     <AccordionContent>{faq.answer}</AccordionContent>
                   </AccordionItem>
                 );
