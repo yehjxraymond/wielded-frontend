@@ -4,7 +4,7 @@ import { useConversation } from "@/context/ConversationContext";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import { Readable } from "stream";
 
 export interface MessageDto {
@@ -92,6 +92,48 @@ interface ApiError {
   statusCode?: number | string;
 }
 
+// Debouncing updates to the UI to prevent crashing the browser
+const useDebouncedUpdate = (updateFrequency = 100, maxLength = 250) => {
+  const updateTimer = useRef<NodeJS.Timeout | null>(null);
+  const updateMessages = useRef<(messages: Message[]) => void>(() => {});
+  const lastBufferLength = useRef(0);
+
+  const setUpdateMessages = useCallback(
+    (callback: (messages: Message[]) => void) => {
+      updateMessages.current = callback;
+    },
+    []
+  );
+
+  const debounceUpdate = useCallback(
+    (newMessages: Message[]) => {
+      if (updateTimer.current) {
+        clearTimeout(updateTimer.current);
+      }
+
+      updateTimer.current = setTimeout(() => {
+        lastBufferLength.current =
+          newMessages[newMessages.length - 1].content.length;
+        updateMessages.current(newMessages);
+      }, updateFrequency);
+
+      if (
+        newMessages[newMessages.length - 1].content.length -
+          lastBufferLength.current >=
+        maxLength
+      ) {
+        clearTimeout(updateTimer.current); // reset the timer
+        updateMessages.current(newMessages);
+        lastBufferLength.current =
+          newMessages[newMessages.length - 1].content.length;
+      }
+    },
+    [updateFrequency, maxLength]
+  );
+
+  return { debounceUpdate, setUpdateMessages };
+};
+
 export const useConversationMessages = (
   workspaceId: string,
   initialConversationId?: string
@@ -105,6 +147,15 @@ export const useConversationMessages = (
   );
   const [isPending, setIsPending] = useState(false);
   const { replace } = useRouter();
+  const { debounceUpdate, setUpdateMessages } = useDebouncedUpdate(100, 250);
+
+  console.log("rerendering");
+
+  useEffect(() => {
+    setUpdateMessages((newMessages) => {
+      setMessages(newMessages);
+    });
+  }, [setUpdateMessages]);
 
   const fetchMessagesMutation = useMutation({
     mutationFn: fetchMessages,
@@ -202,7 +253,16 @@ export const useConversationMessages = (
         } else {
           buffer += str;
 
-          setMessages([
+          // setMessages([
+          //   ...previousMessages,
+          //   {
+          //     type: "assistant",
+          //     content: buffer,
+          //     streaming: true,
+          //   },
+          // ]);
+          // Use debounceUpdate instead of setMessages to update the UI
+          debounceUpdate([
             ...previousMessages,
             {
               type: "assistant",
