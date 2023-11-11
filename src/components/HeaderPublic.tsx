@@ -9,9 +9,12 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 import { ThemeToggle } from "./ThemeToggle";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { Button } from "./ui/button";
 
 const useCases: { title: string; href: string; description: string }[] = [
   {
@@ -53,7 +56,7 @@ const useCases: { title: string; href: string; description: string }[] = [
 
 export function NavigationDropdownMenu() {
   return (
-    <NavigationMenu>
+    <NavigationMenu className="hidden lg:block">
       <NavigationMenuList>
         <NavigationMenuItem>
           <Link href="/" legacyBehavior passHref>
@@ -109,16 +112,64 @@ const ListItem = React.forwardRef<
 });
 ListItem.displayName = "ListItem";
 
+const MobileMenu = () => {
+  const [useCasesOpen, setUseCasesOpen] = React.useState(false);
+  return (
+    <Sheet>
+      <SheetTrigger className="lg:hidden">
+        <Menu size={24} />
+      </SheetTrigger>
+      <SheetContent side="left" className="flex flex-col justify-between">
+        <div className="mt-12">
+          <div className="text-lg font-medium mb-4">
+            <Link href="/">Home</Link>
+          </div>
+          <div
+            className="text-lg font-medium mb-4 cursor-pointer"
+            onClick={() => setUseCasesOpen(!useCasesOpen)}
+          >
+            Use Cases
+          </div>
+          {useCasesOpen && (
+            <div className="pl-4">
+              {useCases.map((component) => (
+                <div className="font-medium mb-4" key={component.title}>
+                  <Link href={component.href}>{component.title}</Link>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="text-lg font-medium mb-4">
+            <Link href="/login?mode=login">Login</Link>
+          </div>
+          <div className="text-lg font-medium mb-4">
+            <Link href="/login">Register</Link>
+          </div>
+        </div>
+        <ThemeToggle />
+      </SheetContent>
+    </Sheet>
+  );
+};
+
 export const HeaderPublic = () => {
   return (
     <nav className="w-full flex container justify-between my-5">
       <Link href="/">
         <div className="font-semibold text-xl">wielded_</div>
       </Link>
+      {/* Desktop Navigation */}
       <NavigationDropdownMenu />
-      <div>
-        <ThemeToggle />
+      <div className="hidden lg:flex gap-2">
+        <Link href="/login?mode=login">
+          <Button variant="ghost">Login</Button>
+        </Link>
+        <Link href="/login?source=navigation-top">
+          <Button>Register</Button>
+        </Link>
       </div>
+      {/* Mobile Navigation */}
+      <MobileMenu />
     </nav>
   );
 };

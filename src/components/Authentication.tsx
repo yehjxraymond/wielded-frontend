@@ -89,12 +89,14 @@ const postLogin = async (loginData: LoginData) => {
   }
 };
 
+type AppMode = "register" | "login" | "resendVerification";
+
 const RightPanel = () => {
   const { replace } = useRouter();
   const searchParams = useSearchParams();
   const { setToken, isLoggedIn } = useAuth();
-  const [mode, setMode] = useState<"login" | "register" | "resendVerification">(
-    "register"
+  const [mode, setMode] = useState<AppMode>(
+    (searchParams.get("mode") as AppMode) || "register"
   );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
