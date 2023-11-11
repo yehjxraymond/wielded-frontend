@@ -20,19 +20,23 @@ export interface Message {
   streaming?: boolean;
 }
 
-const readableStreamToStream = (readableStream: ReadableStream) => {
+const processReadableStream = (
+  readableStream: ReadableStream<Uint8Array>,
+  onData: (chunk: string) => void,
+  onEnd: () => void
+) => {
   const reader = readableStream.getReader();
-  const stream = new Readable({
-    async read() {
-      const { done, value } = await reader.read();
-      if (done) {
-        this.push(null);
-        return;
-      }
-      this.push(value);
-    },
+  const decoder = new TextDecoder();
+
+  reader.read().then(function processData({ done, value }) {
+    if (done) {
+      onEnd();
+      return;
+    }
+    const chunk = decoder.decode(value, { stream: true });
+    onData(chunk);
+    reader.read().then(processData);
   });
-  return stream;
 };
 
 const extractConversationId = (str: string) => {
@@ -149,8 +153,6 @@ export const useConversationMessages = (
   const { replace } = useRouter();
   const { debounceUpdate, setUpdateMessages } = useDebouncedUpdate(100, 250);
 
-  console.log("rerendering");
-
   useEffect(() => {
     setUpdateMessages((newMessages) => {
       setMessages(newMessages);
@@ -237,57 +239,48 @@ export const useConversationMessages = (
         return;
       }
 
-      const stream = readableStreamToStream(response.body as ReadableStream);
-
       let conversationIdBuffer = "";
       let buffer = "";
 
-      stream.on("data", (chunk: Buffer) => {
-        const str = chunk.toString();
-        if (!conversationIdBuffer) {
-          const id = extractConversationId(str);
-          if (id) {
-            conversationIdBuffer = id;
-            setConversationId(id);
+      processReadableStream(
+        response.body as ReadableStream<Uint8Array>,
+        (chunk: string) => {
+          const str = chunk.toString();
+          if (!conversationIdBuffer) {
+            const id = extractConversationId(str);
+            if (id) {
+              conversationIdBuffer = id;
+              setConversationId(id);
+            }
+          } else {
+            buffer += str;
+            // Use debounceUpdate instead of setMessages to update the UI
+            debounceUpdate([
+              ...previousMessages,
+              {
+                type: "assistant",
+                content: buffer,
+                streaming: true,
+              },
+            ]);
           }
-        } else {
-          buffer += str;
-
-          // setMessages([
-          //   ...previousMessages,
-          //   {
-          //     type: "assistant",
-          //     content: buffer,
-          //     streaming: true,
-          //   },
-          // ]);
-          // Use debounceUpdate instead of setMessages to update the UI
-          debounceUpdate([
+        },
+        () => {
+          setMessages([
             ...previousMessages,
             {
               type: "assistant",
               content: buffer,
-              streaming: true,
+              streaming: false,
             },
           ]);
+          setIsPending(false);
+          setError(null);
+          if (reloadConversations && conversation.state === "success")
+            conversation.reloadConversations();
+          replace(`/chat/${conversationIdBuffer}`);
         }
-      });
-
-      stream.on("end", () => {
-        setMessages([
-          ...previousMessages,
-          {
-            type: "assistant",
-            content: buffer,
-            streaming: false,
-          },
-        ]);
-        setIsPending(false);
-        setError(null);
-        if (reloadConversations && conversation.state === "success")
-          conversation.reloadConversations();
-        replace(`/chat/${conversationIdBuffer}`);
-      });
+      );
     };
 
   const startConversation = fetchAndManageResponse({
