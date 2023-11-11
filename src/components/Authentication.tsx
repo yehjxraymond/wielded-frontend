@@ -6,11 +6,11 @@ import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { config } from "../config";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { useRouter } from "next/navigation";
 
 interface LoginData {
   email: string;
@@ -23,6 +23,41 @@ const postRegister = async (registerData: RegisterData) => {
     const res = await axios.post<{ id: string }>(
       `${config.baseUrl}/user`,
       registerData
+    );
+    return res.data;
+  } catch (e) {
+    if (e instanceof AxiosError) {
+      const data = e.response?.data;
+      if (data.message) {
+        throw new Error(data.message);
+      }
+    }
+    throw e;
+  }
+};
+
+const verifyEmail = async (token: string) => {
+  try {
+    const res = await axios.get<{ success: boolean }>(
+      `${config.baseUrl}/user/verify?token=${token}`
+    );
+    return res.data;
+  } catch (e) {
+    if (e instanceof AxiosError) {
+      const data = e.response?.data;
+      if (data.message) {
+        throw new Error(data.message);
+      }
+    }
+    throw e;
+  }
+};
+
+const postResendVerificationEmail = async (email: string) => {
+  try {
+    const res = await axios.post<{ success: boolean }>(
+      `${config.baseUrl}/user/resend-verification`,
+      { email }
     );
     return res.data;
   } catch (e) {
@@ -56,10 +91,14 @@ const postLogin = async (loginData: LoginData) => {
 
 const RightPanel = () => {
   const { replace } = useRouter();
+  const searchParams = useSearchParams();
   const { setToken, isLoggedIn } = useAuth();
-  const [mode, setMode] = useState<"login" | "register">("register");
+  const [mode, setMode] = useState<"login" | "register" | "resendVerification">(
+    "register"
+  );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const loginMutation = useMutation({
     mutationFn: postLogin,
     onSuccess: (data) => {
@@ -72,6 +111,35 @@ const RightPanel = () => {
       setMode("login");
     },
   });
+  const verificationMutation = useMutation({
+    mutationFn: verifyEmail,
+    onSuccess: () => {
+      setMode("login");
+    },
+    onError: () => {
+      setMode("resendVerification");
+    },
+  });
+  const memoisedVerification = useMemo(
+    () => verificationMutation.mutate,
+    [verificationMutation.mutate]
+  );
+  const isLoading =
+    loginMutation.isPending ||
+    registerMutation.isPending ||
+    verificationMutation.isPending;
+  const resendVerificationEmailMutation = useMutation({
+    mutationFn: postResendVerificationEmail,
+  });
+  const verificationToken = searchParams.get("verification_token");
+
+  // Handle verification when the verification token exists in the URL
+  useEffect(() => {
+    if (verificationToken) {
+      memoisedVerification(verificationToken);
+    }
+  }, [verificationToken, memoisedVerification]);
+
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (mode === "login") {
@@ -79,18 +147,20 @@ const RightPanel = () => {
         email: email.toLowerCase(),
         password,
       });
-    } else {
+    } else if (mode === "register") {
       registerMutation.mutate({
         email: email.toLowerCase(),
         password,
       });
+    } else {
+      resendVerificationEmailMutation.mutate(email.toLowerCase());
     }
   };
   useEffect(() => {
     if (isLoggedIn) {
       replace("/");
     }
-  }, [isLoggedIn,replace]);
+  }, [isLoggedIn, replace]);
 
   return (
     <div className="lg:basis-2/3 basis-full min-h-screen flex flex-col">
@@ -111,7 +181,9 @@ const RightPanel = () => {
           <h1 className="text-center text-xl font-medium mb-8">
             {mode === "register"
               ? "Create an account"
-              : "Login to your account"}
+              : mode === "login"
+              ? "Login to your account"
+              : "Re-send Verification Email"}
           </h1>
           {registerMutation.error && (
             <div className="flex w-full max-w-md items-center space-x-2 my-4">
@@ -130,7 +202,62 @@ const RightPanel = () => {
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>
-                  {loginMutation.error.message}
+                  <p>{loginMutation.error.message}</p>
+                  {loginMutation.error.message ===
+                    "Email address has not been verified." && (
+                    <p
+                      className="underline cursor-pointer"
+                      onClick={() => setMode("resendVerification")}
+                    >
+                      Resend verification email
+                    </p>
+                  )}
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
+          {resendVerificationEmailMutation.error && (
+            <div className="flex w-full max-w-md items-center space-x-2 my-4">
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>
+                  {resendVerificationEmailMutation.error.message}
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
+          {verificationMutation.error && (
+            <div className="flex w-full max-w-md items-center space-x-2 my-4">
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Email Verification Error</AlertTitle>
+                <AlertDescription>
+                  <p>
+                    The verification token is invalid or has expired. Your email
+                    might have also been verified. Please try logging in or
+                    request for a new verification token.
+                  </p>
+                  <p
+                    className="underline cursor-pointer"
+                    onClick={() => {
+                      setMode("login");
+                      verificationMutation.reset();
+                    }}
+                  >
+                    Try logging in
+                  </p>
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
+          {resendVerificationEmailMutation.isSuccess && (
+            <div className="flex w-full max-w-md items-center space-x-2 my-4">
+              <Alert>
+                <CheckCircle2 className="h-4 w-4" />
+                <AlertTitle>Verification Email Sent</AlertTitle>
+                <AlertDescription>
+                  Please check your email for the verification email.
                 </AlertDescription>
               </Alert>
             </div>
@@ -140,10 +267,25 @@ const RightPanel = () => {
               <Alert>
                 <CheckCircle2 className="h-4 w-4" />
                 <AlertTitle>Registration Successful</AlertTitle>
-                <AlertDescription>Please login below.</AlertDescription>
+                <AlertDescription>
+                  Please verify your email before logging in. The verification
+                  email has been sent to your email.
+                </AlertDescription>
               </Alert>
             </div>
           )}
+          {verificationMutation.isSuccess && (
+            <div className="flex w-full max-w-md items-center space-x-2 my-4">
+              <Alert>
+                <CheckCircle2 className="h-4 w-4" />
+                <AlertTitle>Email Verified</AlertTitle>
+                <AlertDescription>
+                  Email is verified. You may now login below.
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
+
           {loginMutation.isSuccess && (
             <div className="flex w-full max-w-md items-center space-x-2 my-4">
               <Alert>
@@ -163,15 +305,21 @@ const RightPanel = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <Input
-              className="mb-4"
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <Button className="w-full" type="submit">
-              {mode === "register" ? "Sign Up" : "Login"}
+            {mode !== "resendVerification" && (
+              <Input
+                className="mb-4"
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            )}
+            <Button className="w-full" type="submit" disabled={isLoading}>
+              {mode === "register"
+                ? "Sign Up"
+                : mode === "login"
+                ? "Login"
+                : "Resend Verification Email"}
             </Button>
           </form>
           <div className="h-8" />
