@@ -140,10 +140,10 @@ const MobileMenu = () => {
             </div>
           )}
           <div className="text-lg font-medium mb-4">
-            <Link href="/login?mode=login">Login</Link>
+            <Link href="/login?mode=login&source=navigation-mobile">Login</Link>
           </div>
           <div className="text-lg font-medium mb-4">
-            <Link href="/login">Register</Link>
+            <Link href="/login?source=navigation-mobile">Register</Link>
           </div>
         </div>
         <ThemeToggle />
@@ -161,7 +161,7 @@ export const HeaderPublic = () => {
       {/* Desktop Navigation */}
       <NavigationDropdownMenu />
       <div className="hidden lg:flex gap-2">
-        <Link href="/login?mode=login">
+        <Link href="/login?mode=login&source=navigation-top">
           <Button variant="ghost">Login</Button>
         </Link>
         <Link href="/login?source=navigation-top">
