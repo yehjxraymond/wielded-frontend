@@ -2,6 +2,7 @@ import { CheckIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
+import Link from "next/link";
 
 const tiers = [
   {
@@ -125,13 +126,15 @@ export const Pricing = () => {
                 ))}
               </ul>
             </div>
-            <Button
-              className="mt-8"
-              variant={tier.mostPopular !== isDark ? "default" : "secondary"}
-            >
-              {/* TODO Direct to contact us for enterprise */}
-              {tier.id === "tier-enterprise" ? "Get Started" : "Get Started"}
-            </Button>
+            <Link href="/login?source=pricing">
+              <Button
+                className="mt-8"
+                variant={tier.mostPopular !== isDark ? "default" : "secondary"}
+              >
+                {/* TODO Direct to contact us for enterprise */}
+                {tier.id === "tier-enterprise" ? "Get Started" : "Get Started"}
+              </Button>
+            </Link>
           </div>
         ))}
       </div>

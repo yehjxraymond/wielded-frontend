@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const BottomCTA = () => {
   return (
@@ -9,7 +10,9 @@ export const BottomCTA = () => {
         Start with a free account today.
       </h2>
       <div className="mt-10 flex items-center gap-x-6 lg:mt-0 lg:flex-shrink-0">
-        <Button>Get started</Button>
+        <Link href="/login?source=cta-bottom">
+          <Button>Get started</Button>
+        </Link>
       </div>
     </div>
   );
