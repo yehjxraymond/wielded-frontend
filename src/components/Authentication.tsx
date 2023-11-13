@@ -11,12 +11,18 @@ import { useEffect, useMemo, useState } from "react";
 import { config } from "../config";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { gtmEvent } from "./Analytics";
+import { useUTMParameters } from "@/context/UTMContext";
 
 interface LoginData {
   email: string;
   password: string;
 }
-type RegisterData = LoginData;
+
+interface RegisterData extends LoginData {
+  source?: string;
+  utm_parameters?: object;
+}
 
 const postRegister = async (registerData: RegisterData) => {
   try {
@@ -24,6 +30,10 @@ const postRegister = async (registerData: RegisterData) => {
       `${config.baseUrl}/user`,
       registerData
     );
+    await gtmEvent({
+      event: "register_account",
+      source: registerData.source,
+    });
     return res.data;
   } catch (e) {
     if (e instanceof AxiosError) {
@@ -100,6 +110,7 @@ const RightPanel = () => {
   );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { getUTMParameters } = useUTMParameters();
 
   const loginMutation = useMutation({
     mutationFn: postLogin,
@@ -142,7 +153,7 @@ const RightPanel = () => {
     }
   }, [verificationToken, memoisedVerification]);
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (mode === "login") {
       loginMutation.mutate({
@@ -150,9 +161,12 @@ const RightPanel = () => {
         password,
       });
     } else if (mode === "register") {
+      const utm_parameters = await getUTMParameters();
       registerMutation.mutate({
         email: email.toLowerCase(),
         password,
+        source: searchParams.get("source") || "login_page",
+        utm_parameters,
       });
     } else {
       resendVerificationEmailMutation.mutate(email.toLowerCase());

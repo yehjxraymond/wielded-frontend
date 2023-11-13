@@ -1,9 +1,10 @@
 "use client";
 import { FunctionComponent } from "react";
 import { MessageBubble } from "../ChatInterface/MessageBubble";
-import { HomeHero } from "../Home/HomeHero";
+import { WaitlistCTA } from "../Home/WaitlistCTA";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
+import { WieldedIntroductionCTA } from "../Home/WieldedIntroductionCTA";
 
 export interface SharedMessage {
   id: string;
@@ -40,7 +41,7 @@ export const SharedConversation: FunctionComponent<{
         </div>
       </div>
       <Separator className="mt-8 my-16" />
-      <HomeHero />
+      <WieldedIntroductionCTA />
     </div>
   );
 };

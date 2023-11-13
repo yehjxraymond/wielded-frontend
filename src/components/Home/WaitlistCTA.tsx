@@ -39,7 +39,7 @@ const postLead = async (leadData: LeadData) => {
   }
 };
 
-export const HomeHero = () => {
+export const WaitlistCTA = () => {
   const { getUTMParameters } = useUTMParameters();
   const [email, setEmail] = useState("");
   const mutation = useMutation<{ success: boolean }, AxiosError, LeadData>({
