@@ -30,7 +30,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { AlertCircle, MoreHorizontal } from "lucide-react";
 import { FunctionComponent, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -46,10 +46,7 @@ import {
 } from "../../ui/form";
 import { Input } from "../../ui/input";
 import { Skeleton } from "../../ui/skeleton";
-import {
-  Role,
-  useWorkspaceMembers,
-} from "../WorkspaceSetting/useWorkspaceMembers";
+import { Role, useWorkspaceMembers } from "./useWorkspaceMembers";
 import { NoPermission } from "../NoPermission";
 
 const inviteSchema = z.object({
@@ -228,6 +225,7 @@ export const MembersSettingForm: FunctionComponent<{
     members,
     inviteMember,
     inviteMemberStatus,
+    inviteMemberError,
     removeMember,
     cancelInvite,
   } = useWorkspaceMembers(workspace.id);
@@ -268,6 +266,15 @@ export const MembersSettingForm: FunctionComponent<{
     <>
       <div className="text-xl font-semibold">Members Settings</div>
       <div className="font-medium mt-4">Invite Member</div>
+      {inviteMemberError && (
+        <div className="flex w-full items-center space-x-2 my-4">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{inviteMemberError.message}</AlertDescription>
+          </Alert>
+        </div>
+      )}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4">
           {false && (

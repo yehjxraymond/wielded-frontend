@@ -5,7 +5,7 @@ import { Check, CheckCircle, X } from "lucide-react";
 import { FunctionComponent, useState } from "react";
 import { Skeleton } from "../../ui/skeleton";
 import { NoPermission } from "../NoPermission";
-import { useWorkspaceMembers } from "../WorkspaceSetting/useWorkspaceMembers";
+import { useWorkspaceMembers } from "../MembersSetting/useWorkspaceMembers";
 import { useBilling } from "./useBilling";
 
 const freeFeatures = [

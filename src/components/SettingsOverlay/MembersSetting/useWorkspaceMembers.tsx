@@ -1,7 +1,7 @@
 import { config } from "@/config";
 import { useAuth } from "@/context/AuthContext";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useEffect, useMemo, useState } from "react";
 
 export type Role = "user" | "admin" | "owner";
@@ -78,12 +78,22 @@ const postWorkspaceInvite = async ({
   email: string;
   role: Role;
 }) => {
-  const response = await axios.post<Invite>(
-    `${config.baseUrl}/workspace/${workspaceId}/invite`,
-    { email, role },
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
-  return response.data;
+  try {
+    const response = await axios.post<Invite>(
+      `${config.baseUrl}/workspace/${workspaceId}/invite`,
+      { email, role },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  } catch (e) {
+    if (e instanceof AxiosError) {
+      const data = e.response?.data;
+      if (data.message) {
+        throw new Error(data.message);
+      }
+    }
+    throw e;
+  }
 };
 
 const deleteWorkspaceInvite = async ({
