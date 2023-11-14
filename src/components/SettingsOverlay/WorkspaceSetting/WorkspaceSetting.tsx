@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import {
   Form,
   FormControl,
@@ -11,17 +11,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
+} from "../../ui/form";
+import { Input } from "../../ui/input";
 import {
   Workspace,
   WorkspaceSuccess,
   useWorkspace,
 } from "@/context/WorkspaceContext";
-import { Skeleton } from "../ui/skeleton";
+import { Skeleton } from "../../ui/skeleton";
 import { FunctionComponent } from "react";
 import { MutationStatus } from "@tanstack/react-query";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "../../ui/alert";
+import { NoPermission } from "../NoPermission";
 
 const settingsSchema = z.object({
   workspaceName: z.string().min(3).max(50),
@@ -117,25 +118,23 @@ export const WorkspaceSettingForm: FunctionComponent<{
   );
 };
 
-const NoPermission = () => {
-  return (
-    <div>
-      <div className="text-xl font-semibold">Workspace Settings</div>
-      <div className="mt-4 text-sm font-semibold text-accent-foreground">
-        You do not have permission to edit this workspace.
-      </div>
-    </div>
-  );
-};
-
 export const WorkspaceSetting = () => {
   const workspace = useWorkspace();
   if (workspace.state === "success") {
     const currentWorkspace = workspace.workspaces.find(
       (w) => w.id === workspace.currentWorkspace
     );
-    if (!currentWorkspace) return <NoPermission />;
-    if (currentWorkspace.role === "user") return <NoPermission />;
+    if (!currentWorkspace)
+      return (
+        <NoPermission title="No Workspace" description="Workspace not found" />
+      );
+    if (currentWorkspace.role === "user")
+      return (
+        <NoPermission
+          title="Members Settings"
+          description="You do not have permission to edit this workspace."
+        />
+      );
     return (
       <WorkspaceSettingForm
         workspace={currentWorkspace}

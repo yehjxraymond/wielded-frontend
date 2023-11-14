@@ -34,8 +34,8 @@ import { MoreHorizontal } from "lucide-react";
 import { FunctionComponent, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import { Button } from "../ui/button";
+import { Alert, AlertDescription, AlertTitle } from "../../ui/alert";
+import { Button } from "../../ui/button";
 import {
   Form,
   FormControl,
@@ -43,10 +43,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { Skeleton } from "../ui/skeleton";
-import { Role, useWorkspaceMembers } from "./useWorkspaceMembers";
+} from "../../ui/form";
+import { Input } from "../../ui/input";
+import { Skeleton } from "../../ui/skeleton";
+import {
+  Role,
+  useWorkspaceMembers,
+} from "../WorkspaceSetting/useWorkspaceMembers";
+import { NoPermission } from "../NoPermission";
 
 const inviteSchema = z.object({
   email: z.string().min(3).max(50),
@@ -337,25 +341,23 @@ export const MembersSettingForm: FunctionComponent<{
   );
 };
 
-const NoPermission = () => {
-  return (
-    <div>
-      <div className="text-xl font-semibold">Members Settings</div>
-      <div className="mt-4 text-sm font-semibold text-accent-foreground">
-        You do not have permission to edit this workspace.
-      </div>
-    </div>
-  );
-};
-
 export const MembersSetting = () => {
   const workspace = useWorkspace();
   if (workspace.state === "success") {
     const currentWorkspace = workspace.workspaces.find(
       (w) => w.id === workspace.currentWorkspace
     );
-    if (!currentWorkspace) return <NoPermission />;
-    if (currentWorkspace.role === "user") return <NoPermission />;
+    if (!currentWorkspace)
+      return (
+        <NoPermission title="No Workspace" description="Workspace not found" />
+      );
+    if (currentWorkspace.role === "user")
+      return (
+        <NoPermission
+          title="Members Settings"
+          description="You do not have permission to edit this workspace."
+        />
+      );
     return <MembersSettingForm workspace={currentWorkspace} />;
   }
   return (
