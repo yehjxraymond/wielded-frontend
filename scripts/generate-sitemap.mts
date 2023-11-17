@@ -29,7 +29,7 @@ const urlXml = (url: string, priority = 0.8) => `
   const staticSitemapSegment = staticPaths
     .map((path) => urlXml(url(path), 1))
     .join("");
-  const articleMdxPaths = await globby(["src/app/article/**/page.mdx"]);
+  const articleMdxPaths = await globby(["src/app/chatgpt-prompt/**/page.mdx"]);
   const articleSitemapSegment: string = articleMdxPaths
     .map((path) => {
       const match = path.match(/article\/(.*)\/page.mdx/);
