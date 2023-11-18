@@ -126,7 +126,7 @@ export const TableOfContents = () => {
   }, [tableOfContentItems, setActiveId]);
 
   return (
-    <div>
+    <div className="py-2 max-w-sm">
       <div className="font-semibold text-xl">Table of Contents</div>
       <div className="space-y-1 mt-2">
         {tableOfContentItems.map((item) => {
