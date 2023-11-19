@@ -32,9 +32,9 @@ const urlXml = (url: string, priority = 0.8) => `
   const articleMdxPaths = await globby(["src/app/chatgpt-prompt/**/page.mdx"]);
   const articleSitemapSegment: string = articleMdxPaths
     .map((path) => {
-      const match = path.match(/article\/(.*)\/page.mdx/);
+      const match = path.match(/chatgpt-prompt\/(.*)\/page.mdx/);
       const slug = match?.[1] ?? "unknown";
-      const articleUrl = url(`article/${slug}`);
+      const articleUrl = url(`chatgpt-prompt/${slug}`);
       return urlXml(articleUrl);
     })
     .join("");
