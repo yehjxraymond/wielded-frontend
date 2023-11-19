@@ -19,7 +19,7 @@ export const MessageBubble: FunctionComponent<{
   return (
     <div
       className={cn(
-        "flex w-max max-w-[90%] flex-col gap-2 rounded-lg px-3 py-2 text-sm overflow-x-auto",
+        "flex w-max max-w-[90%] flex-col gap-2 rounded-lg px-3 py-2 text-sm overflow-x-auto prose",
         message.type === "user"
           ? "ml-auto bg-primary text-primary-foreground"
           : "bg-muted"
