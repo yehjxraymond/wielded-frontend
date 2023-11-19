@@ -33,7 +33,7 @@ const urlXml = (url: string, priority = 0.8) => `
   const articleSitemapSegment: string = articleMdxPaths
     .map((path) => {
       const match = path.match(/chatgpt-prompt\/(.*)\/page.mdx/);
-      const slug = match?.[1] ?? "unknown";
+      const slug = match?.[1] ?? "";
       const articleUrl = url(`chatgpt-prompt/${slug}`);
       return urlXml(articleUrl);
     })

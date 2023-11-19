@@ -61,7 +61,7 @@ export function NavigationDropdownMenu() {
         <NavigationMenuItem>
           <Link href="/" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              ChatGPT for Teams
+              Home
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
@@ -80,6 +80,13 @@ export function NavigationDropdownMenu() {
               ))}
             </div>
           </NavigationMenuContent>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link href="/chatgpt-prompt" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              ChatGPT Prompt Library
+            </NavigationMenuLink>
+          </Link>
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>

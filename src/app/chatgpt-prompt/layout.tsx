@@ -1,4 +1,5 @@
 import { HeaderPublic } from "@/components/HeaderPublic";
+import { WieldedIntroductionCTAWithClientRoute } from "@/components/Home/WieldedIntroductionCTA";
 import {
   TableOfContents,
   TableOfContentProvider,
@@ -13,13 +14,16 @@ export default function ArticleLayout({
     <TableOfContentProvider>
       <HeaderPublic />
       <div className="container flex my-8">
-        <div className="prose prose-md dark:prose-invert lg:prose-2xl w-full flex-1">{children}</div>
+        <div className="prose prose-md dark:prose-invert lg:prose-2xl w-full flex-1">
+          {children}
+        </div>
         <div className="min-w-[250px] hidden lg:block relative ml-10">
           <div className="fixed">
             <TableOfContents />
           </div>
         </div>
       </div>
+      <WieldedIntroductionCTAWithClientRoute />
     </TableOfContentProvider>
   );
 }
