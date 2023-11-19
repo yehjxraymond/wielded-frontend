@@ -147,6 +147,9 @@ const MobileMenu = () => {
             </div>
           )}
           <div className="text-lg font-medium mb-4">
+            <Link href="/chatgpt-prompt">ChatGPT Prompt Library</Link>
+          </div>
+          <div className="text-lg font-medium mb-4">
             <Link href="/login?mode=login&source=navigation-mobile">Login</Link>
           </div>
           <div className="text-lg font-medium mb-4">
