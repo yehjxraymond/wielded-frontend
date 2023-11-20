@@ -88,6 +88,13 @@ export function NavigationDropdownMenu() {
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link href="https://newsletter.wielded.com" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Newsletter
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
   );
@@ -148,6 +155,9 @@ const MobileMenu = () => {
           )}
           <div className="text-lg font-medium mb-4">
             <Link href="/chatgpt-prompt">ChatGPT Prompt Library</Link>
+          </div>
+          <div className="text-lg font-medium mb-4">
+            <Link href="https://newsletter.wielded.com">Newsletter</Link>
           </div>
           <div className="text-lg font-medium mb-4">
             <Link href="/login?mode=login&source=navigation-mobile">Login</Link>
