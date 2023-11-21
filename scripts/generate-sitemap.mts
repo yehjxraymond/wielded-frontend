@@ -29,17 +29,30 @@ const urlXml = (url: string, priority = 0.8) => `
   const staticSitemapSegment = staticPaths
     .map((path) => urlXml(url(path), 1))
     .join("");
-  const articleMdxPaths = await globby(["src/app/chatgpt-prompt/**/page.mdx"]);
-  const articleSitemapSegment: string = articleMdxPaths
+  const promptMdxPaths = await globby(["src/app/chatgpt-prompt/**/page.mdx"]);
+  const promptSitemapSegment: string = promptMdxPaths
     .map((path) => {
       const match = path.match(/chatgpt-prompt\/(.*)\/page.mdx/);
       const slug = match?.[1] ?? "";
-      const articleUrl = url(`chatgpt-prompt/${slug}`);
+      const promptUrl = url(`chatgpt-prompt/${slug}`);
+      return urlXml(promptUrl);
+    })
+    .join("");
+  const articleMdxPaths = await globby(["src/app/article/**/page.mdx"]);
+  const articleSitemapSegment: string = articleMdxPaths
+    .map((path) => {
+      const match = path.match(/article\/(.*)\/page.mdx/);
+      const slug = match?.[1] ?? "";
+      const articleUrl = url(`article/${slug}`);
       return urlXml(articleUrl);
     })
     .join("");
 
-  const sitemapUrl = [staticSitemapSegment, articleSitemapSegment].join("");
+  const sitemapUrl = [
+    staticSitemapSegment,
+    articleSitemapSegment,
+    promptSitemapSegment,
+  ].join("");
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${sitemapUrl}
