@@ -7,6 +7,8 @@ const date = new Date().toISOString();
 
 const staticPaths = [
   "", // root
+  "privacy",
+  "terms",
   "login",
   "for-content-creator",
   "for-customer-support",
