@@ -11,7 +11,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from "../ui/dialog";
 import {
   Form,
@@ -188,6 +188,15 @@ export const PersonaInternal: FunctionComponent<PersonaSuccess> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [formType, setFormType] = useState<FormType>({ type: "create" });
+  const [query, setQuery] = useState("");
+  const filteredPersonas = personas.filter(
+    (persona) =>
+      query === "" ||
+      (persona.name &&
+        persona.name.toLowerCase().includes(query.toLowerCase())) ||
+      (persona.description &&
+        persona.description.toLowerCase().includes(query.toLowerCase()))
+  );
 
   return (
     <SidebarLayout>
@@ -222,6 +231,15 @@ export const PersonaInternal: FunctionComponent<PersonaSuccess> = ({
           </div>
         </div>
 
+        <div className="px-4 mt-8">
+          <Input
+            className="max-w-lg"
+            placeholder="Search"
+            onChange={(e) => setQuery(e.target.value)}
+            value={query}
+          />
+        </div>
+
         {personas.length === 0 && (
           <div className="text-center mt-40">
             <div className="text-xl font-semibold">
@@ -233,7 +251,7 @@ export const PersonaInternal: FunctionComponent<PersonaSuccess> = ({
 
         {personas.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-4 px-4 mt-16 gap-4 cursor-pointer">
-            {personas.map((persona) => (
+            {filteredPersonas.map((persona) => (
               <div
                 className="pt-6 relative"
                 key={persona.id}
