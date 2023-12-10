@@ -13,6 +13,7 @@ import {
   useConversationMessages,
 } from "./useConversationMessages";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import WelcomeModal from "./WelcomeModal/WelcomeModal";
 
 interface MessageBarProps {
   isPending: boolean;
@@ -242,10 +243,11 @@ export const ChatInterfaceComponent: FunctionComponent<{
         )
       }
     >
+      <WelcomeModal />
       <div className="flex flex-col max-h-dhv overflow-y-auto">
-        <div className="container flex flex-col items-center mt-12">
+        <div className="container flex flex-col items-center mt-8">
           {messages.length === 0 && (
-            <div className="text-center mt-32 w-full">
+            <div className="text-center mt-28 w-full">
               <div className="text-xl font-semibold">
                 Start a new conversation
               </div>
