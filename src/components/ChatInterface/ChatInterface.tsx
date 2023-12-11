@@ -172,6 +172,7 @@ export const ChatInterfaceComponent: FunctionComponent<{
 }> = ({ workspaceId, conversationId: initialConversationId }) => {
   const conversation = useConversation();
   const {
+    conversationTitle,
     startConversation,
     messages: messagesWithSystemMessage,
     conversationId,
@@ -229,10 +230,7 @@ export const ChatInterfaceComponent: FunctionComponent<{
     }
   }, [messages, isScrollLocked, isInitialLoad]);
 
-  const title =
-    (conversation.state === "success" &&
-      conversation.conversations.find((c) => c.id === conversationId)?.name) ||
-    "Start a new conversation";
+  const title = conversationTitle || "Start a new conversation";
 
   return (
     <SidebarLayout

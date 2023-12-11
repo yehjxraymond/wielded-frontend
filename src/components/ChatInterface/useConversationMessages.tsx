@@ -13,6 +13,15 @@ export interface MessageDto {
   created_at: string;
 }
 
+export interface ConversationDto {
+  id: string;
+  name: string;
+  chatCompletionOption: object;
+  visibility: "private" | "workspace" | "invited" | "public";
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Message {
   type: "system" | "user" | "assistant" | "function";
   content: string;
@@ -97,6 +106,24 @@ const fetchMessages = async ({
   return response.data;
 };
 
+const fetchConversation = async ({
+  token,
+  workspaceId,
+  conversationId,
+}: {
+  token: string;
+  workspaceId: string;
+  conversationId: string;
+}) => {
+  const response = await axios.get<ConversationDto>(
+    `${config.baseUrl}/workspace/${workspaceId}/conversation/${conversationId}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return response.data;
+};
+
 interface ApiError {
   error?: string;
   message?: string;
@@ -157,6 +184,7 @@ export const useConversationMessages = (
     initialConversationId
   );
   const [isPending, setIsPending] = useState(false);
+  const [conversationTitle, setConversationTitle] = useState<string>("");
   const [chatCompletionOptions, setChatCompletionOptions] =
     useState<ChatCompletionOptions>({ model: DEFAULT_GPT4_MODEL });
   const { replace } = useRouter();
@@ -167,6 +195,15 @@ export const useConversationMessages = (
       setMessages(newMessages);
     });
   }, [setUpdateMessages]);
+
+  const fetchConversationMutation = useMutation({
+    mutationFn: fetchConversation,
+    mutationKey: ["conversations", token, initialConversationId],
+    onSuccess: (data) => {
+      setChatCompletionOptions(data.chatCompletionOption);
+      setConversationTitle(data.name);
+    },
+  });
 
   const fetchMessagesMutation = useMutation({
     mutationFn: fetchMessages,
@@ -184,19 +221,36 @@ export const useConversationMessages = (
     },
   });
 
-  const memoisedFetch = useMemo(
+  const memoisedFetchMessage = useMemo(
     () => fetchMessagesMutation.mutate,
     [fetchMessagesMutation.mutate]
   );
 
+  const memoisedFetchConversation = useMemo(
+    () => fetchConversationMutation.mutate,
+    [fetchConversationMutation.mutate]
+  );
+
   useEffect(() => {
-    if (token && initialConversationId)
-      memoisedFetch({
+    if (token && initialConversationId) {
+      memoisedFetchMessage({
         token,
         workspaceId,
         conversationId: initialConversationId,
       });
-  }, [token, memoisedFetch, workspaceId, initialConversationId]);
+      memoisedFetchConversation({
+        token,
+        workspaceId,
+        conversationId: initialConversationId,
+      });
+    }
+  }, [
+    token,
+    memoisedFetchMessage,
+    memoisedFetchConversation,
+    workspaceId,
+    initialConversationId,
+  ]);
 
   const fetchAndManageResponse =
     ({
@@ -306,6 +360,7 @@ export const useConversationMessages = (
   });
 
   return {
+    conversationTitle,
     chatCompletionOptions,
     setChatCompletionOptions,
     messages,
