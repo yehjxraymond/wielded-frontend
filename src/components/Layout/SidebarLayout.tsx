@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   Popover,
@@ -25,6 +25,7 @@ import {
   Menu,
   MessageSquare,
   PlusCircle,
+  PlusSquare,
   Search,
   Trash,
   UserCircle,
@@ -35,6 +36,7 @@ import { SettingsOverlaySidebarTrigger } from "../SettingsOverlay";
 import { ThemeToggle } from "../ThemeToggle";
 import { Button } from "../ui/button";
 import { WorkspaceInvite, useNotifications } from "./useNotifications";
+import { NewWorkspaceMenuItem } from "./NewWorkspaceMenuItem";
 
 const sidebarHoverClass = "hover:bg-accent-foreground px-4";
 
@@ -182,6 +184,7 @@ const WorkspaceMenu: FunctionComponent<{
                 <span>{w.name}</span>
               </DropdownMenuItem>
             ))}
+          <NewWorkspaceMenuItem />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logout} className="cursor-pointer">
@@ -248,7 +251,7 @@ const SidebarContent = () => {
         <SidebarConversations />
       </div>
       <div className="mt-4 bg-secondary mb-10 lg:mb-4 px-4 flex space-x-2">
-        <ThemeToggle align="start"/>
+        <ThemeToggle align="start" />
         <WorkspaceMenu logout={logout} />
       </div>
     </div>
