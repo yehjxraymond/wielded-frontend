@@ -24,6 +24,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
+import { LearnMoreOverlay } from "../LearnMoreOverlay";
 
 type FormType = { type: "create" } | { type: "edit"; id: string };
 

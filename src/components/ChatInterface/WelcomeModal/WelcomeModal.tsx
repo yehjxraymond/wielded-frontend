@@ -17,12 +17,19 @@ const WelcomeModal: React.FC = () => {
 
   return (
     <Dialog open={shouldShowIntroduction && !isDismissed}>
-      <DialogContent>
+      <DialogContent className="max-w-2xl">
         <DialogHeader className="font-semibold">
           Welcome to Wielded!
         </DialogHeader>
         <p>Check out this introduction video to get started.</p>
-
+        <iframe
+          className="w-full h-96"
+          src="https://www.youtube-nocookie.com/embed/2k0wNqepZ5Y?si=DRI0LibcFV9ChREG"
+          title="YouTube video player"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+        ></iframe>
         <DialogFooter>
           <Button
             size="sm"

@@ -39,7 +39,7 @@ export const useIntroduction = () => {
     mutationFn: updateIntroductionPreference,
     onSuccess: () => {
       // If the update was successful, refetch the preference to get the updated value.
-      fetchIntroductionMutation.mutate();
+      if (token) fetchIntroductionMutation.mutate({ token });
     },
   });
   const memoisedFetchIntroduction = useMemo(
