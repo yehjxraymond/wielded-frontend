@@ -5,7 +5,6 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, useRef, useCallback } from "react";
-import { Readable } from "stream";
 
 export interface MessageDto {
   id: string;
@@ -47,6 +46,8 @@ const extractConversationId = (str: string) => {
 };
 
 type Model =
+  | "gpt-4-1106-preview" // Turbo preview
+  | "gpt-4-vision-preview"
   | "gpt-4"
   | "gpt-4-0314"
   | "gpt-4-0613"
@@ -57,20 +58,26 @@ type Model =
   | "gpt-3.5-turbo-16k"
   | "gpt-3.5-turbo-0301"
   | "gpt-3.5-turbo-0613"
+  | "gpt-3.5-turbo-1106"
   | "gpt-3.5-turbo-16k-0613";
+
+export interface ChatCompletionOptions {
+  model?: Model;
+  frequency_penalty?: number; // Positive values decreasing the model's likelihood to repeat the same line verbatim.
+  max_tokens?: number;
+  presence_penalty?: number; // Number between -2.0 and 2.0. Positive values increasing the model's likelihood to talk about new topics
+  temperature?: number; // between 0 and 2. Higher values like 0.8 will make the output more random. Set this or top_p
+  top_p?: number; // 0.1 means only the tokens comprising the top 10% probability mass
+}
 
 export interface ConversationPayload {
   message: string;
   persona?: string;
-  options?: {
-    model?: Model;
-    frequency_penalty?: number; // Positive values decreasing the model's likelihood to repeat the same line verbatim.
-    max_tokens?: number;
-    presence_penalty?: number; // Number between -2.0 and 2.0. Positive values increasing the model's likelihood to talk about new topics
-    temperature?: number; // between 0 and 2. Higher values like 0.8 will make the output more random. Set this or top_p
-    top_p?: number; // 0.1 means only the tokens comprising the top 10% probability mass
-  };
+  options?: ChatCompletionOptions;
 }
+
+export const DEFAULT_GPT3_MODEL = "gpt-3.5-turbo-1106";
+export const DEFAULT_GPT4_MODEL = "gpt-4-1106-preview";
 
 const fetchMessages = async ({
   token,
@@ -150,6 +157,8 @@ export const useConversationMessages = (
     initialConversationId
   );
   const [isPending, setIsPending] = useState(false);
+  const [chatCompletionOptions, setChatCompletionOptions] =
+    useState<ChatCompletionOptions>({ model: DEFAULT_GPT4_MODEL });
   const { replace } = useRouter();
   const { debounceUpdate, setUpdateMessages } = useDebouncedUpdate(100, 250);
 
@@ -219,7 +228,11 @@ export const useConversationMessages = (
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message, persona }),
+        body: JSON.stringify({
+          message,
+          persona,
+          options: chatCompletionOptions,
+        }),
       });
       if (!response.ok) {
         const error: ApiError = await response.json();
@@ -293,6 +306,8 @@ export const useConversationMessages = (
   });
 
   return {
+    chatCompletionOptions,
+    setChatCompletionOptions,
     messages,
     conversationId,
     setConversationId,

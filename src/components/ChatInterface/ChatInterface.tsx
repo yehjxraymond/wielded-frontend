@@ -14,6 +14,7 @@ import {
 } from "./useConversationMessages";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import WelcomeModal from "./WelcomeModal/WelcomeModal";
+import { ModelSelector } from "./ModelSelector";
 
 interface MessageBarProps {
   isPending: boolean;
@@ -177,6 +178,8 @@ export const ChatInterfaceComponent: FunctionComponent<{
     continueConversation,
     isPending,
     error,
+    chatCompletionOptions,
+    setChatCompletionOptions,
   } = useConversationMessages(workspaceId, initialConversationId);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isScrollLocked, setScrollLocked] = useState(true);
@@ -229,29 +232,32 @@ export const ChatInterfaceComponent: FunctionComponent<{
   const title =
     (conversation.state === "success" &&
       conversation.conversations.find((c) => c.id === conversationId)?.name) ||
-    undefined;
+    "Start a new conversation";
 
   return (
     <SidebarLayout
       title={title}
       submenu={
         initialConversationId && (
-          <ShareSubmenu
-            workspaceId={workspaceId}
-            conversationId={initialConversationId}
-          />
+          <>
+            <ShareSubmenu
+              workspaceId={workspaceId}
+              conversationId={initialConversationId}
+            />
+          </>
         )
       }
     >
       <WelcomeModal />
       <div className="flex flex-col max-h-dhv overflow-y-auto">
-        <div className="container flex flex-col items-center mt-8">
+        <div className="container flex flex-col items-center mt-12">
           {messages.length === 0 && (
-            <div className="text-center mt-28 w-full">
-              <div className="text-xl font-semibold">
-                Start a new conversation
-              </div>
-              <div className="w-full mt-12 text-left">
+            <div className="text-center w-full">
+              <div className="w-full mt-8 text-left">
+                <ModelSelector
+                  chatCompletionOptions={chatCompletionOptions}
+                  setChatCompletionOptions={setChatCompletionOptions}
+                />
                 <PersonaSelector />
               </div>
             </div>
