@@ -1,20 +1,19 @@
-import { Textarea } from "@/components/ui/textarea";
-import { useConversation } from "@/context/ConversationContext";
 import { usePersona } from "@/context/PersonaContext";
 import { useWorkspace } from "@/context/WorkspaceContext";
-import { AlertCircle, Send } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { FunctionComponent, useEffect, useRef, useState } from "react";
 import { SidebarLayout } from "../Layout";
+import { MessageBar } from "../MesageBar";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { MessageBubble } from "./MessageBubble";
+import { ModelSelector } from "./ModelSelector";
 import { PersonaSelector } from "./PersonaSelector";
 import { ShareSubmenu } from "./ShareSubmenu";
+import WelcomeModal from "./WelcomeModal/WelcomeModal";
 import {
   ConversationPayload,
   useConversationMessages,
 } from "./useConversationMessages";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import WelcomeModal from "./WelcomeModal/WelcomeModal";
-import { ModelSelector } from "./ModelSelector";
 
 interface MessageBarProps {
   isPending: boolean;
@@ -23,65 +22,31 @@ interface MessageBarProps {
   conversationId?: string;
 }
 
-const MessageBar: FunctionComponent<MessageBarProps> = ({
+const MessageBarWithPersona: FunctionComponent<MessageBarProps> = ({
   isPending,
   startConversation,
   continueConversation,
   conversationId,
 }) => {
   const persona = usePersona();
-  const [rowNum, setRowNum] = useState(1);
-  const [text, setText] = useState("");
 
-  const handleSubmit = () => {
+  const handleSubmit = (text: string) => {
     if (isPending) return;
     const personaText =
       persona.state === "success" ? persona.selectedPersona?.content : "";
     if (!conversationId) {
       startConversation({ message: text, persona: personaText });
-      setText("");
-      setRowNum(1);
     } else {
       continueConversation({ message: text });
-      setText("");
-      setRowNum(1);
     }
-  };
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit();
-    }
-  };
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const lineCount = (e.target.value.match(/\n/g) || []).length + 1;
-    setRowNum(Math.min(10, Math.max(lineCount, 1)));
-    setText(e.target.value);
   };
 
   return (
-    <div className="flex justify-center">
-      <div className="w-full max-w-3xl mb-8">
-        <div className="flex items-center border border-input px-3 py-2 rounded-md bg-background mx-4">
-          <Textarea
-            className="focus-visible:ring-0 focus-visible:ring-offset-0 border-0 resize-none min-h-0"
-            placeholder="Send a message"
-            onChange={handleTextChange}
-            onKeyDown={handleKeyDown}
-            rows={rowNum}
-            value={text}
-          />
-          <div
-            className={
-              isPending ? "cursor-not-allowed opacity-50" : "cursor-pointer"
-            }
-            onClick={handleSubmit}
-          >
-            <Send className="h-6 w-6" />
-          </div>
-        </div>
-      </div>
-    </div>
+    <MessageBar
+      isPending={isPending}
+      onSubmit={handleSubmit}
+      placeholder="Send a message"
+    />
   );
 };
 
@@ -170,7 +135,6 @@ export const ChatInterfaceComponent: FunctionComponent<{
   workspaceId: string;
   conversationId?: string;
 }> = ({ workspaceId, conversationId: initialConversationId }) => {
-  const conversation = useConversation();
   const {
     conversationTitle,
     startConversation,
@@ -271,7 +235,7 @@ export const ChatInterfaceComponent: FunctionComponent<{
         </div>
       </div>
       <div className="absolute bottom-0 left-0 right-0 w-full">
-        <MessageBar
+        <MessageBarWithPersona
           {...{
             isPending,
             startConversation,
