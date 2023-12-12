@@ -20,7 +20,7 @@ const fetchAllImages = async ({
       name: string;
       prompt: string;
       revised_prompt: string;
-      b64: string;
+      thumbnail: string;
     }[]
   >(`${config.baseUrl}/workspace/${workspaceId}/image`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -59,7 +59,7 @@ export const ImageGalleryInternal: FunctionComponent<{
                 <Link href={`/image/${image.id}`}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={`data:image/png;base64,${image.b64}`}
+                    src={`data:image/png;base64,${image.thumbnail}`}
                     className="object-cover w-full h-[250px] grayscale hover:grayscale-0 transition-all cursor-pointer"
                     alt={image.name}
                   />
