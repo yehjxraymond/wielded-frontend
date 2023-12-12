@@ -1,7 +1,7 @@
 "use client";
 import { ImageGenerator } from "@/components/ImageGenerator";
 
-export default function HomePage() {
+export default function GenerateImagePage() {
   return (
     <main>
       <ImageGenerator />
