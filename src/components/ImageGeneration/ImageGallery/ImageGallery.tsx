@@ -3,15 +3,9 @@ import { useAuth } from "@/context/AuthContext";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { FunctionComponent, useEffect, useMemo } from "react";
-import { SidebarLayout } from "../Layout";
 import Link from "next/link";
-
-interface ImageGenerationOptions {
-  quality: "standard" | "hd";
-  style: "natural" | "vivid";
-  size: "1024x1024" | "1792x1024" | "1024x1792";
-}
+import { FunctionComponent, useEffect, useMemo } from "react";
+import { SidebarLayout } from "../../Layout";
 
 const fetchAllImages = async ({
   token,
@@ -50,7 +44,7 @@ const useGalleryImages = (workspaceId: string) => {
   return { fetchImagesMutation, images: fetchImagesMutation.data };
 };
 
-export const ImageGeneratorInternal: FunctionComponent<{
+export const ImageGalleryInternal: FunctionComponent<{
   workspaceId: string;
 }> = ({ workspaceId }) => {
   const { images } = useGalleryImages(workspaceId);
@@ -84,6 +78,6 @@ export const ImageGallery: FunctionComponent = () => {
   // TODO Skeleton loader
   if (workspaceState.state !== "success") return null;
   return (
-    <ImageGeneratorInternal workspaceId={workspaceState.currentWorkspace} />
+    <ImageGalleryInternal workspaceId={workspaceState.currentWorkspace} />
   );
 };

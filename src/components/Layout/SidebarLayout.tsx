@@ -21,11 +21,12 @@ import {
   Bell,
   Building2,
   ChevronsUpDown,
+  ImageIcon,
+  ImagePlus,
   LogOut,
   Menu,
   MessageSquare,
   PlusCircle,
-  PlusSquare,
   Search,
   Trash,
   UserCircle,
@@ -35,8 +36,8 @@ import { FunctionComponent, ReactNode, useState } from "react";
 import { SettingsOverlaySidebarTrigger } from "../SettingsOverlay";
 import { ThemeToggle } from "../ThemeToggle";
 import { Button } from "../ui/button";
-import { WorkspaceInvite, useNotifications } from "./useNotifications";
 import { NewWorkspaceMenuItem } from "./NewWorkspaceMenuItem";
+import { WorkspaceInvite, useNotifications } from "./useNotifications";
 
 const sidebarHoverClass = "hover:bg-accent-foreground px-4";
 
@@ -240,6 +241,18 @@ const SidebarContent = () => {
           <UserCircle className="w-5 h-5 mr-2" /> Personas
         </Link>
         <Link
+          href="/image"
+          className={cn("flex items-center py-1", sidebarHoverClass)}
+        >
+          <ImageIcon className="w-5 h-5 mr-2" /> Gallery
+        </Link>
+        <Link
+          href="/image/generate"
+          className={cn("flex items-center py-1", sidebarHoverClass)}
+        >
+          <ImagePlus className="w-5 h-5 mr-2" /> New Image
+        </Link>
+        <Link
           href="/"
           className={cn("flex items-center py-1", sidebarHoverClass)}
         >
@@ -276,7 +289,13 @@ const ContentHeader: FunctionComponent<{
           </Sheet>
         </div>
         <div className="hidden lg:block" />
-        {title ? <div className="font-medium">{title}</div> : <div />}
+        {title ? (
+          <div className="font-medium overflow-hidden whitespace-nowrap text-ellipsis px-4">
+            {title}
+          </div>
+        ) : (
+          <div />
+        )}
         <div className="mr-4 flex items-center">{submenu}</div>
       </div>
     </>

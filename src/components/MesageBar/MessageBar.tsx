@@ -1,20 +1,22 @@
 import { Send } from "lucide-react";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { Textarea } from "../ui/textarea";
 
 export interface MessageBarProps {
   placeholder: string;
   isPending: boolean;
   onSubmit: (value: string) => void;
+  initialText?: string;
 }
 
 export const MessageBar: FunctionComponent<MessageBarProps> = ({
   placeholder,
   isPending,
   onSubmit,
+  initialText = "",
 }) => {
   const [rowNum, setRowNum] = useState(1);
-  const [text, setText] = useState("");
+  const [text, setText] = useState(initialText);
 
   const handleSubmit = () => {
     if (isPending) return;
@@ -29,11 +31,13 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
     }
   };
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const lineCount = (e.target.value.match(/\n/g) || []).length + 1;
-    const lineByCharacters = e.target.value.length / 90;
-    setRowNum(Math.min(15, Math.max(lineCount, lineByCharacters, 1)));
     setText(e.target.value);
   };
+  useEffect(() => {
+    const lineCount = (text.match(/\n/g) || []).length + 1;
+    const lineByCharacters = text.length / 90;
+    setRowNum(Math.min(15, Math.max(lineCount, lineByCharacters, 1)));
+  }, [initialText, text]);
 
   return (
     <div className="flex justify-center">
