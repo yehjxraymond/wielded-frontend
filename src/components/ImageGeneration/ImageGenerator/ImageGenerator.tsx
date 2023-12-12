@@ -8,6 +8,7 @@ import { Skeleton } from "../../ui/skeleton";
 import { ImageQuality, ImageSize, ImageStyle } from "../types";
 import { useImageGenerator } from "./useImageGenerator";
 import { useRandomLoadingMessage } from "./useRandomLoadingMessage";
+import { ConversationalError } from "@/components/ChatInterface/ConversationalError";
 
 export const ImageGeneratorInternal: FunctionComponent<{
   workspaceId: string;
@@ -21,6 +22,7 @@ export const ImageGeneratorInternal: FunctionComponent<{
   const [aspectRatio, setAspectRatio] = useState<ImageSize>("1024x1024");
   const isLoading = generateImageMutation.isPending;
   const randomLoadingMessage = useRandomLoadingMessage();
+  const error = generateImageMutation.error;
 
   useEffect(() => {
     const queryQuality = searchParams.get("quality");
@@ -50,6 +52,15 @@ export const ImageGeneratorInternal: FunctionComponent<{
           <div className="flex flex-col max-h-dhv overflow-y-auto">
             <div className="container flex flex-col items-center mt-12 text-left">
               <div className="w-full mt-8">
+                {error && (
+                  <div className="my-4">
+                    <ConversationalError
+                      error={error.error}
+                      message={error.message}
+                      statusCode={error.statusCode}
+                    />
+                  </div>
+                )}
                 <div className="font-semibold">Quality</div>
                 <HorizontalSelector
                   className="mt-2"

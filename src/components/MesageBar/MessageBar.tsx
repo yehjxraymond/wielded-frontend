@@ -35,7 +35,7 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
   };
   useEffect(() => {
     const lineCount = (text.match(/\n/g) || []).length + 1;
-    const lineByCharacters = text.length / 90;
+    const lineByCharacters = text.length / 75;
     setRowNum(Math.min(15, Math.max(lineCount, lineByCharacters, 1)));
   }, [initialText, text]);
 
