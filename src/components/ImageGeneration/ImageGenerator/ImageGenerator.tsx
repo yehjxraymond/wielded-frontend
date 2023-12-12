@@ -29,6 +29,8 @@ export const ImageGeneratorInternal: FunctionComponent<{
     const queryStyle = searchParams.get("style");
     const queryAspectRatio = searchParams.get("size");
 
+    console.log(queryQuality, queryQuality?.length)
+
     if (queryQuality && ["standard", "hd"].includes(queryQuality)) {
       setQuality(queryQuality as ImageQuality);
     }

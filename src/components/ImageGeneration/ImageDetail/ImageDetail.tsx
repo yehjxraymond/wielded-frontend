@@ -1,8 +1,10 @@
+import { Button } from "@/components/ui/button";
 import { config } from "@/config";
 import { useAuth } from "@/context/AuthContext";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { Download, Trash2 } from "lucide-react";
 import Link from "next/link";
 import {
   FunctionComponent,
@@ -13,8 +15,6 @@ import {
 } from "react";
 import { SidebarLayout } from "../../Layout";
 import { ImageQuality, ImageSize, ImageStyle } from "../types";
-import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
 
 const fetchAllImages = async ({
   token,
@@ -42,6 +42,32 @@ const fetchAllImages = async ({
   return response.data;
 };
 
+const fetchDeleteImage = async ({
+  token,
+  workspaceId,
+  imageId,
+}: {
+  token: string;
+  workspaceId: string;
+  imageId: string;
+}) => {
+  const response = await axios.delete<{
+    id: string;
+    name: string;
+    prompt: string;
+    revised_prompt: string;
+    b64: string;
+    options?: {
+      size?: ImageSize;
+      quality?: ImageQuality;
+      style?: ImageStyle;
+    };
+  }>(`${config.baseUrl}/workspace/${workspaceId}/image/${imageId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};
+
 const useImage = (workspaceId: string, imageId: string) => {
   const { token } = useAuth();
   const fetchImagesMutation = useMutation({
@@ -51,18 +77,27 @@ const useImage = (workspaceId: string, imageId: string) => {
     () => fetchImagesMutation.mutate,
     [fetchImagesMutation.mutate]
   );
+  const deleteImageMutation = useMutation({
+    mutationFn: fetchDeleteImage,
+    onSuccess: () => {
+      window.location.href = `/image`;
+    },
+  });
+  const deleteImage = () => {
+    if (token) deleteImageMutation.mutate({ token, workspaceId, imageId });
+  };
   useEffect(() => {
     if (token) memoisedFetchImage({ token, workspaceId, imageId });
   }, [token, workspaceId, imageId, memoisedFetchImage]);
 
-  return { fetchImagesMutation, image: fetchImagesMutation.data };
+  return { fetchImagesMutation, image: fetchImagesMutation.data, deleteImage };
 };
 
 export const ImageDetailInternal: FunctionComponent<{
   workspaceId: string;
   imageId: string;
 }> = ({ workspaceId, imageId }) => {
-  const { image } = useImage(workspaceId, imageId);
+  const { image, deleteImage } = useImage(workspaceId, imageId);
   const [hover, setHover] = useState(false);
 
   const handleDownload = (event: MouseEvent) => {
@@ -75,23 +110,36 @@ export const ImageDetailInternal: FunctionComponent<{
     document.body.removeChild(link);
   };
 
+  const handleDelete = async () => {
+    window.confirm("Are you sure you want to delete this image?") &&
+      deleteImage();
+  };
+
   const regenerateLink = `/image/generate?prompt=${encodeURIComponent(
     image?.prompt || ""
   )}&revisedPrompt=${encodeURIComponent(image?.revised_prompt || "")}
-    ${image?.options?.size ? `&size=${image.options.size}` : ""}
-    ${image?.options?.quality ? `&quality=${image.options.quality}` : ""}
-    ${image?.options?.style ? `&style=${image.options.style}` : ""}
-    `;
+${image?.options?.size ? `&size=${image.options.size}` : ""}
+${image?.options?.quality ? `&quality=${image.options.quality}` : ""}
+${image?.options?.style ? `&style=${image.options.style}` : ""}`;
   const regenerateRevisedLink = `/image/generate?prompt=${encodeURIComponent(
     image?.revised_prompt || ""
   )}
-    ${image?.options?.size ? `&size=${image.options.size}` : ""}
-    ${image?.options?.quality ? `&quality=${image.options.quality}` : ""}
-    ${image?.options?.style ? `&style=${image.options.style}` : ""}
+${image?.options?.size ? `&size=${image.options.size}` : ""}
+${image?.options?.quality ? `&quality=${image.options.quality}` : ""}
+${image?.options?.style ? `&style=${image.options.style}` : ""}
     `;
 
   return (
-    <SidebarLayout title={image?.name || "Image"}>
+    <SidebarLayout
+      title={image?.name || "Image"}
+      submenu={
+        image && (
+          <>
+            <Trash2 className="w-6 h-6 cursor-pointer" onClick={handleDelete} />
+          </>
+        )
+      }
+    >
       <div className="container mt-12">
         {image && (
           <div className="flex flex-col lg:flex-row">
@@ -150,7 +198,7 @@ export const ImageDetailInternal: FunctionComponent<{
 
               <div className="font-semibold mt-4">Prompt</div>
               <div className="text-sm">{image.prompt}</div>
-              <div className="text-right">
+              <div className="text-right my-4">
                 <Link href={regenerateLink}>
                   <Button size="sm">Regenerate Image</Button>
                 </Link>
@@ -158,7 +206,7 @@ export const ImageDetailInternal: FunctionComponent<{
 
               <div className="font-semibold mt-4">Revised Prompt</div>
               <div className="text-sm">{image.revised_prompt}</div>
-              <div className="text-right">
+              <div className="text-right my-4">
                 <Link href={regenerateRevisedLink}>
                   <Button size="sm">Regenerate Image</Button>
                 </Link>
