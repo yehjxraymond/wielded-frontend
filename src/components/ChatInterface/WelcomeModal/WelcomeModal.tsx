@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -16,7 +17,10 @@ const WelcomeModal: React.FC = () => {
   }
 
   return (
-    <Dialog open={shouldShowIntroduction && !isDismissed}>
+    <Dialog
+      open={shouldShowIntroduction && !isDismissed}
+      onOpenChange={(open) => setIsDismissed(!open)}
+    >
       <DialogContent className="max-w-2xl">
         <DialogHeader className="font-semibold">
           Welcome to Wielded!
@@ -24,7 +28,7 @@ const WelcomeModal: React.FC = () => {
         <p>Check out this introduction video to get started.</p>
         <iframe
           className="w-full h-96"
-          src="https://www.youtube-nocookie.com/embed/2k0wNqepZ5Y?si=DRI0LibcFV9ChREG"
+          src="https://www.youtube-nocookie.com/embed/3lZb8Wym6tE?si=Mhc9a4WHb1NiyrsM"
           title="YouTube video player"
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

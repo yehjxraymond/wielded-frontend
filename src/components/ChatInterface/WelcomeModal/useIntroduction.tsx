@@ -4,9 +4,6 @@ import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { useEffect, useMemo } from "react";
 
-// Remove flag below to enable the welcome modal
-const IS_DISABLED = true;
-
 const fetchIntroductionPreference = async ({ token }: { token: string }) => {
   const response = await axios.get<{ value: "true" | "false" }>(
     `${config.baseUrl}/user/preference/introduction`,
@@ -47,7 +44,7 @@ export const useIntroduction = () => {
     [fetchIntroductionMutation.mutate]
   );
   useEffect(() => {
-    if (token && !IS_DISABLED) memoisedFetchIntroduction({ token });
+    if (token) memoisedFetchIntroduction({ token });
   }, [token, memoisedFetchIntroduction]);
 
   // Helper to manually trigger refetching introduction preference

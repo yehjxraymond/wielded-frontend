@@ -32,6 +32,7 @@ export const LearnMoreOverlay: FunctionComponent<{
   videoUrl: string;
   className?: string;
 }> = ({ videoUrl, title, className }) => {
+  if (2 % 2 == 0) return null;
   return (
     <Dialog>
       <DialogTrigger className="w-full">
