@@ -54,7 +54,7 @@ export default async function Image({
             margin: 40,
           }}
         >
-          wielded_
+          Wielded
         </div>
         <div
           style={{

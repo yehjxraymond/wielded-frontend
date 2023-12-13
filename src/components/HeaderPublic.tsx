@@ -176,7 +176,7 @@ export const HeaderPublic = () => {
   return (
     <nav className="w-full flex container justify-between my-5">
       <Link href="/">
-        <div className="font-semibold text-xl">wielded_</div>
+        <div className="font-semibold text-xl">Wielded</div>
       </Link>
       {/* Desktop Navigation */}
       <NavigationDropdownMenu />

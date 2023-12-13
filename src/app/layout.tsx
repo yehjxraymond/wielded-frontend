@@ -7,7 +7,7 @@ import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
-  title: "wielded_ - ChatGPT for Teams",
+  title: "Wielded - ChatGPT for Teams",
   description: "Multiply your team's productivity & foster a collaborative and shared workspace that leverages OpenAI's cost-effective API.",
   metadataBase:
     process.env.NODE_ENV === "production"

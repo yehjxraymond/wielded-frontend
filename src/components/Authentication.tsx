@@ -184,7 +184,7 @@ const RightPanel = () => {
       <div className="w-full flex container justify-between my-5">
         <nav className="w-full lg:hidden">
           <Link href="/">
-            <div className="font-semibold text-xl">wielded_</div>
+            <div className="font-semibold text-xl">Wielded</div>
           </Link>
         </nav>
         <div className="hidden lg:block" />
@@ -495,7 +495,7 @@ const LeftPanel = () => {
     <div className="basis-1/3 bg-secondary min-h-screen hidden lg:flex flex-col justify-between pb-8">
       <nav className="w-full flex container justify-between my-5">
         <Link href="/">
-          <div className="font-semibold text-xl">wielded_</div>
+          <div className="font-semibold text-xl">Wielded</div>
         </Link>
       </nav>
       <div className="container text-muted-foreground text-right flex flex-col items-end w-full">

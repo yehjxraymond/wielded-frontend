@@ -60,7 +60,7 @@ export const ImageGalleryInternal: FunctionComponent<{
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={`data:image/png;base64,${image.thumbnail}`}
-                    className="object-cover w-full h-[250px] grayscale hover:grayscale-0 transition-all cursor-pointer"
+                    className="object-cover w-full h-[250px] cursor-pointer"
                     alt={image.name}
                   />
                 </Link>

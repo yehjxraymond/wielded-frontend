@@ -205,7 +205,7 @@ const SidebarContent = () => {
     <div className="max-h-dhv min-h-dhv flex flex-col justify-between">
       <Link href="/" className="px-4">
         <div className="font-semibold text-xl h-12 flex items-center">
-          wielded_
+          wielded
         </div>
       </Link>
       {/* Main actions */}
