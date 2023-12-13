@@ -48,6 +48,7 @@ import { Input } from "../../ui/input";
 import { Skeleton } from "../../ui/skeleton";
 import { Role, useWorkspaceMembers } from "./useWorkspaceMembers";
 import { NoPermission } from "../NoPermission";
+import { LearnMoreOverlay } from "@/components/LearnMoreOverlay";
 
 const inviteSchema = z.object({
   email: z.string().min(3).max(50),
@@ -265,6 +266,10 @@ export const MembersSettingForm: FunctionComponent<{
   return (
     <>
       <div className="text-xl font-semibold">Members Settings</div>
+      <LearnMoreOverlay
+        title="Learn more about Members Settings"
+        videoUrl="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?si=K4bnEK2WJs2seLa-"
+      />
       <div className="font-medium mt-4">Invite Member</div>
       {inviteMemberError && (
         <div className="flex w-full items-center space-x-2 my-4">

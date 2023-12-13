@@ -9,6 +9,7 @@ import { ImageQuality, ImageSize, ImageStyle } from "../types";
 import { useImageGenerator } from "./useImageGenerator";
 import { useRandomLoadingMessage } from "./useRandomLoadingMessage";
 import { ConversationalError } from "@/components/ChatInterface/ConversationalError";
+import { LearnMoreOverlay } from "@/components/LearnMoreOverlay";
 
 export const ImageGeneratorInternal: FunctionComponent<{
   workspaceId: string;
@@ -29,7 +30,7 @@ export const ImageGeneratorInternal: FunctionComponent<{
     const queryStyle = searchParams.get("style");
     const queryAspectRatio = searchParams.get("size");
 
-    console.log(queryQuality, queryQuality?.length)
+    console.log(queryQuality, queryQuality?.length);
 
     if (queryQuality && ["standard", "hd"].includes(queryQuality)) {
       setQuality(queryQuality as ImageQuality);
@@ -53,7 +54,12 @@ export const ImageGeneratorInternal: FunctionComponent<{
         <>
           <div className="flex flex-col max-h-dhv overflow-y-auto">
             <div className="container flex flex-col items-center mt-12 text-left">
-              <div className="w-full mt-8">
+              <div className="w-full">
+                <LearnMoreOverlay
+                  title="Learn more about Image Generator"
+                  videoUrl="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?si=K4bnEK2WJs2seLa-"
+                  className="mb-4"
+                />
                 {error && (
                   <div className="my-4">
                     <ConversationalError

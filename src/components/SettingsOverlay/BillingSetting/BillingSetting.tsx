@@ -7,6 +7,7 @@ import { Skeleton } from "../../ui/skeleton";
 import { NoPermission } from "../NoPermission";
 import { useWorkspaceMembers } from "../MembersSetting/useWorkspaceMembers";
 import { useBilling } from "./useBilling";
+import { LearnMoreOverlay } from "@/components/LearnMoreOverlay";
 
 const freeFeatures = [
   "ChatGPT access",
@@ -258,6 +259,10 @@ const BillingSettingInternal: FunctionComponent<{ workspaceId: string }> = ({
   return (
     <div>
       <div className="text-xl font-semibold">Billing Settings</div>
+      <LearnMoreOverlay
+        title="Learn more about Billing Settings"
+        videoUrl="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?si=K4bnEK2WJs2seLa-"
+      />
       {isNoSubscription && (
         <NoSubscription checkout={checkout} members={members.length} />
       )}

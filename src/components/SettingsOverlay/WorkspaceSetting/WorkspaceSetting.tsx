@@ -23,6 +23,7 @@ import { FunctionComponent } from "react";
 import { MutationStatus } from "@tanstack/react-query";
 import { Alert, AlertDescription, AlertTitle } from "../../ui/alert";
 import { NoPermission } from "../NoPermission";
+import { LearnMoreOverlay } from "@/components/LearnMoreOverlay";
 
 const settingsSchema = z.object({
   workspaceName: z.string().min(3).max(50),
@@ -56,6 +57,10 @@ export const WorkspaceSettingForm: FunctionComponent<{
   return (
     <>
       <div className="text-xl font-semibold">Workspace Settings</div>
+      <LearnMoreOverlay
+        title="Learn more about Workspace Settings"
+        videoUrl="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?si=K4bnEK2WJs2seLa-"
+      />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-4">
           {updateWorkspaceStatus === "success" && (

@@ -6,6 +6,7 @@ import axios from "axios";
 import Link from "next/link";
 import { FunctionComponent, useEffect, useMemo } from "react";
 import { SidebarLayout } from "../../Layout";
+import { LearnMoreOverlay } from "@/components/LearnMoreOverlay";
 
 const fetchAllImages = async ({
   token,
@@ -52,6 +53,11 @@ export const ImageGalleryInternal: FunctionComponent<{
   return (
     <SidebarLayout title="Gallery">
       <div className="container items-center mt-12 text-left">
+        <LearnMoreOverlay
+          title="Learn more about Image Gallery"
+          videoUrl="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?si=K4bnEK2WJs2seLa-"
+          className="mb-4"
+        />
         {images && (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {images.map((image) => (

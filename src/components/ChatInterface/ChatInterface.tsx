@@ -13,6 +13,7 @@ import {
   useConversationMessages,
 } from "./useConversationMessages";
 import { ConversationalError } from "./ConversationalError";
+import { LearnMoreOverlay } from "../LearnMoreOverlay";
 
 interface MessageBarProps {
   isPending: boolean;
@@ -133,7 +134,12 @@ export const ChatInterfaceComponent: FunctionComponent<{
         <div className="container flex flex-col items-center mt-12">
           {messages.length === 0 && (
             <div className="text-center w-full">
-              <div className="w-full mt-8 text-left">
+              <div className="w-full text-left">
+                <LearnMoreOverlay
+                  title="Learn more about Chat"
+                  videoUrl="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?si=K4bnEK2WJs2seLa-"
+                  className="mb-4"
+                />
                 <ModelSelector
                   chatCompletionOptions={chatCompletionOptions}
                   setChatCompletionOptions={setChatCompletionOptions}
