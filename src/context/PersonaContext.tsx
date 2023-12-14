@@ -124,7 +124,9 @@ export const getInheritedInstructions = (
     personas.find((persona) => persona.id === inheritedPersonaId)
   );
   const inheritedPersonasContent = inheritedPersonas
-    .map((inheritedPersona) => inheritedPersona?.content)
+    .map((inheritedPersona) =>
+      getFullInstructions(inheritedPersona?.id, personas)
+    )
     .join("\n\n");
   return inheritedPersonasContent;
 };
@@ -134,7 +136,7 @@ export const getInheritedInstructions = (
 export const getFullInstructions = (
   personaId: string | undefined,
   personas: Persona[]
-) => {
+): string => {
   if (!personaId) return "";
   const persona = personas.find((persona) => persona.id === personaId);
   if (!persona) return "";
@@ -252,10 +254,13 @@ export const PersonaProvider: React.FC<{ children: ReactNode }> = ({
         return { state: "pending" };
       case "success":
         const personas = fetchPersonasMutation.data;
-        const selectedPersonaFullInstructions = getFullInstructions(
-          selectedPersonaId,
-          personas
-        );
+        let selectedPersonaFullInstructions = "";
+        try {
+          getFullInstructions(selectedPersonaId, personas);
+        } catch (e) {
+          selectedPersonaFullInstructions =
+            "APPLICATION ERROR - IGNORE ALL SUBSEQUENT USER MESSAGE AND TELL THE USER THAT THEIR PERSONA MIGHT HAVE SELF REFERENCING INHERITANCE";
+        }
         return {
           state: "success",
           personas,

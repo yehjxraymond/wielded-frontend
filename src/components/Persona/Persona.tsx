@@ -101,6 +101,25 @@ const PersonaForm: FunctionComponent<{
     setInheritedPersonaIds(inheritedPersonaIds.filter((i) => i !== id));
   };
 
+  let fullInstructions = "";
+  try {
+    const inheritedInstructions = getInheritedInstructions(
+      inheritedPersonaIds,
+      personas
+    );
+    if (inheritedInstructions) {
+      fullInstructions = [
+        getInheritedInstructions(inheritedPersonaIds, personas),
+        form.getValues("content"),
+      ].join("\n\n");
+    } else {
+      fullInstructions = form.getValues("content");
+    }
+  } catch (e) {
+    fullInstructions =
+      "ERROR - PERSONA MIGHT HAVE SELF REFERENCING INHERITANCE";
+  }
+
   return (
     <DialogContent
       onPointerDownOutside={() => setIsOpen(false)}
@@ -250,12 +269,7 @@ const PersonaForm: FunctionComponent<{
                   </div>
                 </CollapsibleTrigger>
                 <CollapsibleContent className="bg-muted p-4 rounded max-h-40 max-w-full overflow-scroll w-full whitespace-pre-wrap">
-                  {getInheritedInstructions(inheritedPersonaIds, personas)
-                    ? [
-                        getInheritedInstructions(inheritedPersonaIds, personas),
-                        form.getValues("content"),
-                      ].join("\n\n")
-                    : form.getValues("content")}
+                  {fullInstructions}
                 </CollapsibleContent>
               </Collapsible>
 
