@@ -33,7 +33,9 @@ const MessageBarWithPersona: FunctionComponent<MessageBarProps> = ({
   const handleSubmit = (text: string) => {
     if (isPending) return;
     const personaText =
-      persona.state === "success" ? persona.selectedPersona?.content : "";
+      persona.state === "success"
+        ? persona.selectedPersonaFullInstructions
+        : "";
     if (!conversationId) {
       startConversation({ message: text, persona: personaText });
     } else {

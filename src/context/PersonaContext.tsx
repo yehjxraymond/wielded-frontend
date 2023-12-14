@@ -11,12 +11,14 @@ import {
 import { config } from "../config";
 import { useAuth } from "./AuthContext";
 import { useWorkspace } from "./WorkspaceContext";
+import { get } from "http";
 
 export interface Persona {
   id: string;
   name: string | null;
   description: string | null;
   content: string;
+  inheritedPersonaIds?: string[];
   created_at: string;
   updated_at: string;
 }
@@ -32,6 +34,7 @@ export interface PersonaSuccess {
   updatePersona: (persona: Partial<Persona>) => void;
   deletePersona: (personaId: string) => void;
   selectedPersona: Persona | undefined;
+  selectedPersonaFullInstructions: string;
   selectPersona: (personaId: string | undefined) => void;
 }
 
@@ -110,6 +113,38 @@ const deletePersonaApi = async ({
     }
   );
   return response.data;
+};
+
+export const getInheritedInstructions = (
+  inheritedPersonaIds: string[] | undefined,
+  personas: Persona[]
+) => {
+  if (!inheritedPersonaIds) return "";
+  const inheritedPersonas = inheritedPersonaIds.map((inheritedPersonaId) =>
+    personas.find((persona) => persona.id === inheritedPersonaId)
+  );
+  const inheritedPersonasContent = inheritedPersonas
+    .map((inheritedPersona) => inheritedPersona?.content)
+    .join("\n\n");
+  return inheritedPersonasContent;
+};
+
+// Given a personaId, return the full instructions for that persona
+// Full instruction is the content of the persona + the content of all the personas it inherits from, separated by line breaks
+export const getFullInstructions = (
+  personaId: string | undefined,
+  personas: Persona[]
+) => {
+  if (!personaId) return "";
+  const persona = personas.find((persona) => persona.id === personaId);
+  if (!persona) return "";
+  const inheritedPersonasContent = getInheritedInstructions(
+    persona.inheritedPersonaIds,
+    personas
+  );
+  return inheritedPersonasContent == ""
+    ? persona.content
+    : `${inheritedPersonasContent}\n\n${persona.content}`;
 };
 
 export const PersonaProvider: React.FC<{ children: ReactNode }> = ({
@@ -217,6 +252,10 @@ export const PersonaProvider: React.FC<{ children: ReactNode }> = ({
         return { state: "pending" };
       case "success":
         const personas = fetchPersonasMutation.data;
+        const selectedPersonaFullInstructions = getFullInstructions(
+          selectedPersonaId,
+          personas
+        );
         return {
           state: "success",
           personas,
@@ -225,6 +264,7 @@ export const PersonaProvider: React.FC<{ children: ReactNode }> = ({
           updatePersona,
           deletePersona,
           selectedPersona,
+          selectedPersonaFullInstructions,
           selectPersona,
         };
       case "error":

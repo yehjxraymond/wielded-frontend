@@ -1,6 +1,10 @@
-import { PersonaSuccess, usePersona } from "@/context/PersonaContext";
+import {
+  PersonaSuccess,
+  getInheritedInstructions,
+  usePersona,
+} from "@/context/PersonaContext";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User2 } from "lucide-react";
+import { AlertTriangle, ChevronDown, ChevronUp, User2 } from "lucide-react";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -25,6 +29,12 @@ import {
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { LearnMoreOverlay } from "../LearnMoreOverlay";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { PersonaInheritanceCombobox } from "./PersonaInheritanceCombobox";
 
 type FormType = { type: "create" } | { type: "edit"; id: string };
 
@@ -32,6 +42,7 @@ const personaSchema = z.object({
   name: z.string(),
   description: z.string(),
   content: z.string(),
+  inheritedPersonaIds: z.array(z.string()).optional(),
 });
 
 const PersonaForm: FunctionComponent<{
@@ -41,6 +52,7 @@ const PersonaForm: FunctionComponent<{
   updatePersona: PersonaSuccess["updatePersona"];
   deletePersona: PersonaSuccess["deletePersona"];
   setIsOpen: (isOpen: boolean) => void;
+  isOpen: boolean;
 }> = ({
   formType,
   personas,
@@ -48,14 +60,21 @@ const PersonaForm: FunctionComponent<{
   createPersona,
   updatePersona,
   deletePersona,
+  isOpen,
 }) => {
+  const [isInheritanceOpen, setIsInheritanceOpen] = useState(false);
   const defaultValues =
     formType.type === "edit"
       ? personas.find((p) => p.id === formType.id)
       : undefined;
+  const [inheritedPersonaIds, setInheritedPersonaIds] = useState<string[]>([]);
   const form = useForm<z.infer<typeof personaSchema>>({
     resolver: zodResolver(personaSchema),
   });
+  useEffect(() => {
+    if (isOpen)
+      setInheritedPersonaIds(defaultValues?.inheritedPersonaIds || []);
+  }, [isOpen, defaultValues]);
   useEffect(() => {
     if (defaultValues) {
       form.setValue("name", defaultValues.name || "");
@@ -69,17 +88,24 @@ const PersonaForm: FunctionComponent<{
   }, [defaultValues, form]);
   function onSubmit(values: z.infer<typeof personaSchema>) {
     if (formType.type === "create") {
-      createPersona(values);
+      createPersona({ ...values, inheritedPersonaIds });
     } else {
-      updatePersona({ ...values, id: formType.id });
+      updatePersona({ ...values, id: formType.id, inheritedPersonaIds });
     }
   }
   const onDelete = (id: string) => {
     window.confirm("Are you sure you want to delete this persona?") &&
       deletePersona(id);
   };
+  const handleRemovePersonaInheritance = (id: string) => {
+    setInheritedPersonaIds(inheritedPersonaIds.filter((i) => i !== id));
+  };
+
   return (
-    <DialogContent onPointerDownOutside={() => setIsOpen(false)}>
+    <DialogContent
+      onPointerDownOutside={() => setIsOpen(false)}
+      className="max-h-full overflow-scroll"
+    >
       <DialogHeader>
         <DialogTitle>
           {formType.type === "create" ? "Create a new persona" : "Edit persona"}
@@ -159,6 +185,80 @@ const PersonaForm: FunctionComponent<{
                 )}
               />
 
+              <Collapsible onOpenChange={setIsInheritanceOpen}>
+                <CollapsibleTrigger className="flex justify-between w-full items-center mb-2">
+                  <FormLabel>
+                    Inherited Persona ({inheritedPersonaIds.length})
+                  </FormLabel>
+                  <div>
+                    {isInheritanceOpen ? (
+                      <ChevronDown className="w-5 h-5" />
+                    ) : (
+                      <ChevronUp className="w-5 h-5" />
+                    )}
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="bg-muted p-4 rounded">
+                  <div className="space-y-4">
+                    {inheritedPersonaIds?.map((id) => (
+                      <div
+                        key={id}
+                        className="flex font-medium justify-between"
+                      >
+                        <div>
+                          {personas.find((p) => p.id === id)?.name || (
+                            <span className="text-destructive">
+                              <AlertTriangle className="w-4 h-4 inline-block" />{" "}
+                              MISSING PERSONA
+                            </span>
+                          )}
+                        </div>
+                        <div
+                          className="cursor-pointer"
+                          onClick={() => handleRemovePersonaInheritance(id)}
+                        >
+                          Remove
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <PersonaInheritanceCombobox
+                    personas={personas.filter(
+                      (p) => p.id !== defaultValues?.id
+                    )}
+                    onAddInheritance={(id) => {
+                      const existingIds = inheritedPersonaIds;
+                      if (existingIds) {
+                        setInheritedPersonaIds([...existingIds, id]);
+                      } else {
+                        setInheritedPersonaIds([id]);
+                      }
+                    }}
+                  />
+                </CollapsibleContent>
+              </Collapsible>
+
+              <Collapsible onOpenChange={setIsInheritanceOpen}>
+                <CollapsibleTrigger className="flex justify-between w-full items-center mb-2">
+                  <FormLabel>Preview Full Instructions</FormLabel>
+                  <div>
+                    {isInheritanceOpen ? (
+                      <ChevronDown className="w-5 h-5" />
+                    ) : (
+                      <ChevronUp className="w-5 h-5" />
+                    )}
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="bg-muted p-4 rounded max-h-40 max-w-full overflow-scroll w-full whitespace-pre-wrap">
+                  {getInheritedInstructions(inheritedPersonaIds, personas)
+                    ? [
+                        getInheritedInstructions(inheritedPersonaIds, personas),
+                        form.getValues("content"),
+                      ].join("\n\n")
+                    : form.getValues("content")}
+                </CollapsibleContent>
+              </Collapsible>
+
               <div className="flex justify-end space-x-4">
                 {formType.type === "edit" && (
                   <Button
@@ -203,6 +303,7 @@ export const PersonaInternal: FunctionComponent<PersonaSuccess> = ({
     <SidebarLayout>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <PersonaForm
+          isOpen={isOpen}
           formType={formType}
           personas={personas}
           setIsOpen={setIsOpen}
