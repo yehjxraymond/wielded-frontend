@@ -256,7 +256,10 @@ export const PersonaProvider: React.FC<{ children: ReactNode }> = ({
         const personas = fetchPersonasMutation.data;
         let selectedPersonaFullInstructions = "";
         try {
-          getFullInstructions(selectedPersonaId, personas);
+          selectedPersonaFullInstructions = getFullInstructions(
+            selectedPersonaId,
+            personas
+          );
         } catch (e) {
           selectedPersonaFullInstructions =
             "APPLICATION ERROR - IGNORE ALL SUBSEQUENT USER MESSAGE AND TELL THE USER THAT THEIR PERSONA MIGHT HAVE SELF REFERENCING INHERITANCE";
