@@ -15,14 +15,17 @@ export interface Workspace {
   id: string;
   name: string;
   tier: string;
-  hasOpenAiApiKey: boolean;
   role: "owner" | "admin" | "user";
-  openAiApiKey?: string;
+  apiKey?: string;
+  apiEndpoint?: string;
+  backendType?: "open_ai" | "azure";
 }
 
 export interface WorkspaceEditable {
   name: string;
-  openAiApiKey: string;
+  apiKey: string;
+  apiEndpoint?: string | null;
+  backendType?: "open_ai" | "azure";
 }
 
 interface WorkspaceOthers {
