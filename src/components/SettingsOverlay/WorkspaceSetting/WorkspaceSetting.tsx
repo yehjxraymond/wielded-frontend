@@ -134,7 +134,7 @@ export const WorkspaceSettingForm: FunctionComponent<{
                   </FormControl>
                   <SelectContent>
                     <SelectItem value="open_ai">OpenAI</SelectItem>
-                    <SelectItem value="azure">Azure</SelectItem>
+                    <SelectItem value="azure">Azure (Enterprise Only)</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
