@@ -44,6 +44,7 @@ const tiers = [
     description: "Dedicated support and infrastructure for your company.",
     features: [
       "Everything in team",
+      "Azure OpenAI API backend",
       "Data protection alerts",
       "Quota management",
       "Priority support",
