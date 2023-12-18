@@ -331,6 +331,7 @@ export const PersonaInternal: FunctionComponent<PersonaSuccess> = ({
             <LearnMoreOverlay
               title="Learn more about Persona"
               videoUrl="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?si=K4bnEK2WJs2seLa-"
+              disabled
             />
             <p className="text-sm text-secondary-foreground">
               Personas are custom instructions that are passed as context at the

@@ -262,6 +262,7 @@ const BillingSettingInternal: FunctionComponent<{ workspaceId: string }> = ({
       <LearnMoreOverlay
         title="Learn more about Billing Settings"
         videoUrl="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?si=K4bnEK2WJs2seLa-"
+        disabled
       />
       {isNoSubscription && (
         <NoSubscription checkout={checkout} members={members.length} />

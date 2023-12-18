@@ -269,6 +269,7 @@ export const MembersSettingForm: FunctionComponent<{
       <LearnMoreOverlay
         title="Learn more about Members Settings"
         videoUrl="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?si=K4bnEK2WJs2seLa-"
+        disabled
       />
       <div className="font-medium mt-4">Invite Member</div>
       {inviteMemberError && (

@@ -54,8 +54,8 @@ export const ImageGalleryInternal: FunctionComponent<{
     <SidebarLayout title="Gallery">
       <div className="container items-center mt-12 text-left">
         <LearnMoreOverlay
-          title="Learn more about Image Gallery"
-          videoUrl="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?si=K4bnEK2WJs2seLa-"
+          title="Learn more about Image Generator & Gallery"
+          videoUrl="https://www.youtube-nocookie.com/embed/rP7_STmtiHc?si=R40ravuRXInibtSl"
           className="mb-4"
         />
         {images && (
@@ -83,7 +83,5 @@ export const ImageGallery: FunctionComponent = () => {
   const workspaceState = useWorkspace();
   // TODO Skeleton loader
   if (workspaceState.state !== "success") return null;
-  return (
-    <ImageGalleryInternal workspaceId={workspaceState.currentWorkspace} />
-  );
+  return <ImageGalleryInternal workspaceId={workspaceState.currentWorkspace} />;
 };

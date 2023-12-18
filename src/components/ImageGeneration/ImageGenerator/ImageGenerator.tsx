@@ -57,7 +57,7 @@ export const ImageGeneratorInternal: FunctionComponent<{
               <div className="w-full">
                 <LearnMoreOverlay
                   title="Learn more about Image Generator"
-                  videoUrl="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?si=K4bnEK2WJs2seLa-"
+                  videoUrl="https://www.youtube-nocookie.com/embed/rP7_STmtiHc?si=R40ravuRXInibtSl"
                   className="mb-4"
                 />
                 {error && (

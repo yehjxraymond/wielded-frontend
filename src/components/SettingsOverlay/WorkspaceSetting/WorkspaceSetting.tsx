@@ -84,8 +84,12 @@ export const WorkspaceSettingForm: FunctionComponent<{
     <>
       <div className="text-xl font-semibold">Workspace Settings</div>
       <LearnMoreOverlay
-        title="Learn more about Workspace Settings"
-        videoUrl="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?si=K4bnEK2WJs2seLa-"
+        title="Set Up with OpenAI API"
+        videoUrl="https://www.youtube-nocookie.com/embed/gOPk8Ep2mTs?si=iTwsZQAkHfRVyEUg"
+      />
+      <LearnMoreOverlay
+        title="Set Up with Azure"
+        videoUrl="https://www.youtube-nocookie.com/embed/Sl4yKQUPpKc?si=x3rWrD3eqc5YibPK"
       />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-4">

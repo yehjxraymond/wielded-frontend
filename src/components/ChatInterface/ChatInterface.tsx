@@ -141,6 +141,7 @@ export const ChatInterfaceComponent: FunctionComponent<{
                   title="Learn more about Chat"
                   videoUrl="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?si=K4bnEK2WJs2seLa-"
                   className="mb-4"
+                  disabled
                 />
                 <ModelSelector
                   chatCompletionOptions={chatCompletionOptions}
