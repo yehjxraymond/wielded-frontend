@@ -35,7 +35,7 @@ import {
 const settingsSchema = z.object({
   workspaceName: z.string().min(3).max(50),
   apiKey: z.string(),
-  apiEndpoint: z.string().optional(),
+  apiEndpoint: z.string().optional().or(z.null()),
   backendType: z.enum(["open_ai", "azure"]),
 });
 
@@ -134,7 +134,9 @@ export const WorkspaceSettingForm: FunctionComponent<{
                   </FormControl>
                   <SelectContent>
                     <SelectItem value="open_ai">OpenAI</SelectItem>
-                    <SelectItem value="azure">Azure (Enterprise Only)</SelectItem>
+                    <SelectItem value="azure">
+                      Azure (Enterprise Only)
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
