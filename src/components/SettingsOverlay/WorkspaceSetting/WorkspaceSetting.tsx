@@ -35,7 +35,7 @@ import {
 const settingsSchema = z.object({
   workspaceName: z.string().min(3).max(50),
   apiKey: z.string(),
-  apiEndpoint: z.string().optional().or(z.null()),
+  apiEndpoint: z.string().optional(),
   backendType: z.enum(["open_ai", "azure"]),
 });
 
@@ -50,7 +50,7 @@ export const WorkspaceSettingForm: FunctionComponent<{
       workspaceName: workspace.name || "My Workspace",
       apiKey: workspace.apiKey,
       backendType: workspace.backendType || "open_ai",
-      apiEndpoint: workspace.apiEndpoint,
+      apiEndpoint: workspace.apiEndpoint || undefined,
     },
   });
   const isPending = updateWorkspaceStatus === "pending";
