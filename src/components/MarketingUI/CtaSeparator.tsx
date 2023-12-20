@@ -5,7 +5,8 @@ import { FunctionComponent } from "react";
 export const CtaSeparator: FunctionComponent<{
   title?: string;
   subtitle?: string;
-}> = ({ title, subtitle }) => {
+  source?: string;
+}> = ({ title, subtitle, source }) => {
   return (
     <div className="container py-24 sm:py-32 lg:flex lg:items-center lg:justify-between">
       <div>
@@ -21,7 +22,7 @@ export const CtaSeparator: FunctionComponent<{
         <Link href="/contact">
           <Button variant="secondary">Contact Sales</Button>
         </Link>
-        <Link href="/login?source=cta-bottom">
+        <Link href={`/login?source=${source || "cta-separator"}`}>
           <Button>Get started</Button>
         </Link>
       </div>

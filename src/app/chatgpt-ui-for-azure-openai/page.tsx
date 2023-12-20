@@ -172,6 +172,7 @@ const Content = () => {
       <CtaSeparator
         title="Launch your private ChatGPT using Azure OpenAI today."
         subtitle="Need help? Contact us."
+        source="chatgpt-ui-for-azure-openai-cta-separator"
       />
       <FaqSection faqs={faqs} className="my-10" />
     </>
@@ -184,8 +185,4 @@ export const metadata: Metadata = {
   title: "Custom ChatGPT Interface for Teams on Azure OpenAI - Wielded",
   description:
     "Deploy a tailored ChatGPT interface for your team using Azure OpenAI. Manage access, integrate easily, and control API costs with Wielded's cutting-edge productivity tools.",
-  metadataBase:
-    process.env.NODE_ENV === "production"
-      ? new URL("https://www.wielded.com")
-      : undefined,
 };

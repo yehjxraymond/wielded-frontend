@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { FunctionComponent } from "react";
 
 export const FeatureHero: FunctionComponent<{
   heading: string;
   subheading: string;
   videoUrl: string;
-}> = ({ heading, subheading, videoUrl }) => {
+  source?: string;
+}> = ({ heading, subheading, videoUrl, source }) => {
   return (
     <div className="pt-10 lg:pt-20 pb-10 lg:pb-20 container grid lg:grid-cols-2 gap-6">
       <div>
@@ -16,8 +18,12 @@ export const FeatureHero: FunctionComponent<{
           {subheading}
         </p>
         <div className="space-x-4 my-10">
-          <Button>Get Started with Wielded</Button>
-          <Button variant="secondary">Contact Sales</Button>
+          <Link href={`/login?source=${source || "cta-separator"}`}>
+            <Button>Get started</Button>
+          </Link>
+          <Link href="/contact">
+            <Button variant="secondary">Contact Sales</Button>
+          </Link>
         </div>
       </div>
       <div>
