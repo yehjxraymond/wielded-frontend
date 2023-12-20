@@ -6,14 +6,12 @@ import { useState } from "react";
 
 const FORM_NAME = "Contact Form";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const createFormDataObj = (data: any) => {
+const createFormDataObj = (data: any): any => {
   const formData = new FormData();
   Object.keys(data).forEach((k) => {
     formData.append(k, data[k]);
   });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return formData as any;
+  return formData;
 };
 
 export const ContactForm = () => {
