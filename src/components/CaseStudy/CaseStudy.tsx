@@ -1,15 +1,10 @@
 "use client";
 import { HeaderPublic } from "@/components/HeaderPublic";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import Image from "next/image";
 import { FunctionComponent } from "react";
 import { PersonaGallery } from "../ChatInterface/PersonaSelector";
 import { Button } from "../ui/button";
+import { FaqSection } from "../FaqSection";
 
 export interface CaseStudyData {
   idealCustomer: string;
@@ -207,41 +202,10 @@ export const CaseStudy: FunctionComponent<{ caseStudyData: CaseStudyData }> = ({
       </div>
 
       {/* FAQs */}
-      <div className="container my-24">
-        <h2 className="text-2xl font-semibold mb-4 tracking-tight">
-          Frequently Asked Questions
-        </h2>
-        <div className="grid gap-8 grid-cols-2">
-          <Accordion type="single" collapsible className="w-full">
-            {caseStudyData.faqs
-              .filter((_, i) => i % 2 == 0)
-              .map((faq, index) => {
-                return (
-                  <AccordionItem value={index.toString()} key={index}>
-                    <AccordionTrigger className="text-left">
-                      {faq.question}
-                    </AccordionTrigger>
-                    <AccordionContent>{faq.answer}</AccordionContent>
-                  </AccordionItem>
-                );
-              })}
-          </Accordion>
-          <Accordion type="single" collapsible className="w-full">
-            {caseStudyData.faqs
-              .filter((_, i) => i % 2 != 0)
-              .map((faq, index) => {
-                return (
-                  <AccordionItem value={index.toString()} key={index}>
-                    <AccordionTrigger className="text-left">
-                      {faq.question}
-                    </AccordionTrigger>
-                    <AccordionContent>{faq.answer}</AccordionContent>
-                  </AccordionItem>
-                );
-              })}
-          </Accordion>
-        </div>
-      </div>
+      <FaqSection
+        title="Frequently Asked Questions"
+        faqs={caseStudyData.faqs}
+      />
     </>
   );
 };
