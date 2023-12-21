@@ -17,6 +17,8 @@ const staticPaths = [
   "for-product-manager",
   "for-produce-team",
   "for-sales-team",
+  "chatgpt-ui-for-azure-openai",
+  "contact",
 ];
 
 const urlXml = (url: string, priority = 0.8) => `
