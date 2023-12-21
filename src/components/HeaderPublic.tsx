@@ -154,6 +154,7 @@ ListItem.displayName = "ListItem";
 
 const MobileMenu = () => {
   const [useCasesOpen, setUseCasesOpen] = React.useState(false);
+  const [productsOpen, setProductsOpen] = React.useState(false);
   return (
     <Sheet>
       <SheetTrigger className="lg:hidden">
@@ -164,6 +165,21 @@ const MobileMenu = () => {
           <div className="text-lg font-medium mb-4">
             <Link href="/">Home</Link>
           </div>
+          <div
+            className="text-lg font-medium mb-4 cursor-pointer"
+            onClick={() => setProductsOpen(!productsOpen)}
+          >
+            Products
+          </div>
+          {productsOpen && (
+            <div className="pl-4">
+              {productFeatures.map((component) => (
+                <div className="font-medium mb-4" key={component.title}>
+                  <Link href={component.href}>{component.title}</Link>
+                </div>
+              ))}
+            </div>
+          )}
           <div
             className="text-lg font-medium mb-4 cursor-pointer"
             onClick={() => setUseCasesOpen(!useCasesOpen)}
