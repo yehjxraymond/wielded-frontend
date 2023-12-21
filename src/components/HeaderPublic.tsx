@@ -54,6 +54,16 @@ const useCases: { title: string; href: string; description: string }[] = [
   },
 ];
 
+const productFeatures: { title: string; href: string; description: string }[] =
+  [
+    {
+      title: "Private ChatGPT with Azure OpenAI",
+      description:
+        "Deploy a private instance of ChatGPT for your team, leveraging on your Azure subscription.",
+      href: "/chatgpt-ui-for-azure-openai",
+    },
+  ];
+
 export function NavigationDropdownMenu() {
   return (
     <NavigationMenu className="hidden lg:block">
@@ -64,6 +74,22 @@ export function NavigationDropdownMenu() {
               Home
             </NavigationMenuLink>
           </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Product</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <div className="p-4 w-96">
+              {productFeatures.map((component) => (
+                <ListItem
+                  key={component.title}
+                  title={component.title}
+                  href={component.href}
+                >
+                  {component.description}
+                </ListItem>
+              ))}
+            </div>
+          </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuTrigger>Use Cases</NavigationMenuTrigger>
@@ -89,9 +115,9 @@ export function NavigationDropdownMenu() {
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link href="https://newsletter.wielded.com" legacyBehavior passHref>
+          <Link href="/contact?source=nav-bar" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Newsletter
+              Contact
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
