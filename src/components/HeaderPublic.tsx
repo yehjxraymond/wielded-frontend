@@ -62,6 +62,12 @@ const productFeatures: { title: string; href: string; description: string }[] =
         "Deploy a private instance of ChatGPT for your team, leveraging on your Azure subscription.",
       href: "/chatgpt-ui-for-azure-openai",
     },
+    {
+      title: "Generating Images in Bulk with Dall-E 3",
+      description:
+        "Generate up to 50 images per minute with Dall-E 3, and unlock the creative potential of your team.",
+      href: "/image-generation-with-dalle3",
+    },
   ];
 
 export function NavigationDropdownMenu() {

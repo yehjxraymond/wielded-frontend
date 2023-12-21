@@ -18,10 +18,10 @@ export const FeatureHero: FunctionComponent<{
           {subheading}
         </p>
         <div className="space-x-4 my-10">
-          <Link href={`/login?source=${source || "cta-separator"}`}>
+          <Link href={`/login?source=${source || "feature-hero"}`}>
             <Button>Get started</Button>
           </Link>
-          <Link href="/contact">
+          <Link href={`/contact?source=${source || "feature-hero"}`}>
             <Button variant="secondary">Contact Sales</Button>
           </Link>
         </div>

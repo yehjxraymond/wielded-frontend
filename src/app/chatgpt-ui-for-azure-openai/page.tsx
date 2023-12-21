@@ -140,6 +140,7 @@ const Content = () => {
         heading="Custom ChatGPT Interface for Your Team with Azure OpenAI"
         subheading="Deploy a private instance of ChatGPT for your team, leveraging on your existing Azure OpenAI Service subscription."
         videoUrl="https://www.youtube-nocookie.com/embed/gOPk8Ep2mTs?si=fA-86WsyHUCx578H&controls=0"
+        source="chatgpt-ui-for-azure-openai"
       />
       <TitleSeparator title="Simple integration and cost management" />
       <FeatureHighlight
