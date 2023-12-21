@@ -1,54 +1,55 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { config } from "@/config";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-const FORM_NAME = "Contact Form";
+interface FormFields {
+  firstName: string;
+  lastName: string;
+  company: string;
+  email: string;
+  message: string;
+  source: string;
+}
 
-const createFormDataObj = (data: any): any => {
-  const formData = new FormData();
-  Object.keys(data).forEach((k) => {
-    formData.append(k, data[k]);
-  });
-  return formData;
+const submitContactForm = async (formData: FormFields) => {
+  const { data } = await axios.post(
+    `${config.baseUrl}/form-submissions`,
+    formData
+  );
+  return data;
+};
+
+export const useContactFormSubmit = () => {
+  return useMutation({ mutationFn: submitContactForm });
 };
 
 export const ContactForm = () => {
   const searchParams = useSearchParams();
 
-  const [formState, setFormState] = useState<
-    "idle" | "submitting" | "success" | "error"
-  >("idle");
+  const { mutate: submitForm, isSuccess, isError } = useContactFormSubmit();
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    submitForm({
+      firstName,
+      lastName,
+      company,
+      email,
+      message,
+      source: searchParams.get("source") || "enterprise",
+    });
+  };
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [company, setCompany] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    // This `data` object is what's passed to the createFormDataObj. It needs all of your form fields, where the key is the name= attribute and the value is the value=
-    const data = {
-      "form-name": FORM_NAME,
-      FirstName: firstName,
-      LastName: lastName,
-      Email: email,
-      Company: company,
-      Message: message,
-      Source: searchParams.get("source") || "",
-    };
-    setFormState("submitting");
-    // This POSTs your encoded form to Netlify with the required headers (for text; headers will be different for POSTing a file) and, on success, redirects to the custom success page using Gatsby's `navigate` helper function that we imported at the top
-    fetch("/", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams(createFormDataObj(data)).toString(),
-    })
-      .then(() => setFormState("success"))
-      .catch((error) => setFormState("error"));
-    // This is required to prevent the default onSubmit behavior
-    e.preventDefault();
-  };
 
   return (
     <div className="relative isolate bg-white">
@@ -68,9 +69,8 @@ export const ContactForm = () => {
           name="contact"
           className="px-6 pb-24 pt-20 sm:pb-32 lg:px-8 lg:py-48"
           onSubmit={handleSubmit}
-          data-netlify="true"
         >
-          {formState === "success" && (
+          {isSuccess && (
             <div className="mx-auto max-w-xl lg:mr-0 lg:max-w-lg">
               <h2 className="text-3xl font-bold tracking-tight text-gray-900">
                 Thank you for contacting us!
@@ -80,7 +80,12 @@ export const ContactForm = () => {
               </p>
             </div>
           )}
-          {formState !== "success" && (
+          {isError && (
+            <div>
+              An error occurred while sending your message. Please try again.
+            </div>
+          )}
+          {!isSuccess && (
             <div className="mx-auto max-w-xl lg:mr-0 lg:max-w-lg">
               <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
                 <div>
