@@ -57,6 +57,12 @@ const useCases: { title: string; href: string; description: string }[] = [
 const productFeatures: { title: string; href: string; description: string }[] =
   [
     {
+      title: "ChatGPT Interface for Your Team",
+      description:
+        "Deploy an organization-wide ChatGPT and consolidate billing for the entire team.",
+      href: "/chatgpt-for-teams",
+    },
+    {
       title: "Private ChatGPT with Azure OpenAI",
       description:
         "Deploy a private instance of ChatGPT for your team, leveraging on your Azure subscription.",

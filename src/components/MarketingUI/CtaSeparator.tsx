@@ -19,7 +19,7 @@ export const CtaSeparator: FunctionComponent<{
         </p>
       </div>
       <div className="mt-10 flex items-center gap-x-6 lg:mt-0 lg:flex-shrink-0">
-        <Link href="/contact">
+        <Link href={`/contact?source=${source || "cta-separator"}`}>
           <Button variant="secondary">Contact Sales</Button>
         </Link>
         <Link href={`/login?source=${source || "cta-separator"}`}>

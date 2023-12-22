@@ -104,7 +104,7 @@ const Content = () => {
         heading="Your Creations at a Glance"
         subheading="Seamless visual and textual search"
         description="Easily browse through all generated images in our intuitive gallery view. Looking for something specific? Use the text search feature to quickly find your past creations."
-        imageUrl="/assets/images/dalle-3-gallery.png"
+        imageUrl="/assets/images/dalle-3-gallery-light.png"
         imageAlt="Searching through generated images in gallery"
       />
       <CtaSeparator

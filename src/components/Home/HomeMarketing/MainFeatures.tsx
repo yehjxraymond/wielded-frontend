@@ -154,6 +154,71 @@ export const MainFeatures = () => {
           )}
         </div>
       </div>
+      {/* Limitless Image Generation with Dall-E 3 */}
+      <div className="container lg:flex mb-52 items-center">
+        <div className="max-w-2xl lg:order-2 lg:ml-10">
+          <h2 className="text-3xl font-semibold tracking-tight">
+            Limitless Image Generation with Dall-E 3
+          </h2>
+          <div className="leading-6 my-8">
+            Unleash creativity across your team without worrying about rate
+            limits. Turn every team member into a digital artist with Wielded.
+          </div>
+          <div className="text-xl font-semibold tracking-tight mb-2">
+            Creativity without boundaries
+          </div>
+          <div className="leading-6">
+            Dall-E 3 Access for the Entire Team. Forget the hassle of individual
+            subscriptions—every team member can harness the capability of Dall-E
+            3 without constraints. Generate high-quality images as a team,
+            elevating your project visuals without limitations.
+          </div>
+          <div className="text-xl font-semibold tracking-tight mt-6 mb-2">
+            Unlimited Image Generation
+          </div>
+          <div className="leading-6">
+            Create more, wait less. With Wielded, your team can generate up to
+            50 images per minute, bypassing the individual rate limits typically
+            encountered. Refer to the OpenAI rate limits for more details.
+          </div>
+          <div className="text-xl font-semibold tracking-tight mt-6 mb-2">
+            Granular Style Controls
+          </div>
+          <div className="leading-6">
+            Control your creative output with simple and detailed
+            prompts—achieve the exact style your project requires. Start with a
+            simple prompt and let Wielded refine it into a detailed one,
+            offering you options for creative exploration or consistent imagery.
+          </div>
+          <div className="text-xl font-semibold tracking-tight mt-6 mb-2">
+            Your Creations at a Glance
+          </div>
+          <div className="leading-6">
+            Seamlessly browse through all generated images in our intuitive
+            gallery view. Looking for something specific? Use the text search
+            feature to quickly find your past creations.
+          </div>
+        </div>
+        <div className="my-6 lg:my-0 lg:order-1">
+          {isDark ? (
+            <Image
+              className="rounded-xl drop-shadow-lg"
+              src="/assets/images/dalle-3-gallery-dark.png"
+              width={900}
+              height={800}
+              alt="Dall-E 3 Image Generation UI"
+            />
+          ) : (
+            <Image
+              className="rounded-xl drop-shadow-lg"
+              src="/assets/images/dalle-3-gallery-light.png"
+              width={900}
+              height={800}
+              alt="Dall-E 3 Image Generation UI"
+            />
+          )}
+        </div>
+      </div>
     </>
   );
 };
