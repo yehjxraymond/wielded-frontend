@@ -14,8 +14,10 @@ const tiers = [
       "Start free for individuals and teams of 2. No credit card required.",
     features: [
       "ChatGPT Access",
+      "Image Generation with Dall-E 3",
       "Unlimited conversations",
       "Up to 5 personas",
+      "Up to 50 Dall-E 3 images stored",
       "Up to 5 prompt templates (coming soon)",
     ],
     mostPopular: false,
@@ -31,6 +33,7 @@ const tiers = [
       "Everything in free",
       "Unlimited personas",
       "Email support",
+      "Unlimited image storage for Dall-E 3",
       "Unlimited prompt templates (coming soon)",
       "Prompt masterclass access (coming soon)",
     ],
