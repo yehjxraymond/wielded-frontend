@@ -1,5 +1,6 @@
 "use client";
 
+import { gtmEvent } from "@/components/Analytics";
 import { Button } from "@/components/ui/button";
 import { config } from "@/config";
 import { useMutation } from "@tanstack/react-query";
@@ -25,7 +26,14 @@ const submitContactForm = async (formData: FormFields) => {
 };
 
 export const useContactFormSubmit = () => {
-  return useMutation({ mutationFn: submitContactForm });
+  return useMutation({
+    mutationFn: submitContactForm,
+    onSuccess: async () => {
+      await gtmEvent({
+        event: "contact_form_submit",
+      });
+    },
+  });
 };
 
 export const ContactForm = () => {
