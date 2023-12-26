@@ -20,6 +20,7 @@ const staticPaths = [
   "chatgpt-ui-for-azure-openai",
   "chatgpt-for-teams",
   "image-generation-with-dalle3",
+  "teaching-generative-ai-for-educator",
   "contact",
 ];
 

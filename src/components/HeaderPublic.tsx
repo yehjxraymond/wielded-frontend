@@ -74,6 +74,12 @@ const productFeatures: { title: string; href: string; description: string }[] =
         "Generate up to 50 images per minute with Dall-E 3, and unlock the creative potential of your team.",
       href: "/image-generation-with-dalle3",
     },
+    {
+      title: "Teaching Generative AI with Wielded",
+      description:
+        "Deploy a generative AI environment for your classroom with all the tools you need to teach AI.",
+      href: "/teaching-generative-ai-for-educator",
+    },
   ];
 
 export function NavigationDropdownMenu() {
