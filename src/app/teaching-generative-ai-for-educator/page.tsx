@@ -154,8 +154,8 @@ const Content = () => {
     <>
       <HeaderPublic />
       <FeatureHero
-        heading="Deploy ChatGPT for Your Team with Wielded"
-        subheading="Unleash the full potential of collaborative AI across your organization for unmatched productivity."
+        heading="Teaching Generative AI with Wielded"
+        subheading="Empower your teaching with instant access to student accounts for ChatGPT and Dall-E 3. Bring OpenAI's most powerful tools into your generative AI classroom."
         videoUrl="https://www.youtube-nocookie.com/embed/3lZb8Wym6tE?si=Xux9dM3Tp6DZl3rM&controls=0"
         source="teaching-generative-ai-educator"
       />
