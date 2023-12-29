@@ -63,6 +63,12 @@ const productFeatures: { title: string; href: string; description: string }[] =
       href: "/chatgpt-for-teams",
     },
     {
+      title: "Creating Custom AI Chatbots with Personas",
+      description:
+        "Using custom instructions, create AI chatbots that are tailored to your business workflows.",
+      href: "/creating-custom-ai-chatbot-with-persona",
+    },
+    {
       title: "Private ChatGPT with Azure OpenAI",
       description:
         "Deploy a private instance of ChatGPT for your team, leveraging on your Azure subscription.",
