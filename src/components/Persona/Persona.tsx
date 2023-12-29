@@ -328,17 +328,14 @@ export const PersonaInternal: FunctionComponent<PersonaSuccess> = ({
         <div className="lg:flex px-4 justify-between items-end mt-12">
           <div className="max-w-xl">
             <h1 className="text-2xl">Persona</h1>
+            <p className="text-sm text-secondary-foreground">
+              Personas allow you to get highly customised output from the AI and
+              switch gears between different tasks quickly
+            </p>
             <LearnMoreOverlay
               title="Learn more about Persona"
-              videoUrl="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?si=K4bnEK2WJs2seLa-"
-              disabled
+              videoUrl="https://www.youtube-nocookie.com/embed/gae3e4l-TLs?si=TVfAW-1rFmKzbDlW"
             />
-            <p className="text-sm text-secondary-foreground">
-              Personas are custom instructions that are passed as context at the
-              start of your chats. They allow you to get highly customised
-              output from the AI and switch gears between different tasks
-              quickly
-            </p>
           </div>
           <div className="mt-6 lg:mt-0">
             <Button
