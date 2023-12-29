@@ -21,6 +21,7 @@ const staticPaths = [
   "chatgpt-for-teams",
   "image-generation-with-dalle3",
   "teaching-generative-ai-for-educator",
+  "creating-custom-ai-chatbot-with-persona",
   "contact",
 ];
 
