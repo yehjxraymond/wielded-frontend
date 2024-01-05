@@ -11,9 +11,10 @@ import { useRouter } from "next/navigation";
 
 interface AuthContextProps {
   token: string | null;
-  setToken: React.Dispatch<React.SetStateAction<string | null>>;
+  setToken: (token: string | null) => void;
   isLoggedIn: boolean;
   logout: () => void;
+  isLoading: boolean;
 }
 
 // initializing the context with undefined
@@ -22,6 +23,7 @@ export const AuthContext = createContext<AuthContextProps>({
   setToken: () => {},
   logout: () => {},
   isLoggedIn: false,
+  isLoading: true,
 });
 
 const isTokenExpired = (token: string) => {
@@ -34,7 +36,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const { push } = useRouter();
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setTokenLocal] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Load the token from the storage on mount
   useEffect(() => {
@@ -42,17 +45,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       if (value && !isTokenExpired(value)) {
         setToken(value);
       }
+      setIsLoading(false);
     });
   }, []);
 
   // Save the token to the storage whenever it changes
-  useEffect(() => {
+  const setToken = (token: string | null) => {
+    setTokenLocal(token);
     if (token) {
       localForage.setItem("access_token", token);
     } else {
       localForage.removeItem("access_token");
     }
-  }, [token]);
+  };
 
   const isLoggedIn = !!token && !isTokenExpired(token);
   const logout = () => {
@@ -61,7 +66,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   return (
-    <AuthContext.Provider value={{ token, setToken, isLoggedIn, logout }}>
+    <AuthContext.Provider
+      value={{ token, setToken, isLoggedIn, logout, isLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );
