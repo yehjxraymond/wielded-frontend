@@ -1,3 +1,4 @@
+import { config } from "@/config";
 import { useAuth } from "@/context/AuthContext";
 import axios, { AxiosError } from "axios";
 import { useCallback, useState } from "react";
@@ -67,7 +68,7 @@ export const useFileUpload = (acceptFiles: boolean) => {
             content: string;
             size: string;
           }[]
-        >("http://localhost:3001/file-loader/upload", formData, {
+        >(`${config.baseUrl}/file-loader/upload`, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
