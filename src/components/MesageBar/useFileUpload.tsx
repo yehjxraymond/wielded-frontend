@@ -85,7 +85,7 @@ export const useFileUpload = (acceptFiles: boolean) => {
       } catch (e) {
         if (e instanceof AxiosError) {
           const data = e.response?.data;
-          if (data.message) {
+          if (data && data.message) {
             setFileUploadStatus({
               state: "error",
               files: acceptedFiles.map((file) => file.name),
@@ -94,6 +94,14 @@ export const useFileUpload = (acceptFiles: boolean) => {
                   ? data.message
                   : "An unknown error has occurred",
             });
+          } else {
+            console.error(e);
+            if (e.code === "ERR_NETWORK")
+              setFileUploadStatus({
+                state: "error",
+                files: acceptedFiles.map((file) => file.name),
+                error: "File upload error. Ensure each file is under 10MB.",
+              });
           }
         } else {
           setFileUploadStatus({
