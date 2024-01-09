@@ -108,8 +108,8 @@ export const ImageGeneratorInternal: FunctionComponent<{
               initialText={searchParams.get("prompt") || ""}
               placeholder="Describe your image"
               isPending={isLoading}
-              onSubmit={(prompt) =>
-                generateImage(prompt, {
+              onSubmit={({ text }) =>
+                generateImage(text, {
                   quality,
                   style,
                   size: aspectRatio,

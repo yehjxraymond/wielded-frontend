@@ -84,6 +84,10 @@ export interface ChatCompletionOptions {
 export interface ConversationPayload {
   message: string;
   persona?: string;
+  files?: {
+    name: string;
+    content: string;
+  }[];
   options?: ChatCompletionOptions;
 }
 
@@ -263,14 +267,21 @@ export const useConversationMessages = (
       url: string;
       reloadConversations?: boolean;
     }) =>
-    async ({ message, persona }: ConversationPayload) => {
-      const previousMessages: Message[] = [
-        ...messages,
-        {
-          type: "user",
-          content: message,
-        },
-      ];
+    async ({ message, persona, files }: ConversationPayload) => {
+      const previousMessages: Message[] = [...messages];
+      if (files) {
+        files.forEach((file) => {
+          previousMessages.push({
+            type: "file_upload",
+            fileName: file.name,
+            content: `File uploaded: ${file.content}`,
+          });
+        });
+      }
+      previousMessages.push({
+        type: "user",
+        content: message,
+      });
 
       setMessages([
         ...previousMessages,
@@ -286,6 +297,7 @@ export const useConversationMessages = (
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          files,
           message,
           persona,
           options: chatCompletionOptions,
