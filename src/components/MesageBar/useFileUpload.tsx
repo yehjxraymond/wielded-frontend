@@ -100,7 +100,7 @@ export const useFileUpload = (acceptFiles: boolean) => {
               setFileUploadStatus({
                 state: "error",
                 files: acceptedFiles.map((file) => file.name),
-                error: "File upload error. Ensure each file is under 10MB.",
+                error: "File upload error. Ensure each file is under 25MB.",
               });
           }
         } else {
