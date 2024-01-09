@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 export interface MessageDto {
   id: string;
   type: "system" | "user" | "assistant" | "function";
+  fileName?: string;
   content: string;
   created_at: string;
 }
@@ -23,8 +24,9 @@ export interface ConversationDto {
 }
 
 export interface Message {
-  type: "system" | "user" | "assistant" | "function";
+  type: "system" | "user" | "assistant" | "function" | "file_upload";
   content: string;
+  fileName?: string;
   streaming?: boolean;
 }
 
@@ -213,6 +215,7 @@ export const useConversationMessages = (
         data.map((message) => ({
           type: message.type,
           content: message.content,
+          fileName: message.fileName,
         }))
       );
     },
