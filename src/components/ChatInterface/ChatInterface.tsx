@@ -54,6 +54,7 @@ const MessageBarWithPersona: FunctionComponent<MessageBarProps> = ({
 
   return (
     <MessageBar
+      acceptFiles
       isPending={isPending}
       onSubmit={handleSubmit}
       placeholder="Send a message"

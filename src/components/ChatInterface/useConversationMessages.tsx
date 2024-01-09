@@ -269,7 +269,15 @@ export const useConversationMessages = (
     }) =>
     async ({ message, persona, files }: ConversationPayload) => {
       const previousMessages: Message[] = [...messages];
-      if (files) {
+      if ((!files || files.length === 0) && message.length === 0) {
+        setError({
+          error: "Message cannot be empty",
+          message: "Type a message or upload a file",
+        });
+        setIsPending(false);
+        return;
+      }
+      if (files)
         files.forEach((file) => {
           previousMessages.push({
             type: "file_upload",
@@ -277,11 +285,11 @@ export const useConversationMessages = (
             content: `File uploaded: ${file.content}`,
           });
         });
-      }
-      previousMessages.push({
-        type: "user",
-        content: message,
-      });
+      if (message && message.length > 0)
+        previousMessages.push({
+          type: "user",
+          content: message,
+        });
 
       setMessages([
         ...previousMessages,

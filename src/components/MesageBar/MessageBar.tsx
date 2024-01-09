@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Send, Upload, X } from "lucide-react";
+import { Paperclip, Send, Upload, X } from "lucide-react";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Textarea } from "../ui/textarea";
@@ -34,7 +34,7 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
     fileUploadStatus,
     setFileUploadStatus,
     handleUploadFiles,
-  } = useFileUpload();
+  } = useFileUpload(acceptFiles);
 
   const handleSubmit = () => {
     if (isPending) return;
@@ -59,8 +59,10 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
     setRowNum(Math.min(15, Math.max(lineCount, lineByCharacters, 1)));
   }, [initialText, text]);
 
-  const { getRootProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop: handleUploadFiles,
+    noClick: true,
+    noKeyboard: true,
     accept: acceptFiles
       ? {
           "application/pdf": [".pdf"],
@@ -80,12 +82,18 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
           {...getRootProps()}
           className="relative  border border-input px-3 py-2 rounded-md bg-background mx-4"
         >
+          <input {...getInputProps()} className="hidden" />
           {isDragActive && (
             <div className="absolute w-full h-full left-0 right-0 top-0 bottom-0 rounded flex items-center justify-center bg-muted">
               <Upload className="w-5 h-5 mr-2" />
             </div>
           )}
           <div className="flex items-center">
+            {acceptFiles && (
+              <div onClick={() => open()} className="cursor-pointer">
+                <Paperclip className="h-6 w-6" />
+              </div>
+            )}
             <Textarea
               className="focus-visible:ring-0 focus-visible:ring-offset-0 border-0 resize-none min-h-0"
               placeholder={placeholder}
@@ -105,6 +113,7 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
           </div>
 
           {(uploadedFiles.length > 0 ||
+            fileUploadStatus.hasRejections ||
             fileUploadStatus.state === "error" ||
             (fileUploadStatus.state === "pending" &&
               fileUploadStatus.files.length > 0)) && (
@@ -114,7 +123,7 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
                 {uploadedFiles.map((uploadedFile, i) => {
                   return (
                     <Badge variant="outline" key={i}>
-                      {uploadedFile.file}
+                      {uploadedFile.name}
                       <X
                         className="w-4 ml-2"
                         onClick={() => {
@@ -140,6 +149,13 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
                   <div>
                     <small className="text-destructive">
                       {fileUploadStatus.error}
+                    </small>
+                  </div>
+                )}
+                {fileUploadStatus.hasRejections && (
+                  <div>
+                    <small className="text-destructive">
+                      Upload only .txt, .csv, .pdf & .docx
                     </small>
                   </div>
                 )}
