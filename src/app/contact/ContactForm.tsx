@@ -7,6 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { useUTMParameters } from "@/context/UTMContext";
 
 interface FormFields {
   firstName: string;
@@ -15,6 +16,7 @@ interface FormFields {
   email: string;
   message: string;
   source: string;
+  utm_parameters: Record<string, string>;
 }
 
 const submitContactForm = async (formData: FormFields) => {
@@ -38,18 +40,20 @@ export const useContactFormSubmit = () => {
 
 export const ContactForm = () => {
   const searchParams = useSearchParams();
+  const { getUTMParameters } = useUTMParameters();
 
   const { mutate: submitForm, isSuccess, isError } = useContactFormSubmit();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    const utm_parameters = await getUTMParameters();
     submitForm({
       firstName,
       lastName,
       company,
       email,
       message,
+      utm_parameters,
       source: searchParams.get("source") || "enterprise",
     });
   };
