@@ -32,11 +32,19 @@ export type FileUploadStatus =
   | FileUploadPending
   | FileUploadError;
 
-export const useFileUpload = (acceptFiles: boolean) => {
+export interface FileStringified {
+  name: string;
+  content: string;
+  size: string;
+}
+
+export const useFileUpload = (
+  acceptFiles: boolean,
+  initialFiles: FileStringified[]
+) => {
   const { token } = useAuth();
-  const [uploadedFiles, setUploadedFiles] = useState<
-    { name: string; content: string; size: string }[]
-  >([]);
+  const [uploadedFiles, setUploadedFiles] =
+    useState<FileStringified[]>(initialFiles);
   const [fileUploadStatus, setFileUploadStatus] = useState<FileUploadStatus>({
     state: "initial",
   });
@@ -64,7 +72,7 @@ export const useFileUpload = (acceptFiles: boolean) => {
       try {
         const { data } = await axios.post<
           {
-            file: string;
+            name: string;
             content: string;
             size: string;
           }[]
@@ -78,10 +86,7 @@ export const useFileUpload = (acceptFiles: boolean) => {
           state: "initial",
           hasRejections: fileRejection.length > 0,
         });
-        setUploadedFiles((prev) => [
-          ...prev,
-          ...data.map((file) => ({ ...file, name: file.file })),
-        ]);
+        setUploadedFiles((prev) => [...prev, ...data]);
       } catch (e) {
         if (e instanceof AxiosError) {
           const data = e.response?.data;
@@ -116,11 +121,16 @@ export const useFileUpload = (acceptFiles: boolean) => {
     [acceptFiles, token]
   );
 
+  const removeFile = (index: number) => {
+    setUploadedFiles((prev) => prev.filter((file, i) => i !== index));
+  };
+
   return {
     handleUploadFiles,
     uploadedFiles,
     setUploadedFiles,
     fileUploadStatus,
     setFileUploadStatus,
+    removeFile,
   };
 };

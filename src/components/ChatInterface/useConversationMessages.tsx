@@ -24,7 +24,13 @@ export interface ConversationDto {
 }
 
 export interface Message {
-  type: "system" | "user" | "assistant" | "function" | "file_upload";
+  type:
+    | "system"
+    | "user"
+    | "assistant"
+    | "function"
+    | "file_upload"
+    | "file_upload_system";
   content: string;
   fileName?: string;
   streaming?: boolean;

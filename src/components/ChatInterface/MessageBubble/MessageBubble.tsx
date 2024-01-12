@@ -17,22 +17,24 @@ const p: Components["p"] = (props) => {
 export const MessageBubble: FunctionComponent<{
   message: Message;
 }> = ({ message }) => {
+  const isFile =
+    message.type === "file_upload" || message.type === "file_upload_system";
   return (
     <div
       className={cn(
         "flex w-max max-w-[90%] flex-col gap-2 rounded-lg px-3 py-2 text-sm overflow-x-auto prose dark:prose-invert",
-        message.type === "user" || message.type === "file_upload"
+        message.type === "user" || isFile
           ? "ml-auto bg-primary text-primary-foreground prose-strong:text-primary-foreground"
           : "bg-muted"
       )}
     >
-      {message.type === "file_upload" && (
+      {isFile && (
         <div className="flex items-center">
           <File className="h-4 w-4 mr-2" />
           {message.fileName}
         </div>
       )}
-      {message.type !== "file_upload" && (
+      {!isFile && (
         <ReactMarkdown
           remarkPlugins={[remarkGfm, [remarkMath]]}
           rehypePlugins={[

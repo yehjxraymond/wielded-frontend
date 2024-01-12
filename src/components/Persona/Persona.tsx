@@ -1,4 +1,9 @@
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
   PersonaSuccess,
   getInheritedInstructions,
   usePersona,
@@ -9,6 +14,9 @@ import { FunctionComponent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { SidebarLayout } from "../Layout";
+import { LearnMoreOverlay } from "../LearnMoreOverlay";
+import { FullPageLoader } from "../Loader";
+import { useFileUpload } from "../MesageBar/useFileUpload";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -28,14 +36,9 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import { LearnMoreOverlay } from "../LearnMoreOverlay";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { PersonaInheritanceCombobox } from "./PersonaInheritanceCombobox";
-import { FullPageLoader } from "../Loader";
+import { useDropzone } from "react-dropzone";
+import { Upload, X } from "lucide-react";
 
 type FormType = { type: "create" } | { type: "edit"; id: string };
 
@@ -69,13 +72,32 @@ const PersonaForm: FunctionComponent<{
       ? personas.find((p) => p.id === formType.id)
       : undefined;
   const [inheritedPersonaIds, setInheritedPersonaIds] = useState<string[]>([]);
+  const { setUploadedFiles, uploadedFiles, removeFile, handleUploadFiles } =
+    useFileUpload(true, []);
   const form = useForm<z.infer<typeof personaSchema>>({
     resolver: zodResolver(personaSchema),
   });
+  // Inside your Persona component
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
+    onDrop: handleUploadFiles,
+    noClick: true,
+    noKeyboard: true,
+    accept: {
+      "application/pdf": [".pdf"],
+      "text/csv": [".csv"],
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        [".docx"],
+      "application/msword": [".doc"],
+      "text/plain": [".txt"],
+    },
+  });
+
   useEffect(() => {
-    if (isOpen)
+    if (isOpen) {
       setInheritedPersonaIds(defaultValues?.inheritedPersonaIds || []);
-  }, [isOpen, defaultValues]);
+      setUploadedFiles(defaultValues?.files || []);
+    }
+  }, [isOpen, defaultValues, setUploadedFiles]);
   useEffect(() => {
     if (defaultValues) {
       form.setValue("name", defaultValues.name || "");
@@ -89,9 +111,14 @@ const PersonaForm: FunctionComponent<{
   }, [defaultValues, form]);
   function onSubmit(values: z.infer<typeof personaSchema>) {
     if (formType.type === "create") {
-      createPersona({ ...values, inheritedPersonaIds });
+      createPersona({ ...values, inheritedPersonaIds, files: uploadedFiles });
     } else {
-      updatePersona({ ...values, id: formType.id, inheritedPersonaIds });
+      updatePersona({
+        ...values,
+        id: formType.id,
+        inheritedPersonaIds,
+        files: uploadedFiles,
+      });
     }
   }
   const onDelete = (id: string) => {
@@ -204,6 +231,56 @@ const PersonaForm: FunctionComponent<{
                   </FormItem>
                 )}
               />
+              <Collapsible onOpenChange={setIsInheritanceOpen}>
+                <CollapsibleTrigger className="flex justify-between w-full items-center mb-2">
+                  <FormLabel>Files ({uploadedFiles.length})</FormLabel>
+                  <div>
+                    {isInheritanceOpen ? (
+                      <ChevronDown className="w-5 h-5" />
+                    ) : (
+                      <ChevronUp className="w-5 h-5" />
+                    )}
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="bg-muted p-4 rounded">
+                  <div className="space-y-2">
+                    {uploadedFiles.map((file, i) => {
+                      return (
+                        <div
+                          className="flex font-medium justify-between gap-2"
+                          key={i}
+                        >
+                          <div>{file.name}</div>
+                          <div
+                            className="cursor-pointer"
+                            onClick={() => removeFile(i)}
+                          >
+                            Remove
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div {...getRootProps()} className="cursor-pointer">
+                    <input {...getInputProps()} className="hidden" />
+                    <div
+                      className="w-full h-20 flex items-center justify-center border-2 mt-2 rounded"
+                      onClick={() => open()}
+                    >
+                      {isDragActive ? (
+                        <>Drop file(s)</>
+                      ) : (
+                        <>
+                          <Upload className="w-5 h-5 mr-2" />
+                          Drop file(s) to upload
+                        </>
+                      )}
+                    </div>
+                    {/* <Upload className="h-6 w-6" onClick={() => open()} /> */}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
 
               <Collapsible onOpenChange={setIsInheritanceOpen}>
                 <CollapsibleTrigger className="flex justify-between w-full items-center mb-2">

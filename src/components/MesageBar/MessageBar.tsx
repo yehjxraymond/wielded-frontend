@@ -34,7 +34,7 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
     fileUploadStatus,
     setFileUploadStatus,
     handleUploadFiles,
-  } = useFileUpload(acceptFiles);
+  } = useFileUpload(acceptFiles, []);
 
   const handleSubmit = () => {
     if (isPending) return;
