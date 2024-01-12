@@ -35,6 +35,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { PersonaInheritanceCombobox } from "./PersonaInheritanceCombobox";
+import { FullPageLoader } from "../Loader";
 
 type FormType = { type: "create" } | { type: "edit"; id: string };
 
@@ -400,5 +401,5 @@ export const Persona = () => {
     return <PersonaInternal {...personaState} />;
   }
   // TODO loading
-  return <div>Loading...</div>;
+  return <FullPageLoader />;
 };
