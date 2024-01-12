@@ -1,4 +1,4 @@
-import { File } from "@/components/MesageBar/useFileUpload";
+import { FileStringified } from "@/components/MesageBar/useFileUpload";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import {
@@ -19,7 +19,7 @@ export interface Persona {
   description: string | null;
   content: string;
   inheritedPersonaIds?: string[];
-  files?: File[];
+  files?: FileStringified[];
   created_at: string;
   updated_at: string;
 }
