@@ -83,7 +83,7 @@ export interface ChatCompletionOptions {
 
 export interface ConversationPayload {
   message: string;
-  persona?: string;
+  personaId?: string;
   files?: {
     name: string;
     content: string;
@@ -267,7 +267,7 @@ export const useConversationMessages = (
       url: string;
       reloadConversations?: boolean;
     }) =>
-    async ({ message, persona, files }: ConversationPayload) => {
+    async ({ message, personaId, files }: ConversationPayload) => {
       const previousMessages: Message[] = [...messages];
       if ((!files || files.length === 0) && message.length === 0) {
         setError({
@@ -307,7 +307,7 @@ export const useConversationMessages = (
         body: JSON.stringify({
           files,
           message,
-          persona,
+          personaId,
           options: chatCompletionOptions,
         }),
       });

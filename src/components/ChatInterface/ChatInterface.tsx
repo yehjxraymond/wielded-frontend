@@ -41,12 +41,10 @@ const MessageBarWithPersona: FunctionComponent<MessageBarProps> = ({
     }[];
   }) => {
     if (isPending) return;
-    const personaText =
-      persona.state === "success"
-        ? persona.selectedPersonaFullInstructions
-        : "";
+    const personaId =
+      persona.state === "success" ? persona.selectedPersona?.id : "";
     if (!conversationId) {
-      startConversation({ message: text, persona: personaText, files });
+      startConversation({ message: text, personaId, files });
     } else {
       continueConversation({ message: text, files });
     }
