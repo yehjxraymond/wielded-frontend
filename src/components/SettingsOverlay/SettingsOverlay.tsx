@@ -1,12 +1,13 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { Landmark, Settings, Users } from "lucide-react";
+import { Blocks, Landmark, Settings, Users } from "lucide-react";
 import { useState } from "react";
 import { WorkspaceSetting } from "./WorkspaceSetting";
 import { MembersSetting } from "./MembersSetting";
 import { BillingSetting } from "./BillingSetting";
+import { IntegrationSetting } from "./IntegrationSetting";
 
-type SettingMenu = "settings" | "members" | "billing";
+type SettingMenu = "settings" | "members" | "billing" | "integrations";
 
 export const SettingsContent = () => {
   const [menuSelection, setMenuSelection] = useState<SettingMenu>("settings");
@@ -25,6 +26,16 @@ export const SettingsContent = () => {
           >
             <Settings className="h-5 w-5 mr-1" />
             Settings
+          </div>
+          <div
+            className={cn(
+              "text-sm font-semibold hover:bg-accent-foreground flex items-center px-4 py-1 cursor-pointer",
+              menuSelection === "integrations" && "bg-accent-foreground"
+            )}
+            onClick={() => setMenuSelection("integrations")}
+          >
+            <Blocks className="h-5 w-5 mr-1" />
+            Integrations
           </div>
           <div
             className={cn(
@@ -50,6 +61,7 @@ export const SettingsContent = () => {
       </div>
       <div className="flex-1 p-4 overflow-auto">
         {menuSelection === "settings" && <WorkspaceSetting />}
+        {menuSelection === "integrations" && <IntegrationSetting />}
         {menuSelection === "members" && <MembersSetting />}
         {menuSelection === "billing" && <BillingSetting />}
       </div>
