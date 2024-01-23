@@ -1,19 +1,21 @@
+import { useActiveWorkspace } from "@/context/ActiveWorkspaceContext";
 import { usePersona } from "@/context/PersonaContext";
-import { useWorkspace } from "@/context/WorkspaceContext";
 import { FunctionComponent, useEffect, useRef, useState } from "react";
 import { SidebarLayout } from "../Layout";
+import { LearnMoreOverlay } from "../LearnMoreOverlay";
+import { FullPageLoader } from "../Loader";
 import { MessageBar } from "../MesageBar";
+import { ConversationalError } from "./ConversationalError";
 import { MessageBubble } from "./MessageBubble";
 import { ModelSelector } from "./ModelSelector";
 import { PersonaSelector } from "./PersonaSelector";
 import { ShareSubmenu } from "./ShareSubmenu";
+import { UnconfiguredWorkspace } from "./UnconfiguredWorkspace";
 import WelcomeModal from "./WelcomeModal/WelcomeModal";
 import {
   ConversationPayload,
   useConversationMessages,
 } from "./useConversationMessages";
-import { ConversationalError } from "./ConversationalError";
-import { LearnMoreOverlay } from "../LearnMoreOverlay";
 
 interface MessageBarProps {
   isPending: boolean;
@@ -72,8 +74,6 @@ export const ChatInterfaceComponent: FunctionComponent<{
     continueConversation,
     isPending,
     error,
-    chatCompletionOptions,
-    setChatCompletionOptions,
   } = useConversationMessages(workspaceId, initialConversationId);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isScrollLocked, setScrollLocked] = useState(true);
@@ -151,10 +151,7 @@ export const ChatInterfaceComponent: FunctionComponent<{
                   className="mb-4"
                   disabled
                 />
-                <ModelSelector
-                  chatCompletionOptions={chatCompletionOptions}
-                  setChatCompletionOptions={setChatCompletionOptions}
-                />
+                <ModelSelector />
                 <PersonaSelector />
               </div>
             </div>
@@ -186,12 +183,15 @@ export const ChatInterfaceComponent: FunctionComponent<{
 export const ChatInterface: FunctionComponent<{ conversationId?: string }> = ({
   conversationId,
 }) => {
-  const workspaceState = useWorkspace();
-  // TODO Skeleton loader
-  if (workspaceState.state !== "success") return null;
+  const { activeWorkspaceId, features, isFetching } = useActiveWorkspace();
+  const isWorkspaceConfigured = features.chat.integrations.length > 0;
+
+  if (!activeWorkspaceId || isFetching) return <FullPageLoader />;
+  if (!isWorkspaceConfigured) return <UnconfiguredWorkspace />;
+
   return (
     <ChatInterfaceComponent
-      workspaceId={workspaceState.currentWorkspace}
+      workspaceId={activeWorkspaceId}
       conversationId={conversationId}
     />
   );

@@ -16,16 +16,10 @@ export interface Workspace {
   name: string;
   tier: string;
   role: "owner" | "admin" | "user";
-  apiKey?: string;
-  apiEndpoint?: string;
-  backendType?: "open_ai" | "azure";
 }
 
 export interface WorkspaceEditable {
   name: string;
-  apiKey: string;
-  apiEndpoint?: string | null;
-  backendType?: "open_ai" | "azure";
 }
 
 interface WorkspaceOthers {

@@ -24,11 +24,13 @@ class ApiError extends Error {
 const postNewImage = async ({
   token,
   workspaceId,
+  integrationId,
   prompt,
   options,
 }: {
   token: string;
   workspaceId: string;
+  integrationId: string;
   prompt: string;
   options?: ImageGenerationOptions;
 }) => {
@@ -41,7 +43,7 @@ const postNewImage = async ({
       b64: string;
     }>(
       `${config.baseUrl}/workspace/${workspaceId}/image`,
-      { prompt, options },
+      { prompt, options, integrationId },
       { headers: { Authorization: `Bearer ${token}` } }
     );
     return response.data;
@@ -56,7 +58,10 @@ const postNewImage = async ({
   }
 };
 
-export const useImageGenerator = (workspaceId: string) => {
+export const useImageGenerator = (
+  workspaceId: string,
+  integrationId: string
+) => {
   const { token } = useAuth();
   const { replace } = useRouter();
 
@@ -72,6 +77,7 @@ export const useImageGenerator = (workspaceId: string) => {
     {
       token: string;
       workspaceId: string;
+      integrationId: string;
       prompt: string;
       options?: ImageGenerationOptions | undefined;
     }
@@ -83,7 +89,13 @@ export const useImageGenerator = (workspaceId: string) => {
   });
   const generateImage = (prompt: string, options?: ImageGenerationOptions) => {
     if (token)
-      generateImageMutation.mutate({ token, workspaceId, prompt, options });
+      generateImageMutation.mutate({
+        token,
+        workspaceId,
+        prompt,
+        options,
+        integrationId,
+      });
   };
   return { generateImage, generateImageMutation };
 };

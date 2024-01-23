@@ -1,4 +1,5 @@
 import { config } from "@/config";
+import { useActiveWorkspace } from "@/context/ActiveWorkspaceContext";
 import { useAuth } from "@/context/AuthContext";
 import { useConversation } from "@/context/ConversationContext";
 import { useMutation } from "@tanstack/react-query";
@@ -14,10 +15,15 @@ export interface MessageDto {
   created_at: string;
 }
 
+export type ChatCompletionOptions = {
+  [key: string]: object;
+};
+
 export interface ConversationDto {
   id: string;
   name: string;
-  chatCompletionOption: object;
+  chatCompletionOption: ChatCompletionOptions | null;
+  integrationId: string | null;
   visibility: "private" | "workspace" | "invited" | "public";
   created_at: string;
   updated_at: string;
@@ -62,31 +68,6 @@ const extractConversationId = (str: string) => {
   return match ? match[1] : null;
 };
 
-type Model =
-  | "gpt-4-1106-preview" // Turbo preview
-  | "gpt-4-vision-preview"
-  | "gpt-4"
-  | "gpt-4-0314"
-  | "gpt-4-0613"
-  | "gpt-4-32k"
-  | "gpt-4-32k-0314"
-  | "gpt-4-32k-0613"
-  | "gpt-3.5-turbo"
-  | "gpt-3.5-turbo-16k"
-  | "gpt-3.5-turbo-0301"
-  | "gpt-3.5-turbo-0613"
-  | "gpt-3.5-turbo-1106"
-  | "gpt-3.5-turbo-16k-0613";
-
-export interface ChatCompletionOptions {
-  model?: Model;
-  frequency_penalty?: number; // Positive values decreasing the model's likelihood to repeat the same line verbatim.
-  max_tokens?: number;
-  presence_penalty?: number; // Number between -2.0 and 2.0. Positive values increasing the model's likelihood to talk about new topics
-  temperature?: number; // between 0 and 2. Higher values like 0.8 will make the output more random. Set this or top_p
-  top_p?: number; // 0.1 means only the tokens comprising the top 10% probability mass
-}
-
 export interface ConversationPayload {
   message: string;
   personaId?: string;
@@ -96,9 +77,6 @@ export interface ConversationPayload {
   }[];
   options?: ChatCompletionOptions;
 }
-
-export const DEFAULT_GPT3_MODEL = "gpt-3.5-turbo-1106";
-export const DEFAULT_GPT4_MODEL = "gpt-4-1106-preview";
 
 const fetchMessages = async ({
   token,
@@ -190,6 +168,11 @@ export const useConversationMessages = (
 ) => {
   const conversation = useConversation();
   const { token } = useAuth();
+  const { selectedChatIntegration: selectedChatIntegrationFromContext } =
+    useActiveWorkspace();
+  const [chatIntegrationOverride, setChatIntegrationOverride] = useState<
+    string | null
+  >(null);
   const [error, setError] = useState<ApiError | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversationId, setConversationId] = useState<string | undefined>(
@@ -198,9 +181,11 @@ export const useConversationMessages = (
   const [isPending, setIsPending] = useState(false);
   const [conversationTitle, setConversationTitle] = useState<string>("");
   const [chatCompletionOptions, setChatCompletionOptions] =
-    useState<ChatCompletionOptions>({ model: DEFAULT_GPT4_MODEL });
+    useState<ChatCompletionOptions | null>(null);
   const { replace } = useRouter();
   const { debounceUpdate, setUpdateMessages } = useDebouncedUpdate(100, 250);
+  const selectedChatIntegration =
+    chatIntegrationOverride || selectedChatIntegrationFromContext;
 
   useEffect(() => {
     setUpdateMessages((newMessages) => {
@@ -214,6 +199,9 @@ export const useConversationMessages = (
     onSuccess: (data) => {
       setChatCompletionOptions(data.chatCompletionOption);
       setConversationTitle(data.name);
+      if (data.integrationId) {
+        setChatIntegrationOverride(data.integrationId);
+      }
     },
   });
 
@@ -269,11 +257,21 @@ export const useConversationMessages = (
     ({
       url,
       reloadConversations,
+      integrationId,
     }: {
       url: string;
+      integrationId?: string;
       reloadConversations?: boolean;
     }) =>
     async ({ message, personaId, files }: ConversationPayload) => {
+      if (!integrationId) {
+        setError({
+          error: "No chat model selected",
+          message:
+            "Please select a chat model to start/continue the conversation",
+        });
+        return;
+      }
       const previousMessages: Message[] = [...messages];
       if ((!files || files.length === 0) && message.length === 0) {
         setError({
@@ -314,6 +312,7 @@ export const useConversationMessages = (
           files,
           message,
           personaId,
+          integrationId,
           options: chatCompletionOptions,
         }),
       });
@@ -362,7 +361,7 @@ export const useConversationMessages = (
           }
         },
         () => {
-          setMessages([
+          debounceUpdate([
             ...previousMessages,
             {
               type: "assistant",
@@ -382,10 +381,12 @@ export const useConversationMessages = (
   const startConversation = fetchAndManageResponse({
     url: `${config.baseUrl}/workspace/${workspaceId}/conversation/start`,
     reloadConversations: true,
+    integrationId: selectedChatIntegration,
   });
 
   const continueConversation = fetchAndManageResponse({
     url: `${config.baseUrl}/workspace/${workspaceId}/conversation/${conversationId}/continue`,
+    integrationId: selectedChatIntegration,
   });
 
   return {
