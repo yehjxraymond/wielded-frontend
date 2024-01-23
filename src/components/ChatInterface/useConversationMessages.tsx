@@ -379,13 +379,13 @@ export const useConversationMessages = (
     };
 
   const startConversation = fetchAndManageResponse({
-    url: `${config.baseUrl}/workspace/${workspaceId}/conversation/start-new`,
+    url: `${config.baseUrl}/workspace/${workspaceId}/conversation/start`,
     reloadConversations: true,
     integrationId: selectedChatIntegration,
   });
 
   const continueConversation = fetchAndManageResponse({
-    url: `${config.baseUrl}/workspace/${workspaceId}/conversation/${conversationId}/continue-new`,
+    url: `${config.baseUrl}/workspace/${workspaceId}/conversation/${conversationId}/continue`,
     integrationId: selectedChatIntegration,
   });
 
