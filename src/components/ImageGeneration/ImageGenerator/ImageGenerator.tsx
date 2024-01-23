@@ -10,14 +10,20 @@ import { useImageGenerator } from "./useImageGenerator";
 import { useRandomLoadingMessage } from "./useRandomLoadingMessage";
 import { ConversationalError } from "@/components/ChatInterface/ConversationalError";
 import { LearnMoreOverlay } from "@/components/LearnMoreOverlay";
+import { FullPageLoader } from "@/components/Loader";
+import { useActiveWorkspace } from "@/context/ActiveWorkspaceContext";
+import { UnconfiguredImageGenerator } from "./UnconfiguredImageGenerator";
 
 export const ImageGeneratorInternal: FunctionComponent<{
   workspaceId: string;
-}> = ({ workspaceId }) => {
+  integrationId: string;
+}> = ({ workspaceId, integrationId }) => {
   const searchParams = useSearchParams();
 
-  const { generateImage, generateImageMutation } =
-    useImageGenerator(workspaceId);
+  const { generateImage, generateImageMutation } = useImageGenerator(
+    workspaceId,
+    integrationId
+  );
   const [quality, setQuality] = useState<ImageQuality>("standard");
   const [style, setStyle] = useState<ImageStyle>("vivid");
   const [aspectRatio, setAspectRatio] = useState<ImageSize>("1024x1024");
@@ -29,8 +35,6 @@ export const ImageGeneratorInternal: FunctionComponent<{
     const queryQuality = searchParams.get("quality");
     const queryStyle = searchParams.get("style");
     const queryAspectRatio = searchParams.get("size");
-
-    console.log(queryQuality, queryQuality?.length);
 
     if (queryQuality && ["standard", "hd"].includes(queryQuality)) {
       setQuality(queryQuality as ImageQuality);
@@ -136,10 +140,17 @@ export const ImageGeneratorInternal: FunctionComponent<{
 };
 
 export const ImageGenerator: FunctionComponent = () => {
-  const workspaceState = useWorkspace();
-  // TODO Skeleton loader
-  if (workspaceState.state !== "success") return null;
+  const { activeWorkspaceId, isFetching, features } = useActiveWorkspace();
+  const integrationId =
+    features.image.enabled && features.image.integrations[0]
+      ? features.image.integrations[0].id
+      : null;
+  if (isFetching || !activeWorkspaceId) return <FullPageLoader />;
+  if (!integrationId) return <UnconfiguredImageGenerator />;
   return (
-    <ImageGeneratorInternal workspaceId={workspaceState.currentWorkspace} />
+    <ImageGeneratorInternal
+      workspaceId={activeWorkspaceId}
+      integrationId={integrationId}
+    />
   );
 };

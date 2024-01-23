@@ -49,6 +49,10 @@ export interface Feature {
     enabled: boolean;
     integrations: (Integration & { label: string })[];
   };
+  image: {
+    enabled: boolean;
+    integrations: (Integration & { label: string })[];
+  };
 }
 
 const integrationsToFeatures = (integrations: Integration[] = []): Feature => {
@@ -77,10 +81,20 @@ const integrationsToFeatures = (integrations: Integration[] = []): Feature => {
         hasMultipleOpenAiProviders,
       }),
     }));
+  const imageIntegrations = integrations
+    .filter((integration) => integration.type === "image")
+    .map((integration) => ({
+      ...integration,
+      label: integration.model,
+    }));
   return {
     chat: {
       enabled: chatIntegrations.length > 0,
       integrations: chatIntegrations,
+    },
+    image: {
+      enabled: imageIntegrations.length > 0,
+      integrations: imageIntegrations,
     },
   };
 };

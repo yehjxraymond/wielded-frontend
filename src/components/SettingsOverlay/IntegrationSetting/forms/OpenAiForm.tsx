@@ -1,29 +1,33 @@
 import { Button } from "@/components/ui/button";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FunctionComponent } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "../../../ui/form";
 import { Input } from "../../../ui/input";
 import { humanReadableModel } from "../humanReadableNames";
 import { IntegrationDto, UpdateIntegrationDto } from "../useIntegrations";
 
-const selectableOpenAiModel = ["gpt-4-1106-preview", "gpt-3.5-turbo-1106"];
+const selectableOpenAiModel = [
+  "gpt-4-1106-preview",
+  "gpt-3.5-turbo-1106",
+  "dall-e-3",
+];
 const openAiConfigSchema = z.object({
   model: z.string(),
   apiKey: z.string(),

@@ -94,6 +94,10 @@ export const IntegrationEditForm: FunctionComponent<{
   );
 };
 
+const inferModelType = (model: string) => {
+  return model.startsWith("dall-e") ? "image" : "chat";
+};
+
 export const CreateIntegrationForm: FunctionComponent<{
   isPending: boolean;
   workspaceId: string;
@@ -107,7 +111,13 @@ export const CreateIntegrationForm: FunctionComponent<{
     if (!values.model) throw new Error("Model is required");
     if (!values.config) throw new Error("Config is required");
     const { model, config } = values;
-    await handleCreate({ config, model, provider, type: "chat", workspaceId });
+    await handleCreate({
+      config,
+      model,
+      provider,
+      type: inferModelType(model),
+      workspaceId,
+    });
     setOpen(false);
   };
 
