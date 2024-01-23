@@ -77,7 +77,9 @@ export const ImageGeneratorInternal: FunctionComponent<{
                     { label: "High Definition", value: "hd" },
                   ]}
                   selected={quality}
-                  setSelected={setQuality}
+                  setSelected={(quality: string) =>
+                    setQuality(quality as ImageQuality)
+                  }
                 />
                 <div className="font-semibold mt-6">Style</div>
                 <HorizontalSelector
@@ -87,7 +89,7 @@ export const ImageGeneratorInternal: FunctionComponent<{
                     { label: "Realistic", value: "natural" },
                   ]}
                   selected={style}
-                  setSelected={setStyle}
+                  setSelected={(style: string) => setStyle(style as ImageStyle)}
                 />
                 <div className="font-semibold mt-6">Aspect Ratio</div>
                 <HorizontalSelector
@@ -98,7 +100,9 @@ export const ImageGeneratorInternal: FunctionComponent<{
                     { label: "Portrait", value: "1024x1792" },
                   ]}
                   selected={aspectRatio}
-                  setSelected={setAspectRatio}
+                  setSelected={(aspectRatio: string) =>
+                    setAspectRatio(aspectRatio as ImageSize)
+                  }
                 />
               </div>
             </div>

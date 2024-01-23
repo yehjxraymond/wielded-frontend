@@ -8,7 +8,6 @@ import {
   createContext,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 import { useWorkspace } from "./WorkspaceContext";
@@ -29,6 +28,8 @@ interface ActiveWorkspaceContextProps {
   features: Feature;
   selectedChatIntegration?: string;
   setSelectedChatIntegration: (integrationId: string) => void;
+  refetchIntegrations: () => void;
+  isFetching: boolean;
 }
 
 export const ActiveWorkspaceContext =
@@ -134,6 +135,8 @@ export const ActiveWorkspaceProvider: React.FC<{ children: ReactNode }> = ({
       });
   };
   const value = {
+    isFetching: integrationQuery.isFetching,
+    refetchIntegrations: integrationQuery.refetch,
     activeWorkspaceId: workspaceId === "" ? undefined : workspaceId,
     integrations: integrationQuery.data || [],
     features: integrationsToFeatures(integrationQuery.data),

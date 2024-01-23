@@ -1,16 +1,21 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { Blocks, Landmark, Settings, Users } from "lucide-react";
-import { useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { WorkspaceSetting } from "./WorkspaceSetting";
 import { MembersSetting } from "./MembersSetting";
 import { BillingSetting } from "./BillingSetting";
 import { IntegrationSetting } from "./IntegrationSetting";
+import { useSearchParams } from "next/navigation";
 
 type SettingMenu = "settings" | "members" | "billing" | "integrations";
 
-export const SettingsContent = () => {
-  const [menuSelection, setMenuSelection] = useState<SettingMenu>("settings");
+export const SettingsContent: FunctionComponent<{
+  defaultMenu: string | null;
+}> = ({ defaultMenu }) => {
+  const [menuSelection, setMenuSelection] = useState<SettingMenu>(
+    (defaultMenu as SettingMenu) || "settings"
+  );
 
   return (
     <DialogContent className="max-w-5xl flex p-0 h-[600px]">
@@ -70,14 +75,25 @@ export const SettingsContent = () => {
 };
 
 export const SettingsOverlaySidebarTrigger = () => {
+  const { get } = useSearchParams();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const settingSelectionFromUrl = get("settings");
+
+  useEffect(() => {
+    if (settingSelectionFromUrl) {
+      setIsOpen(true);
+    }
+  }, [settingSelectionFromUrl]);
+
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger className="w-full">
         <div className="flex items-center py-1 w-full">
           <Settings className="w-5 h-5 mr-2" /> Settings
         </div>
       </DialogTrigger>
-      <SettingsContent />
+      <SettingsContent defaultMenu={settingSelectionFromUrl} />
     </Dialog>
   );
 };

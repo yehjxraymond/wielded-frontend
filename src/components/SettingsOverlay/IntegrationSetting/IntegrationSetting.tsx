@@ -8,7 +8,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { Workspace, useWorkspace } from "@/context/WorkspaceContext";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { Skeleton } from "../../ui/skeleton";
 import { NoPermission } from "../NoPermission";
 import {
@@ -30,6 +30,7 @@ import {
 } from "./useIntegrations";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useActiveWorkspace } from "@/context/ActiveWorkspaceContext";
 
 export const IntegrationEditForm: FunctionComponent<{
   integration: IntegrationDto;
@@ -179,6 +180,8 @@ export const CreateIntegrationForm: FunctionComponent<{
 export const IntegrationSettingForm: FunctionComponent<{
   workspace: Workspace;
 }> = ({ workspace }) => {
+  const { refetchIntegrations } = useActiveWorkspace();
+  const [isChangesMade, setIsChangesMade] = useState(false);
   const {
     integrations,
     updateIntegrationMutation,
@@ -196,11 +199,20 @@ export const IntegrationSettingForm: FunctionComponent<{
     return acc;
   }, {});
 
+  useEffect(() => {
+    return () => {
+      if (isChangesMade) {
+        refetchIntegrations();
+      }
+    };
+  }, [refetchIntegrations, isChangesMade]);
+
   const handleEdit = async (
     values: UpdateIntegrationDto,
     integrationId?: string
   ) => {
     if (!integrationId) return;
+    setIsChangesMade(true);
     try {
       updateIntegrationMutation.mutateAsync({
         workspaceId: workspace.id,
@@ -222,6 +234,7 @@ export const IntegrationSettingForm: FunctionComponent<{
 
   const handleDelete = async (integrationId: string) => {
     try {
+      setIsChangesMade(true);
       await deleteIntegrationMutation.mutateAsync({
         workspaceId: workspace.id,
         integrationId,
@@ -241,6 +254,7 @@ export const IntegrationSettingForm: FunctionComponent<{
 
   const handleCreate = async (values: CreateIntegrationDto) => {
     try {
+      setIsChangesMade(true);
       await createIntegrationMutation.mutateAsync({
         workspaceId: workspace.id,
         integration: values,
@@ -267,7 +281,16 @@ export const IntegrationSettingForm: FunctionComponent<{
         isPending={false}
       />
 
-      <div className="text-lg font-semibold mt-8">Existing Integrations</div>
+      {integrations?.length === 0 ? (
+        <div className="mt-8">
+          <div className="font-medium mt-4">
+            No Integrations found. Click on &quot;New Integration&quot; to add
+            an AI model to the workspace.
+          </div>
+        </div>
+      ) : (
+        <div className="text-lg font-semibold mt-8">Existing Integrations</div>
+      )}
 
       {integrationProviders
         .filter((key) => groupedIntegrations && groupedIntegrations[key])
@@ -290,15 +313,6 @@ export const IntegrationSettingForm: FunctionComponent<{
             </div>
           );
         })}
-
-      {integrations?.length === 0 && (
-        <div className="mt-8">
-          <div className="font-medium mt-4">
-            No Integrations found. Click on &quot;New Integration&quot; to add
-            an AI model to the workspace.
-          </div>
-        </div>
-      )}
     </>
   );
 };
