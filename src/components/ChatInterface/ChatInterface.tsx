@@ -2,7 +2,9 @@ import { usePersona } from "@/context/PersonaContext";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { FunctionComponent, useEffect, useRef, useState } from "react";
 import { SidebarLayout } from "../Layout";
+import { LearnMoreOverlay } from "../LearnMoreOverlay";
 import { MessageBar } from "../MesageBar";
+import { ConversationalError } from "./ConversationalError";
 import { MessageBubble } from "./MessageBubble";
 import { ModelSelector } from "./ModelSelector";
 import { PersonaSelector } from "./PersonaSelector";
@@ -12,8 +14,6 @@ import {
   ConversationPayload,
   useConversationMessages,
 } from "./useConversationMessages";
-import { ConversationalError } from "./ConversationalError";
-import { LearnMoreOverlay } from "../LearnMoreOverlay";
 
 interface MessageBarProps {
   isPending: boolean;
@@ -72,8 +72,6 @@ export const ChatInterfaceComponent: FunctionComponent<{
     continueConversation,
     isPending,
     error,
-    chatCompletionOptions,
-    setChatCompletionOptions,
   } = useConversationMessages(workspaceId, initialConversationId);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isScrollLocked, setScrollLocked] = useState(true);
@@ -151,10 +149,7 @@ export const ChatInterfaceComponent: FunctionComponent<{
                   className="mb-4"
                   disabled
                 />
-                <ModelSelector
-                  chatCompletionOptions={chatCompletionOptions}
-                  setChatCompletionOptions={setChatCompletionOptions}
-                />
+                <ModelSelector />
                 <PersonaSelector />
               </div>
             </div>

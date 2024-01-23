@@ -9,6 +9,7 @@ import { WorkspaceProvider } from "@/context/WorkspaceContext";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { FunctionComponent, ReactNode } from "react";
+import { ActiveWorkspaceProvider } from "@/context/ActiveWorkspaceContext";
 
 export const Providers: FunctionComponent<{ children: ReactNode }> = ({
   children,
@@ -27,12 +28,14 @@ export const Providers: FunctionComponent<{ children: ReactNode }> = ({
           <AuthProvider>
             <UserProvider>
               <WorkspaceProvider>
-                <ConversationProvider>
-                  <PersonaProvider>
-                    {children}
-                    <Toaster />
-                  </PersonaProvider>
-                </ConversationProvider>
+                <ActiveWorkspaceProvider>
+                  <ConversationProvider>
+                    <PersonaProvider>
+                      {children}
+                      <Toaster />
+                    </PersonaProvider>
+                  </ConversationProvider>
+                </ActiveWorkspaceProvider>
               </WorkspaceProvider>
             </UserProvider>
           </AuthProvider>

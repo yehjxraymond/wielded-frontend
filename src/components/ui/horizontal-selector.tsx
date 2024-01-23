@@ -1,16 +1,42 @@
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-export const HorizontalSelector = <T extends unknown>({
+export const HorizontalSelector = ({
   choices,
   selected,
   setSelected,
   className,
 }: {
-  choices: { label: string; value: T }[];
-  selected: T;
-  setSelected: (value: T) => void;
+  choices: { label: string; value: string }[];
+  selected?: string;
+  setSelected: (value: string) => void;
   className?: string;
 }) => {
+  const isTooManyChoices = choices.length > 5;
+
+  if (isTooManyChoices) {
+    return (
+      <Select value={selected} onValueChange={setSelected}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select a choice" />
+        </SelectTrigger>
+        <SelectContent>
+          {choices.map((choice, index) => (
+            <SelectItem key={index} value={choice.value}>
+              <span className="whitespace-nowrap text-xs">{choice.label}</span>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    );
+  }
+
   return (
     <div className="text-sm">
       {choices.map((choice, index) => (
