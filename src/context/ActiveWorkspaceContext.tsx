@@ -115,6 +115,7 @@ export const ActiveWorkspaceProvider: React.FC<{ children: ReactNode }> = ({
     queryKey: ["integrations", { workspaceId }],
     queryFn: () => getIntegrations({ workspaceId }),
     enabled: workspaceId !== "",
+    refetchOnWindowFocus: false,
   });
   const [selectedChatIntegration, setSelectedChatIntegrationState] = useState<
     string | undefined
