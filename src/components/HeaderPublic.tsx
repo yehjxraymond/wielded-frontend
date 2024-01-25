@@ -81,6 +81,12 @@ const productFeatures: { title: string; href: string; description: string }[] =
       href: "/image-generation-with-dalle3",
     },
     {
+      title: "Chat with your Documents",
+      description:
+        "Summarize, translate & review documents, or simply ask questions.",
+      href: "/chat-with-documents",
+    },
+    {
       title: "Teaching Generative AI with Wielded",
       description:
         "Deploy a generative AI environment for your classroom with all the tools you need to teach AI.",
@@ -102,7 +108,7 @@ export function NavigationDropdownMenu() {
         <NavigationMenuItem>
           <NavigationMenuTrigger>Product</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <div className="p-4 w-96">
+            <div className="grid w-[400px] gap-3 p-4 md:w-[600px] md:grid-cols-2 lg:w-[780px]">
               {productFeatures.map((component) => (
                 <ListItem
                   key={component.title}
