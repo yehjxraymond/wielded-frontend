@@ -154,7 +154,7 @@ const Content = () => {
       <FeatureHero
         heading="Empower Decision-Making with AI-Powered Document Analysis"
         subheading="Upload, Chat, Discover – Enhance your data comprehension and unlock actionable insights from documents effortlessly."
-        videoUrl="https://www.youtube-nocookie.com/embed/3lZb8Wym6tE?si=Xux9dM3Tp6DZl3rM&controls=0"
+        videoUrl="https://www.youtube-nocookie.com/embed/PWXxUBLEbB8?si=klkUEVyj2iF6QYof&controls=0"
         source="chat-with-documents"
       />
       <TitleSeparator title="Leverage Data with Next-Generation AI Tools" />
