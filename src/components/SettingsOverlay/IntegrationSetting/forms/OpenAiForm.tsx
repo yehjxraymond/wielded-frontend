@@ -22,6 +22,7 @@ import {
 import { Input } from "../../../ui/input";
 import { humanReadableModel } from "../humanReadableNames";
 import { IntegrationDto, UpdateIntegrationDto } from "../useIntegrations";
+import { LearnMoreOverlay } from "@/components/LearnMoreOverlay";
 
 const selectableOpenAiModel = [
   "gpt-4-1106-preview",
@@ -71,6 +72,10 @@ export const OpenAiForm: FunctionComponent<{
     <div>
       <Form {...form}>
         <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
+          <LearnMoreOverlay
+            title="Learn to set up OpenAI integration"
+            videoUrl="https://www.youtube-nocookie.com/embed/fohI1KMBsH4?si=mdR4lVA6lHvKWuOr"
+          />
           <FormField
             control={form.control}
             name="model"

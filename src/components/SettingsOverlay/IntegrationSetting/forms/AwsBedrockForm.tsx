@@ -22,6 +22,7 @@ import {
 import { Input } from "../../../ui/input";
 import { IntegrationDto, UpdateIntegrationDto } from "../useIntegrations";
 import { humanReadableModel } from "../humanReadableNames";
+import { LearnMoreOverlay } from "@/components/LearnMoreOverlay";
 
 const selectableAwsBedrockModel = [
   "anthropic.claude-instant-v1",
@@ -74,6 +75,10 @@ export const AwsBedrockForm: FunctionComponent<{
     <div>
       <Form {...form}>
         <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
+          <LearnMoreOverlay
+            title="Learn to set up AWS Bedrock"
+            videoUrl="https://www.youtube-nocookie.com/embed/K6XBkym7cWE?si=7-WDU4hv1IqZMqH-"
+          />
           <FormField
             control={form.control}
             name="model"

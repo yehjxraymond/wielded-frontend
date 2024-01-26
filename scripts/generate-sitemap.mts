@@ -23,6 +23,7 @@ const staticPaths = [
   "teaching-generative-ai-for-educator",
   "creating-custom-ai-chatbot-with-persona",
   "chat-with-documents",
+  "multi-model-ai-lab-for-education",
   "contact",
 ];
 
