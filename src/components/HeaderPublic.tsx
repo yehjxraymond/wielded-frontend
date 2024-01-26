@@ -92,6 +92,12 @@ const productFeatures: { title: string; href: string; description: string }[] =
         "Deploy a generative AI environment for your classroom with all the tools you need to teach AI.",
       href: "/teaching-generative-ai-for-educator",
     },
+    {
+      title: "Multi-model AI Lab for Education",
+      description:
+        "Explore OpenAI & Anthropic AI models and prompting techniques in your classrooms.",
+      href: "/multi-model-ai-lab-for-education",
+    },
   ];
 
 export function NavigationDropdownMenu() {
