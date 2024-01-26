@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const tiers = [
   {
-    name: "Free",
+    name: "Individual",
     id: "tier-free",
     href: "#",
     priceMonthly: "$0",
