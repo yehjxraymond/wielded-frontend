@@ -5,7 +5,7 @@ import { useConversation } from "@/context/ConversationContext";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, useRef, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface MessageDto {
   id: string;
@@ -222,15 +222,8 @@ export const useConversationMessages = (
     },
   });
 
-  const memoisedFetchMessage = useMemo(
-    () => fetchMessagesMutation.mutate,
-    [fetchMessagesMutation.mutate]
-  );
-
-  const memoisedFetchConversation = useMemo(
-    () => fetchConversationMutation.mutate,
-    [fetchConversationMutation.mutate]
-  );
+  const memoisedFetchMessage = fetchMessagesMutation.mutate;
+  const memoisedFetchConversation = fetchConversationMutation.mutate;
 
   useEffect(() => {
     if (token && initialConversationId) {

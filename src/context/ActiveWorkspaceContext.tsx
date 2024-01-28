@@ -16,7 +16,7 @@ export interface Integration {
   id: string;
   workspaceId: string;
   provider: "azure_open_ai" | "open_ai" | "aws_bedrock" | "claude";
-  type: "chat" | "image";
+  type: "chat" | "image" | "audio";
   model: string;
   createdAt: string;
   updatedAt: string;
@@ -53,6 +53,10 @@ export interface Feature {
     enabled: boolean;
     integrations: (Integration & { label: string })[];
   };
+  audio: {
+    enabled: boolean;
+    integrations: (Integration & { label: string })[];
+  };
 }
 
 const integrationsToFeatures = (integrations: Integration[] = []): Feature => {
@@ -81,6 +85,13 @@ const integrationsToFeatures = (integrations: Integration[] = []): Feature => {
         hasMultipleOpenAiProviders,
       }),
     }));
+
+  const audioIntegrations = integrations
+    .filter((integration) => integration.type === "audio")
+    .map((integration) => ({
+      ...integration,
+      label: integration.model,
+    }));
   const imageIntegrations = integrations
     .filter((integration) => integration.type === "image")
     .map((integration) => ({
@@ -95,6 +106,10 @@ const integrationsToFeatures = (integrations: Integration[] = []): Feature => {
     image: {
       enabled: imageIntegrations.length > 0,
       integrations: imageIntegrations,
+    },
+    audio: {
+      enabled: audioIntegrations.length > 0,
+      integrations: audioIntegrations,
     },
   };
 };

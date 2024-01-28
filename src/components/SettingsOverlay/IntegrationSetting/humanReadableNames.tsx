@@ -30,6 +30,8 @@ export const humanReadableModel = (model: IntegrationDto["model"] | string) => {
       return "Claude v1.2";
     case model === "dall-e-3":
       return "DALL-E 3";
+    case model === "whisper-1":
+      return "Whisper";
     default:
       return model;
   }

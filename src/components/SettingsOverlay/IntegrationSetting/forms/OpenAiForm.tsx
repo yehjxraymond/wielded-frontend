@@ -28,6 +28,7 @@ const selectableOpenAiModel = [
   "gpt-4-1106-preview",
   "gpt-3.5-turbo-1106",
   "dall-e-3",
+  "whisper-1",
 ];
 const openAiConfigSchema = z.object({
   model: z.string(),
