@@ -95,7 +95,11 @@ export const IntegrationEditForm: FunctionComponent<{
 };
 
 const inferModelType = (model: string) => {
-  return model.startsWith("dall-e") ? "image" : "chat";
+  return model.startsWith("dall-e")
+    ? "image"
+    : model === "whisper-1"
+    ? "audio"
+    : "chat";
 };
 
 export const CreateIntegrationForm: FunctionComponent<{

@@ -23,7 +23,11 @@ import { Input } from "../../../ui/input";
 import { humanReadableModel } from "../humanReadableNames";
 import { IntegrationDto, UpdateIntegrationDto } from "../useIntegrations";
 
-const selectableAzureOpenAiModel = ["gpt-4-1106-preview", "gpt-3.5-turbo-1106"];
+const selectableAzureOpenAiModel = [
+  "gpt-4-1106-preview",
+  "gpt-3.5-turbo-1106",
+  "whisper-1",
+];
 
 const azureOpenAiConfigSchema = z.object({
   model: z.string(),

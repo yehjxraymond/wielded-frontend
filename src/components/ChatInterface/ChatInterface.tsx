@@ -31,6 +31,8 @@ const MessageBarWithPersona: FunctionComponent<MessageBarProps> = ({
   conversationId,
 }) => {
   const persona = usePersona();
+  const { features } = useActiveWorkspace();
+  const acceptVoice = features.audio.enabled;
 
   const handleSubmit = ({
     text,
@@ -61,7 +63,7 @@ const MessageBarWithPersona: FunctionComponent<MessageBarProps> = ({
       personaId={
         persona.state === "success" ? persona.selectedPersona?.id : undefined
       }
-      acceptVoice
+      acceptVoice={acceptVoice}
     />
   );
 };
