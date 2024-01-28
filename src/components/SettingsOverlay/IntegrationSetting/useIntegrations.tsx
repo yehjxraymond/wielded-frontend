@@ -21,7 +21,7 @@ export const integrationProviders = [
 export interface IntegrationDto {
   id: string;
   workspaceId: string;
-  type: "chat" | "image";
+  type: "chat" | "image" | "audio";
   provider: "azure_open_ai" | "open_ai" | "claude" | "aws_bedrock";
   model: string;
   config: { [key: string]: string };
