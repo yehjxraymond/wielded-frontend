@@ -1,9 +1,19 @@
 import { Badge } from "@/components/ui/badge";
-import { Paperclip, Send, Upload, X } from "lucide-react";
+import {
+  AudioLines,
+  Disc3,
+  Mic,
+  Paperclip,
+  Send,
+  Upload,
+  X,
+} from "lucide-react";
 import { FunctionComponent, useEffect, useState } from "react";
+import { useAudioRecorder } from "react-audio-voice-recorder";
 import { useDropzone } from "react-dropzone";
 import { Textarea } from "../ui/textarea";
 import { useFileUpload } from "./useFileUpload";
+import { useVoiceUpload } from "./useVoiceUpload";
 
 export interface MessageBarProps {
   placeholder: string;
@@ -17,6 +27,8 @@ export interface MessageBarProps {
   }) => void;
   initialText?: string;
   acceptFiles?: boolean;
+  acceptVoice?: boolean;
+  personaId?: string;
 }
 
 export const MessageBar: FunctionComponent<MessageBarProps> = ({
@@ -25,6 +37,8 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
   onSubmit,
   initialText = "",
   acceptFiles = false,
+  acceptVoice = false,
+  personaId,
 }) => {
   const [rowNum, setRowNum] = useState(1);
   const [text, setText] = useState(initialText);
@@ -35,6 +49,23 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
     setFileUploadStatus,
     handleUploadFiles,
   } = useFileUpload(acceptFiles, []);
+  const { startRecording, stopRecording, isRecording, recordingBlob } =
+    useAudioRecorder({
+      noiseSuppression: true,
+      echoCancellation: true,
+    });
+  const { uploadAudio, uploadAudioMutation } = useVoiceUpload({
+    personaId,
+    onVoiceTranscribed: (text) => {
+      setText(text);
+    },
+  });
+  const isAudioPending = uploadAudioMutation.isPending;
+
+  useEffect(() => {
+    if (!recordingBlob) return;
+    uploadAudio(recordingBlob);
+  }, [recordingBlob, uploadAudio]);
 
   const handleSubmit = () => {
     if (isPending) return;
@@ -88,12 +119,26 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
               <Upload className="w-5 h-5 mr-2" />
             </div>
           )}
-          <div className="flex items-center">
+          <div className="flex items-center space-x-1">
             {acceptFiles && (
               <div onClick={() => open()} className="cursor-pointer">
-                <Paperclip className="h-6 w-6" />
+                <Paperclip className="h-5 w-5" />
               </div>
             )}
+            {acceptVoice &&
+              (isRecording ? (
+                <div onClick={stopRecording} className="cursor-pointer">
+                  <AudioLines className="h-5 w-5" />
+                </div>
+              ) : isAudioPending ? (
+                <div>
+                  <Disc3 className="h-5 w-5 animate-spin" />
+                </div>
+              ) : (
+                <div onClick={startRecording} className="cursor-pointer">
+                  <Mic className="h-5 w-5" />
+                </div>
+              ))}
             <Textarea
               className="focus-visible:ring-0 focus-visible:ring-offset-0 border-0 resize-none min-h-0"
               placeholder={placeholder}

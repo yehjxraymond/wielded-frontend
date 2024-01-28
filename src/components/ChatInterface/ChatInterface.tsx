@@ -58,6 +58,10 @@ const MessageBarWithPersona: FunctionComponent<MessageBarProps> = ({
       isPending={isPending}
       onSubmit={handleSubmit}
       placeholder="Send a message"
+      personaId={
+        persona.state === "success" ? persona.selectedPersona?.id : undefined
+      }
+      acceptVoice
     />
   );
 };
