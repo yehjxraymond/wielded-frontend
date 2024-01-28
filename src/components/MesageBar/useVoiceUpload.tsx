@@ -50,7 +50,7 @@ export const useVoiceUpload = ({
     (blob: Blob) => {
       if (!activeWorkspaceId) throw new Error("No active workspace");
       const file = new File([blob], "audio.webm", {
-        type: blob.type,
+        type: 'audio/webm',
         lastModified: Date.now(),
       });
       const formData = new FormData();
