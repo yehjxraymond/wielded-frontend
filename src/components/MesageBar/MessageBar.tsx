@@ -15,7 +15,6 @@ import { useDropzone } from "react-dropzone";
 import { Textarea } from "../ui/textarea";
 import { useFileUpload } from "./useFileUpload";
 import { useVoiceUpload } from "./useVoiceUpload";
-import AudioRecorder from "audio-recorder-polyfill";
 
 export interface MessageBarProps {
   placeholder: string;
@@ -67,7 +66,9 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
   useEffect(() => {
     if (typeof window !== "undefined") {
       // polyfill for safari (https://github.com/ai/audio-recorder-polyfill)
-      window.MediaRecorder = AudioRecorder;
+      import("audio-recorder-polyfill").then((AudioRecorder) => {
+        window.MediaRecorder = AudioRecorder.default;
+      });
     }
   }, []);
 
