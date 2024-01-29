@@ -18,7 +18,7 @@ import { useVoiceUpload } from "./useVoiceUpload";
 
 // polyfill for safari (https://github.com/ai/audio-recorder-polyfill)
 import AudioRecorder from "audio-recorder-polyfill";
-window.MediaRecorder = AudioRecorder;
+if (typeof window !== "undefined") window.MediaRecorder = AudioRecorder;
 
 export interface MessageBarProps {
   placeholder: string;
