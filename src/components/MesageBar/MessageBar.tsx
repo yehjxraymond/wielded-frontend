@@ -100,8 +100,19 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
     setRowNum(Math.min(15, Math.max(lineCount, lineByCharacters, 1)));
   }, [initialText, text]);
 
+  const handleMultipleFileUpload = async (files: File[]) => {
+    const isAudioUpload =
+      files.length === 1 &&
+      (files[0].type.includes("audio") || files[0].type.includes("video"));
+    if (isAudioUpload) {
+      uploadAudio(files[0]);
+    } else {
+      handleUploadFiles(files, []);
+    }
+  };
+
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
-    onDrop: handleUploadFiles,
+    onDrop: handleMultipleFileUpload,
     noClick: true,
     noKeyboard: true,
     accept: acceptFiles
@@ -112,6 +123,8 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
             [".docx"],
           "application/msword": [".doc"],
           "text/plain": [".txt"],
+          "audio/ogg": [".ogg"],
+          "audio/webm": [".webm"],
         }
       : {},
   });
