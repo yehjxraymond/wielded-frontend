@@ -1,3 +1,4 @@
+"use client";
 import { Badge } from "@/components/ui/badge";
 import {
   AudioLines,
@@ -14,6 +15,10 @@ import { useDropzone } from "react-dropzone";
 import { Textarea } from "../ui/textarea";
 import { useFileUpload } from "./useFileUpload";
 import { useVoiceUpload } from "./useVoiceUpload";
+
+// polyfill for safari (https://github.com/ai/audio-recorder-polyfill)
+import AudioRecorder from "audio-recorder-polyfill";
+window.MediaRecorder = AudioRecorder;
 
 export interface MessageBarProps {
   placeholder: string;
