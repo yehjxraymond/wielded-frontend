@@ -15,10 +15,7 @@ import { useDropzone } from "react-dropzone";
 import { Textarea } from "../ui/textarea";
 import { useFileUpload } from "./useFileUpload";
 import { useVoiceUpload } from "./useVoiceUpload";
-
-// polyfill for safari (https://github.com/ai/audio-recorder-polyfill)
 import AudioRecorder from "audio-recorder-polyfill";
-if (typeof window !== "undefined") window.MediaRecorder = AudioRecorder;
 
 export interface MessageBarProps {
   placeholder: string;
@@ -66,6 +63,13 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
     },
   });
   const isAudioPending = uploadAudioMutation.isPending;
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // polyfill for safari (https://github.com/ai/audio-recorder-polyfill)
+      window.MediaRecorder = AudioRecorder;
+    }
+  }, []);
 
   useEffect(() => {
     if (!recordingBlob) return;

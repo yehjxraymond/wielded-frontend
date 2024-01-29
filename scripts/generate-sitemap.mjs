@@ -2,7 +2,7 @@ import fs from "fs";
 import { globby } from "globby";
 
 const baseUrl = "https://wielded.com";
-const url = (path: string) => `${baseUrl}/${path}`;
+const url = (path) => `${baseUrl}/${path}`;
 const date = new Date().toISOString();
 
 const staticPaths = [
@@ -27,7 +27,7 @@ const staticPaths = [
   "contact",
 ];
 
-const urlXml = (url: string, priority = 0.8) => `
+const urlXml = (url, priority = 0.8) => `
   <url>
     <loc>${url}</loc>
     <lastmod>${date}</lastmod>
@@ -40,7 +40,7 @@ const urlXml = (url: string, priority = 0.8) => `
     .map((path) => urlXml(url(path), 1))
     .join("");
   const promptMdxPaths = await globby(["src/app/chatgpt-prompt/**/page.mdx"]);
-  const promptSitemapSegment: string = promptMdxPaths
+  const promptSitemapSegment = promptMdxPaths
     .map((path) => {
       const match = path.match(/chatgpt-prompt\/(.*)\/page.mdx/);
       const slug = match?.[1] ?? "";
@@ -49,7 +49,7 @@ const urlXml = (url: string, priority = 0.8) => `
     })
     .join("");
   const articleMdxPaths = await globby(["src/app/article/**/page.mdx"]);
-  const articleSitemapSegment: string = articleMdxPaths
+  const articleSitemapSegment = articleMdxPaths
     .map((path) => {
       const match = path.match(/article\/(.*)\/page.mdx/);
       const slug = match?.[1] ?? "";
