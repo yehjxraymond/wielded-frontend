@@ -16,16 +16,17 @@ export const UnconfiguredWorkspace = () => {
             <CardHeader>
               <CardTitle>Welcome to your new workspace</CardTitle>
               <CardDescription>
-                This workspace needs to be configured with an AI model before
-                you can start using it. As an admin, you need to configure your
-                workspace to start using it. Alternatively if you were invited
-                as an user to this workspace, please contact your admin to
-                complete the setup.
+                Set up your workspace with your own AI model subscription or
+                upgrade to Pro to use it immediately. Alternatively if you were
+                invited as an user to this workspace, please contact your admin
+                to complete the setup.
               </CardDescription>
             </CardHeader>
 
             <CardContent className="space-y-2">
-              <div className="text-lg font-medium">1. Integrate AI models</div>
+              <div className="text-lg font-medium">
+                1. Integrate AI models or Subscribe to Pro
+              </div>
               <p>
                 Wielded works with any of the following AI models & providers:
               </p>
@@ -40,6 +41,13 @@ export const UnconfiguredWorkspace = () => {
                 &quot;Integrations&quot; tab in &quot;Settings&quot; on the
                 sidebar.
               </p>
+              <p>
+                Alternatively, subscribe to the Pro plan to use Wielded
+                immediately with all available AI models. Models provided by
+                Wielded are private instances of OpenAI&apos;s and
+                Anthropic&apos;s models. Your data will be private and will not
+                be used to train these models.
+              </p>
               <div className="text-lg font-medium">2. Invite your team</div>
               <p>
                 To allow your team members to access the workspace, you can
@@ -47,8 +55,8 @@ export const UnconfiguredWorkspace = () => {
                 tab in &quot;Settings&quot; on the sidebar.
               </p>
               <p>
-                Once you&apos;ve subscribe to the team plan, you may invite your
-                team members onto this workspace by visiting the
+                Once you&apos;ve subscribe to the Lite or Pro plan, you may
+                invite your team members onto this workspace by visiting the
                 &quot;Members&quot; tab in the settings page.
               </p>
             </CardContent>
