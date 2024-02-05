@@ -1,5 +1,6 @@
 import { config } from "@/config";
 import { useAuth } from "@/context/AuthContext";
+import { betterAxiosError } from "@/lib/errors";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useMemo } from "react";
@@ -10,7 +11,7 @@ export type SubscriptionStatus =
   | "past_due"
   | "unpaid"
   | "initializing";
-export type SubscriptionTier = "free" | "team";
+export type SubscriptionTier = "free" | "team" | "team_pro";
 export interface Subscription {
   id: string;
   tier: SubscriptionTier;
@@ -23,68 +24,64 @@ export interface CheckoutSession {
   url: string;
 }
 
-const getSubscription = async ({
-  token,
-  workspaceId,
-}: {
-  token: string;
-  workspaceId: string;
-}) => {
-  const response = await axios.get<Subscription | null>(
-    `${config.baseUrl}/workspace/${workspaceId}/subscription`,
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
-  return response.data;
-};
-const postSubscriptionCheckout = async ({
-  token,
-  workspaceId,
-  tier,
-  seats,
-}: {
-  token: string;
-  workspaceId: string;
-  tier: SubscriptionTier;
-  seats: number;
-}) => {
-  const response = await axios.post<CheckoutSession>(
-    `${config.baseUrl}/workspace/${workspaceId}/subscription/checkout`,
-    { tier, seats },
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
-  return response.data;
-};
-const putSubscription = async ({
-  token,
-  workspaceId,
-  tier,
-  seats,
-}: {
-  token: string;
-  workspaceId: string;
-  tier?: SubscriptionTier;
-  seats?: number;
-}) => {
-  const response = await axios.put<Subscription>(
-    `${config.baseUrl}/workspace/${workspaceId}/subscription/update-subscription`,
-    { tier, seats },
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
-  return response.data;
-};
-const deleteSubscription = async ({
-  token,
-  workspaceId,
-}: {
-  token: string;
-  workspaceId: string;
-}) => {
-  const response = await axios.delete<Subscription>(
-    `${config.baseUrl}/workspace/${workspaceId}/subscription`,
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
-  return response.data;
-};
+const getSubscription = betterAxiosError(
+  async ({ token, workspaceId }: { token: string; workspaceId: string }) => {
+    const response = await axios.get<Subscription | null>(
+      `${config.baseUrl}/workspace/${workspaceId}/subscription`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  }
+);
+const postSubscriptionCheckout = betterAxiosError(
+  async ({
+    token,
+    workspaceId,
+    tier,
+    seats,
+  }: {
+    token: string;
+    workspaceId: string;
+    tier: SubscriptionTier;
+    seats: number;
+  }) => {
+    const response = await axios.post<CheckoutSession>(
+      `${config.baseUrl}/workspace/${workspaceId}/subscription/checkout`,
+      { tier, seats },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  }
+);
+const putSubscription = betterAxiosError(
+  async ({
+    token,
+    workspaceId,
+    tier,
+    seats,
+  }: {
+    token: string;
+    workspaceId: string;
+    tier?: SubscriptionTier;
+    seats?: number;
+  }) => {
+    const response = await axios.put<Subscription>(
+      `${config.baseUrl}/workspace/${workspaceId}/subscription/update-subscription`,
+      { tier, seats },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  }
+);
+const deleteSubscription = betterAxiosError(
+  async ({ token, workspaceId }: { token: string; workspaceId: string }) => {
+    const response = await axios.delete<Subscription>(
+      `${config.baseUrl}/workspace/${workspaceId}/subscription`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    return response.data;
+  }
+);
 
 export const useBilling = (workspaceId: string) => {
   const { token } = useAuth();
@@ -133,16 +130,16 @@ export const useBilling = (workspaceId: string) => {
       });
     }
   };
-  const cancelSubscription = async () => {
+  const cancelSubscriptionAsync = async () => {
     if (token) {
-      deleteSubscriptionMutation.mutate({
+      deleteSubscriptionMutation.mutateAsync({
         token,
         workspaceId,
       });
     }
   };
 
-  const updateSubscription = async ({
+  const updateSubscriptionAsync = async ({
     tier,
     seats,
   }: {
@@ -150,7 +147,7 @@ export const useBilling = (workspaceId: string) => {
     seats?: number;
   }) => {
     if (token) {
-      updateSubscriptionMutation.mutate({
+      await updateSubscriptionMutation.mutateAsync({
         token,
         workspaceId,
         tier,
@@ -173,11 +170,11 @@ export const useBilling = (workspaceId: string) => {
     checkoutState: checkoutSubscriptionMutation.status,
     checkoutError: checkoutSubscriptionMutation.error,
 
-    updateSubscription,
+    updateSubscriptionAsync,
     updateSubscriptionState: updateSubscriptionMutation.status,
     updateSubscriptionError: updateSubscriptionMutation.error,
 
-    cancelSubscription,
+    cancelSubscriptionAsync,
     cancelSubscriptionState: deleteSubscriptionMutation.status,
     cancelSubscriptionError: deleteSubscriptionMutation.error,
   };
