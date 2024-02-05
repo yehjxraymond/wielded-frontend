@@ -171,13 +171,15 @@ const CurrentPlan = ({
             No. Seats: {currentSeats}
           </div>
         )}
-        <Button
-          size="sm"
-          className="mt-4 whitespace-nowrap"
-          onClick={() => setAppState({ type: "update-seats" })}
-        >
-          Change No. Seats
-        </Button>
+        {(plan.id === "team" || plan.id === "team_pro") && (
+          <Button
+            size="sm"
+            className="mt-4 whitespace-nowrap"
+            onClick={() => setAppState({ type: "update-seats" })}
+          >
+            Change No. Seats
+          </Button>
+        )}
       </div>
       <div className="basis-5/12 flex-grow">
         <div className="font-semibold">Includes</div>
