@@ -6,34 +6,53 @@ import Link from "next/link";
 
 const tiers = [
   {
-    name: "Individual",
+    name: "Free",
     id: "tier-free",
     href: "#",
     priceMonthly: "$0",
     description:
-      "Start free for individuals and teams of 2. No credit card required.",
+      "Free for individuals and teams of 2. No credit card required.",
     features: [
-      "ChatGPT Access",
+      "Bring your key from OpenAI, Azure, Anthropic, or AWS Bedrock",
+      "Chat completion with GPT3.5, GPT-4 or Claude models",
       "Image Generation with Dall-E 3",
+      "Speech-to-text with Whisper",
       "Unlimited conversations",
       "Up to 5 personas",
-      "Up to 50 Dall-E 3 images stored",
-      "Up to 5 prompt templates (coming soon)",
     ],
     mostPopular: false,
   },
   {
-    name: "Team",
+    name: "Lite",
     id: "tier-team",
     href: "#",
     priceMonthly: "$7",
     pricePostfix: "/user/month",
-    description: "Team features for teams of 3 or more.",
+    description: "Bring-your-own-key plan for teams",
     features: [
       "Everything in free",
       "Unlimited personas",
       "Email support",
       "Unlimited image storage for Dall-E 3",
+      "Access to prompt masterclass (coming soon)",
+      "Access to prompt library (coming soon)",
+    ],
+    mostPopular: false,
+  },
+  {
+    name: "Pro",
+    id: "tier-pro",
+    href: "#",
+    priceMonthly: "$30",
+    pricePostfix: "/user/month",
+    description: "Access to all AI models with greater data privacy",
+    features: [
+      "Chat with GPT-3.5 & GPT-4 models included",
+      "Chat with Claude 1.2 & Claude 2.1 models included",
+      "Image generation with Dall-E 3 included",
+      "Models do not train on your data",
+      "Unlimited personas",
+      "Email support",
       "Unlimited prompt templates (coming soon)",
       "Prompt masterclass access (coming soon)",
     ],
@@ -46,12 +65,12 @@ const tiers = [
     priceMonthly: "Contact us",
     description: "Dedicated support and infrastructure for your company.",
     features: [
-      "Everything in team",
-      "Azure OpenAI API backend",
+      "Everything in Lite/Pro",
       "Data protection alerts",
       "Quota management",
       "Priority support",
-      "SSO (coming soon)",
+      "Custom Domains",
+      "SSO",
     ],
     mostPopular: false,
   },
@@ -74,7 +93,7 @@ export const Pricing = () => {
         Integrate AI into your workflow without hidden costs. Our flat fee makes
         ChatGPT budget-friendly; just bring your OpenAI key.
       </p>
-      <div className="isolate mx-auto mt-16 grid max-w-md grid-cols-1 gap-y-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+      <div className="isolate mx-auto mt-16 grid max-w-md grid-cols-1 gap-y-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-4">
         {tiers.map((tier, tierIdx) => (
           <div
             key={tier.id}
@@ -82,6 +101,7 @@ export const Pricing = () => {
               tier.mostPopular ? "lg:z-10 lg:rounded-b-none" : "lg:mt-8",
               tierIdx === 0 ? "lg:rounded-r-none" : "",
               tierIdx === tiers.length - 1 ? "lg:rounded-l-none" : "",
+              tierIdx === 1 ? "lg:rounded-none" : "",
               "flex flex-col justify-between rounded-3xl bg-white p-8 ring-1 ring-gray-200 xl:p-10"
             )}
           >
@@ -130,13 +150,20 @@ export const Pricing = () => {
                 ))}
               </ul>
             </div>
-            <Link href="/login?source=pricing">
+            <Link
+              href={
+                tier.id === "tier-enterprise"
+                  ? "/contact"
+                  : "/login?source=pricing"
+              }
+            >
               <Button
                 className="mt-8"
                 variant={tier.mostPopular !== isDark ? "default" : "secondary"}
               >
-                {/* TODO Direct to contact us for enterprise */}
-                {tier.id === "tier-enterprise" ? "Get Started" : "Get Started"}
+                {tier.id === "tier-enterprise"
+                  ? "Contact Sales"
+                  : "Get Started"}
               </Button>
             </Link>
           </div>
