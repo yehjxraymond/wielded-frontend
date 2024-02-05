@@ -479,10 +479,7 @@ const ChangePlan: React.FC<{
   currentTier: SubscriptionTier;
   targetTier: SubscriptionTier;
   backToDashboard: () => void;
-  updateSubscriptionAsync: (plan: {
-    tier: SubscriptionTier;
-    seats: number;
-  }) => void;
+  updateSubscriptionAsync: (plan: { tier: SubscriptionTier }) => void;
 }> = ({
   currentTier,
   targetTier,
@@ -497,7 +494,7 @@ const ChangePlan: React.FC<{
 
   const handleUpdate = async () => {
     try {
-      await updateSubscriptionAsync({ tier: targetTier, seats: 0 });
+      await updateSubscriptionAsync({ tier: targetTier });
       toast({
         title: "Subscription updated",
         description: `You have successfully updated your subscription to the ${plan.name} plan.`,
