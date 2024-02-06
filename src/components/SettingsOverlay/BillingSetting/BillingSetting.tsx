@@ -136,10 +136,12 @@ const CurrentPlan = ({
   currentMembers,
   currentSeats,
   setAppState,
+  eligibleForFreeTrial,
 }: {
   plan: Plan;
   currentMembers: number;
   currentSeats: number;
+  eligibleForFreeTrial: boolean;
   setAppState: (state: AppState) => void;
 }) => {
   const handleCta = () => {
@@ -203,6 +205,10 @@ const CurrentPlan = ({
           <Button size="sm" className="mt-4" onClick={handleCta}>
             {plan.cta.ctaText}
           </Button>
+
+          {eligibleForFreeTrial && (
+            <div className="text-xs mt-2">*Free trial for 30 days.</div>
+          )}
         </div>
       )}
     </div>
@@ -213,9 +219,11 @@ const SelectablePlan = ({
   currentPlan,
   targetPlan,
   setAppState,
+  eligibleForFreeTrial,
 }: {
   targetPlan: Plan;
   currentPlan: Plan;
+  eligibleForFreeTrial: boolean;
   setAppState: (state: AppState) => void;
 }) => {
   const { toast } = useToast();
@@ -288,13 +296,19 @@ const SelectablePlan = ({
         </div>
       </div>
       <div className="basis-3/12 flex justify-center">
-        <Button
-          size="sm"
-          className="mt-4 whitespace-nowrap"
-          onClick={handleChange}
-        >
-          {upgradeOrDowngrade} {targetPlan.name}
-        </Button>
+        <div>
+          <Button
+            size="sm"
+            className="mt-4 whitespace-nowrap"
+            onClick={handleChange}
+          >
+            {upgradeOrDowngrade} {targetPlan.name}
+          </Button>
+          {eligibleForFreeTrial &&
+            (targetPlan.id === "team" || targetPlan.id === "team_pro") && (
+              <div className="text-xs mt-2">*Free trial for 30 days.</div>
+            )}
+        </div>
       </div>
     </div>
   );
@@ -327,11 +341,18 @@ const PlanInfo = ({ tier }: { tier: SubscriptionTier }) => {
 };
 
 const NewSubscription: React.FC<{
+  eligibleForFreeTrial: boolean;
   currentMembers: number;
   backToDashboard: () => void;
   targetTier: SubscriptionTier;
   checkout: (plan: { tier: SubscriptionTier; seats: number }) => void;
-}> = ({ currentMembers, backToDashboard, targetTier, checkout }) => {
+}> = ({
+  currentMembers,
+  backToDashboard,
+  targetTier,
+  checkout,
+  eligibleForFreeTrial,
+}) => {
   const [targetSeats, setTargetSeats] = useState(currentMembers.toString());
   const plan = plans.find((p) => p.id === targetTier);
   if (!plan) throw new Error("Plan not found");
@@ -388,8 +409,31 @@ const NewSubscription: React.FC<{
         </Button>
       </div>
 
-      <div className="text-xl font-semibold mb-2 mt-10">Payment Due</div>
-      <div className="font-semibold">${price.toFixed(2)} per month</div>
+      {eligibleForFreeTrial ? (
+        <>
+          <div className="text-xl font-semibold mb-2 mt-10">
+            Monthly Payment (after 30 days)
+          </div>
+          <div className="font-semibold text-sm">
+            ${price.toFixed(2)} per month
+          </div>
+
+          <div className="text-xl font-semibold mb-2 mt-10">
+            Payment Due Today
+          </div>
+          <div className="font-semibold">$0 (free trial)</div>
+        </>
+      ) : (
+        <>
+          <div className="text-xl font-semibold mb-2 mt-10">
+            Monthly Payment
+          </div>
+          <div className="font-semibold text-sm">
+            ${price.toFixed(2)} per month
+          </div>
+        </>
+      )}
+
       <Button className="mt-6" onClick={handleCheckout}>
         Checkout (via Stripe)
       </Button>
@@ -600,6 +644,8 @@ const BillingSettingPanel = ({ workspaceId }: { workspaceId: string }) => {
   const currentSeats = subscription?.seats || 0;
   const currentMembers = members.length;
   const remainingPlans = plans.filter((p) => p.id !== currentPlan.id);
+  const eligibleForFreeTrial =
+    !subscription || subscription.status === "initializing";
 
   if (fetchWorkspaceMemberMutation.isPending) return <Skeleton />;
 
@@ -613,6 +659,7 @@ const BillingSettingPanel = ({ workspaceId }: { workspaceId: string }) => {
       {appState.type === "dashboard" && (
         <>
           <CurrentPlan
+            eligibleForFreeTrial={eligibleForFreeTrial}
             plan={currentPlan}
             currentMembers={currentMembers}
             currentSeats={currentSeats}
@@ -623,6 +670,7 @@ const BillingSettingPanel = ({ workspaceId }: { workspaceId: string }) => {
           <div className="space-y-20 mb-20">
             {remainingPlans.map((plan, i) => (
               <SelectablePlan
+                eligibleForFreeTrial={eligibleForFreeTrial}
                 currentPlan={currentPlan}
                 targetPlan={plan}
                 setAppState={setAppState}
@@ -634,6 +682,7 @@ const BillingSettingPanel = ({ workspaceId }: { workspaceId: string }) => {
       )}
       {appState.type === "new-subscription" && (
         <NewSubscription
+          eligibleForFreeTrial={eligibleForFreeTrial}
           checkout={checkout}
           backToDashboard={handleBackToDashboard}
           currentMembers={members.length}
