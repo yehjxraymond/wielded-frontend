@@ -2,6 +2,8 @@ import { config } from "@/config";
 import { useActiveWorkspace } from "@/context/ActiveWorkspaceContext";
 import { useAuth } from "@/context/AuthContext";
 import { useConversation } from "@/context/ConversationContext";
+import { authenticatedAxios } from "@/lib/authenticatedAxios";
+import { betterAxiosError } from "@/lib/errors";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -78,23 +80,20 @@ export interface ConversationPayload {
   options?: ChatCompletionOptions;
 }
 
-const fetchMessages = async ({
-  token,
-  workspaceId,
-  conversationId,
-}: {
-  token: string;
-  workspaceId: string;
-  conversationId: string;
-}) => {
-  const response = await axios.get<MessageDto[]>(
-    `${config.baseUrl}/workspace/${workspaceId}/conversation/${conversationId}/messages`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
-  return response.data;
-};
+const fetchMessages = betterAxiosError(
+  async ({
+    workspaceId,
+    conversationId,
+  }: {
+    workspaceId: string;
+    conversationId: string;
+  }) => {
+    const response = await authenticatedAxios.get<MessageDto[]>(
+      `/workspace/${workspaceId}/conversation/${conversationId}/messages`
+    );
+    return response.data;
+  }
+);
 
 const fetchConversation = async ({
   token,
@@ -218,7 +217,8 @@ export const useConversationMessages = (
       );
     },
     onError: (error) => {
-      setError(error);
+      if (error.message === "Conversation not found in this workspace")
+        replace("/");
     },
   });
 
@@ -228,7 +228,6 @@ export const useConversationMessages = (
   useEffect(() => {
     if (token && initialConversationId) {
       memoisedFetchMessage({
-        token,
         workspaceId,
         conversationId: initialConversationId,
       });
@@ -383,6 +382,7 @@ export const useConversationMessages = (
   });
 
   return {
+    fetchMessagesMutation,
     conversationTitle,
     chatCompletionOptions,
     setChatCompletionOptions,
@@ -391,6 +391,7 @@ export const useConversationMessages = (
     setConversationId,
     startConversation,
     continueConversation,
+    isFetchingConversation: fetchConversationMutation.isPending,
     isPending,
     error,
   };

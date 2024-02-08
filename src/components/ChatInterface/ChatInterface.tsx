@@ -79,7 +79,9 @@ export const ChatInterfaceComponent: FunctionComponent<{
     conversationId,
     continueConversation,
     isPending,
+    isFetchingConversation,
     error,
+    fetchMessagesMutation,
   } = useConversationMessages(workspaceId, initialConversationId);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isScrollLocked, setScrollLocked] = useState(true);
@@ -131,6 +133,8 @@ export const ChatInterfaceComponent: FunctionComponent<{
 
   const title = conversationTitle || "Start a new conversation";
 
+  if (isFetchingConversation) return <FullPageLoader />;
+
   return (
     <SidebarLayout
       title={title}
@@ -167,6 +171,11 @@ export const ChatInterfaceComponent: FunctionComponent<{
               <MessageBubble key={index} message={message} />
             ))}
             {error && <ConversationalError {...error} />}
+            {fetchMessagesMutation.error && (
+              <ConversationalError
+                message={fetchMessagesMutation.error.message}
+              />
+            )}
           </div>
           <div ref={lastMessageRef} className="inline-block" />
           <div className="h-24" />
