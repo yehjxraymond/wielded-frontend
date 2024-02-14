@@ -1,18 +1,19 @@
 "use client";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { config } from "@/config";
 import { useAuth } from "@/context/AuthContext";
+import { useUTMParameters } from "@/context/UTMContext";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { config } from "../config";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { gtmEvent } from "./Analytics";
-import { useUTMParameters } from "@/context/UTMContext";
+import { useEffect, useState } from "react";
+import { gtmEvent } from "../Analytics";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { useSsoCheck } from "./useSsoCheck";
 
 interface LoginData {
   email: string;
@@ -101,8 +102,15 @@ const postLogin = async (loginData: LoginData) => {
 
 type AppMode = "register" | "login" | "resendVerification";
 
+type SsoState =
+  | {
+      state: "pending";
+    }
+  | { state: "success"; isSsoEnabled: boolean; isSsoEnforced: boolean }
+  | { state: "error"; error: string };
+
 const RightPanel = () => {
-  const { replace } = useRouter();
+  const { replace, push } = useRouter();
   const searchParams = useSearchParams();
   const { setToken, isLoggedIn } = useAuth();
   const [mode, setMode] = useState<AppMode>(
@@ -110,6 +118,7 @@ const RightPanel = () => {
   );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const ssoState = useSsoCheck({ email });
   const { getUTMParameters } = useUTMParameters();
 
   const loginMutation = useMutation({
@@ -133,10 +142,7 @@ const RightPanel = () => {
       setMode("resendVerification");
     },
   });
-  const memoisedVerification = useMemo(
-    () => verificationMutation.mutate,
-    [verificationMutation.mutate]
-  );
+  const mutateVerification = verificationMutation.mutate;
   const isLoading =
     loginMutation.isPending ||
     registerMutation.isPending ||
@@ -149,12 +155,17 @@ const RightPanel = () => {
   // Handle verification when the verification token exists in the URL
   useEffect(() => {
     if (verificationToken) {
-      memoisedVerification(verificationToken);
+      mutateVerification(verificationToken);
     }
-  }, [verificationToken, memoisedVerification]);
+  }, [verificationToken, mutateVerification]);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (ssoState.state === "success" && ssoState.isSsoEnforced) {
+      const redirectUrl = `${config.baseUrl}/sso/saml/login?email=${email}`;
+      push(redirectUrl);
+      return;
+    }
     if (mode === "login") {
       loginMutation.mutate({
         email: email.toLowerCase(),
@@ -321,22 +332,32 @@ const RightPanel = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            {mode !== "resendVerification" && (
-              <Input
-                className="mb-4"
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+            {!(ssoState.state === "success" && ssoState.isSsoEnforced) &&
+              mode !== "resendVerification" && (
+                <Input
+                  className="mb-4"
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              )}
+            {ssoState.state === "success" && ssoState.isSsoEnforced && (
+              <Button className="w-full" type="submit" disabled={isLoading}>
+                Login (SSO)
+              </Button>
             )}
-            <Button className="w-full" type="submit" disabled={isLoading}>
-              {mode === "register"
-                ? "Sign Up"
-                : mode === "login"
-                ? "Login"
-                : "Resend Verification Email"}
-            </Button>
+            {!(ssoState.state === "success" && ssoState.isSsoEnforced) && (
+              <Button
+                className="w-full"
+                type="submit"
+                disabled={isLoading || ssoState.state === "pending"}
+              >
+                {mode === "register" && "Sign Up"}
+                {mode === "login" && "Login"}
+                {mode === "resendVerification" && "Resend Verification Email"}
+              </Button>
+            )}
           </form>
           <div className="h-8" />
         </div>
