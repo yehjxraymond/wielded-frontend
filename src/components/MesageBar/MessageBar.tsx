@@ -1,8 +1,10 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import {
   AudioLines,
   Disc3,
+  Download,
   Mic,
   Paperclip,
   Send,
@@ -129,6 +131,16 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
       : {},
   });
 
+  const handleDownloadAudio = () => {
+    if (!recordingBlob) return;
+    const url = URL.createObjectURL(recordingBlob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "audio.webm";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="flex justify-center">
       <div className="w-full max-w-3xl mb-8">
@@ -148,20 +160,38 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
                 <Paperclip className="h-5 w-5" />
               </div>
             )}
-            {acceptVoice &&
-              (isRecording ? (
-                <div onClick={stopRecording} className="cursor-pointer">
-                  <AudioLines className="h-5 w-5" />
-                </div>
-              ) : isAudioPending ? (
-                <div>
-                  <Disc3 className="h-5 w-5 animate-spin" />
-                </div>
-              ) : (
-                <div onClick={startRecording} className="cursor-pointer">
-                  <Mic className="h-5 w-5" />
-                </div>
-              ))}
+            {acceptVoice && (
+              <div
+                className={cn(
+                  "flex space-x-1 p-1",
+                  recordingBlob && "border-2 rounded-2xl border-muted"
+                )}
+              >
+                {isRecording ? (
+                  <div onClick={stopRecording} className="cursor-pointer">
+                    <AudioLines className="h-5 w-5" />
+                  </div>
+                ) : isAudioPending ? (
+                  <div>
+                    <Disc3 className="h-5 w-5 animate-spin" />
+                  </div>
+                ) : (
+                  <>
+                    <div onClick={startRecording} className="cursor-pointer">
+                      <Mic className="h-5 w-5" />
+                    </div>
+                  </>
+                )}
+                {recordingBlob && (
+                  <div>
+                    <Download
+                      className="h-5 w-5 cursor-pointer"
+                      onClick={handleDownloadAudio}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
             <Textarea
               className="focus-visible:ring-0 focus-visible:ring-offset-0 border-0 resize-none min-h-0"
               placeholder={placeholder}
