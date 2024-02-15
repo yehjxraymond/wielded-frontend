@@ -77,8 +77,8 @@ const plans: Plan[] = [
     name: "Lite Plan",
     icon: <Feather size={50} className="text-muted-foreground mb-4" />,
     description: "Bring-your-own-key plan for teams",
-    price: "$7/user/month",
-    priceNumber: 7,
+    price: "$3.50/user/month",
+    priceNumber: 3.5,
     includes: [
       "Everything in free plan",
       "Unlimited team members in workspace",
@@ -101,8 +101,8 @@ const plans: Plan[] = [
     name: "Pro Plan",
     icon: <Home size={50} className="text-muted-foreground mb-4" />,
     description: "Access to all AI models while keeping data private.",
-    price: "$30/user/month",
-    priceNumber: 30,
+    price: "$20/user/month",
+    priceNumber: 20,
     includes: [
       "GPT 3.5 Turbo & GPT-4 Turbo subscription",
       "Claude 1.2 & Claude 2.1 subscription",

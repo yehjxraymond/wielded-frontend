@@ -26,7 +26,7 @@ const tiers = [
     name: "Lite",
     id: "tier-team",
     href: "#",
-    priceMonthly: "$7",
+    priceMonthly: "$3.50",
     pricePostfix: "/user/month",
     description: "Bring-your-own-key plan for teams",
     features: [
@@ -43,7 +43,7 @@ const tiers = [
     name: "Pro",
     id: "tier-pro",
     href: "#",
-    priceMonthly: "$30",
+    priceMonthly: "$20",
     pricePostfix: "/user/month",
     description: "Access to all AI models with greater data privacy",
     features: [
