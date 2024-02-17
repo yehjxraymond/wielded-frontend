@@ -91,3 +91,22 @@ export const useFlags = () => {
   }
   return context;
 };
+
+export const useFlaggedActive = (
+  flagIds: string[],
+  allFlagsMustBeActive = false
+): boolean => {
+  const { flags } = useFlags();
+
+  if (allFlagsMustBeActive) {
+    // All flags in flagIds array must be active
+    return flagIds.every((flagId) =>
+      flags.some((flag) => flag.id === flagId && flag.isActive)
+    );
+  } else {
+    // At least one flag in flagIds array must be active
+    return flagIds.some((flagId) =>
+      flags.some((flag) => flag.id === flagId && flag.isActive)
+    );
+  }
+};

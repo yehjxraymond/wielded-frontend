@@ -1,4 +1,3 @@
-import { useActiveWorkspace } from "@/context/ActiveWorkspaceContext";
 import { authenticatedAxios } from "@/lib/authenticatedAxios";
 import { betterAxiosError } from "@/lib/errors";
 import { useMutation } from "@tanstack/react-query";

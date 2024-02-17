@@ -1,14 +1,16 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { Blocks, Landmark, Settings, Users } from "lucide-react";
+import { Blocks, Landmark, Link, Settings, Users } from "lucide-react";
 import { FunctionComponent, useEffect, useState } from "react";
 import { WorkspaceSetting } from "./WorkspaceSetting";
 import { MembersSetting } from "./MembersSetting";
 import { BillingSetting } from "./BillingSetting";
 import { IntegrationSetting } from "./IntegrationSetting";
 import { useSearchParams } from "next/navigation";
+import { FeatureFlag } from "../FeatureFlag/FeatureFlag";
+import { SsoSetting } from "./SsoSetting/SsoSetting";
 
-type SettingMenu = "settings" | "members" | "billing" | "integrations";
+type SettingMenu = "settings" | "members" | "billing" | "integrations" | "sso";
 
 export const SettingsContent: FunctionComponent<{
   defaultMenu: string | null;
@@ -62,6 +64,18 @@ export const SettingsContent: FunctionComponent<{
             <Landmark className="h-5 w-5 mr-1" />
             Billing
           </div>
+          <FeatureFlag flags={["SSO_ENABLED"]}>
+            <div
+              className={cn(
+                "text-sm font-semibold hover:bg-accent-foreground flex items-center px-4 py-1 cursor-pointer",
+                menuSelection === "sso" && "bg-accent-foreground"
+              )}
+              onClick={() => setMenuSelection("sso")}
+            >
+              <Link className="h-5 w-5 mr-1" />
+              SSO
+            </div>
+          </FeatureFlag>
         </div>
       </div>
       <div className="flex-1 p-4 overflow-auto">
@@ -69,6 +83,7 @@ export const SettingsContent: FunctionComponent<{
         {menuSelection === "integrations" && <IntegrationSetting />}
         {menuSelection === "members" && <MembersSetting />}
         {menuSelection === "billing" && <BillingSetting />}
+        {menuSelection === "sso" && <SsoSetting />}
       </div>
     </DialogContent>
   );
