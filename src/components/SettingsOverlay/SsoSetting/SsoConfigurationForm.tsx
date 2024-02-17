@@ -43,8 +43,8 @@ export const SSOConfigurationForm: FunctionComponent<{
       idpIssuer: ssoConfig?.idpIssuer,
       ssoUrl: ssoConfig?.ssoUrl,
       publicCertificate: ssoConfig?.publicCertificate,
-      signedAssertions: ssoConfig?.signedAssertions || false,
-      signedResponse: ssoConfig?.signedResponse || true,
+      signedAssertions: ssoConfig?.signedAssertions || true,
+      signedResponse: ssoConfig?.signedResponse || false,
       enforceSso: ssoConfig?.enforceSso || false,
       autoProvision: ssoConfig?.autoProvision || false,
     },
@@ -76,8 +76,8 @@ export const SSOConfigurationForm: FunctionComponent<{
             name="idpIssuer"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>IDP Issuer ID</FormLabel>
-                <FormDescription>Issuer ID from your IdP</FormDescription>
+                <FormLabel>IDP Entity ID</FormLabel>
+                <FormDescription>Entity ID from your IdP</FormDescription>
                 <FormControl>
                   <Input
                     {...field}

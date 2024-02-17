@@ -100,6 +100,7 @@ export const SsoSettingForm: FunctionComponent<{
       await verifyDomainMutation.mutateAsync({
         workspaceId: workspace.id,
       });
+      setAppState("dashboard");
     }
   };
 

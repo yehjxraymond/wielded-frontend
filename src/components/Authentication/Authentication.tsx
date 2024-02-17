@@ -9,7 +9,7 @@ import axios, { AxiosError } from "axios";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { gtmEvent } from "../Analytics";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -159,13 +159,16 @@ const RightPanel = () => {
     }
   }, [verificationToken, mutateVerification]);
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const loginViaSso = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    if (ssoState.state === "success" && ssoState.isSsoEnforced) {
+    if (ssoState.state === "success" && ssoState.isSsoEnabled) {
       const redirectUrl = `${config.baseUrl}/sso/saml/login?email=${email}`;
       push(redirectUrl);
-      return;
     }
+  };
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (mode === "login") {
       loginMutation.mutate({
         email: email.toLowerCase(),
@@ -342,19 +345,27 @@ const RightPanel = () => {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               )}
-            {ssoState.state === "success" && ssoState.isSsoEnforced && (
-              <Button className="w-full" type="submit" disabled={isLoading}>
+            {ssoState.state === "success" && ssoState.isSsoEnabled && (
+              <Button
+                className="w-full mt-4"
+                onClick={loginViaSso}
+                disabled={isLoading}
+              >
                 Login (SSO)
               </Button>
             )}
             {!(ssoState.state === "success" && ssoState.isSsoEnforced) && (
               <Button
-                className="w-full"
+                className="w-full mt-4"
                 type="submit"
                 disabled={isLoading || ssoState.state === "pending"}
               >
                 {mode === "register" && "Sign Up"}
-                {mode === "login" && "Login"}
+                {mode === "login" &&
+                ssoState.state === "success" &&
+                ssoState.isSsoEnabled
+                  ? "Login (Password)"
+                  : "Login"}
                 {mode === "resendVerification" && "Resend Verification Email"}
               </Button>
             )}
