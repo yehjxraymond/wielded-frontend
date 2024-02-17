@@ -70,8 +70,14 @@ export const SsoSettingForm: FunctionComponent<{
 
   const handleFormSubmit = async (form: SsoConfigSchema) => {
     if (hasSsoConfig) {
+      const data: Partial<SsoConfigSchema> = {
+        ...form,
+      };
+      if (ssoConfig?.domain === form.domain) {
+        delete data.domain;
+      }
       await updateMutation.mutateAsync({
-        ssoConfig: form,
+        ssoConfig: data,
         workspaceId: workspace.id,
         samlConfigId: ssoConfig?.id || "",
       });
