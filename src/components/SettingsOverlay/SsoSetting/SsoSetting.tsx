@@ -19,7 +19,10 @@ export const SsoSetupInstructions = () => {
         </p>
         <p>
           <strong>ACS URL:</strong> Enter{" "}
-          <CopyText text="https://api.production.wielded.com/sso/saml/callback" size="sm" />{" "}
+          <CopyText
+            text="https://api.production.wielded.com/sso/saml/callback"
+            size="sm"
+          />{" "}
           as the ACS URL.
         </p>
         <p>
@@ -27,8 +30,8 @@ export const SsoSetupInstructions = () => {
           email.
         </p>
         <p>
-          <strong>Attribute Mapping:</strong> Set up your IdP to map the user&apos;s
-          primary email to the <code>email</code> attribute.
+          <strong>Attribute Mapping:</strong> Set up your IdP to map the
+          user&apos;s primary email to the <code>email</code> attribute.
         </p>
         <p>
           Once the SAML configuration is complete, enter the following
