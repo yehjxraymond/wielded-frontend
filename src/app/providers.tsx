@@ -10,6 +10,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { FunctionComponent, ReactNode } from "react";
 import { ActiveWorkspaceProvider } from "@/context/ActiveWorkspaceContext";
+import { FlagsProvider } from "@/components/FeatureFlag/FlagsContext";
 
 export const Providers: FunctionComponent<{ children: ReactNode }> = ({
   children,
@@ -31,7 +32,9 @@ export const Providers: FunctionComponent<{ children: ReactNode }> = ({
                 <ActiveWorkspaceProvider>
                   <ConversationProvider>
                     <PersonaProvider>
-                      {children}
+                      <FlagsProvider localStorageOverride>
+                        {children}
+                      </FlagsProvider>
                       <Toaster />
                     </PersonaProvider>
                   </ConversationProvider>
