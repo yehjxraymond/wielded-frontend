@@ -62,14 +62,24 @@ export interface Feature {
 const integrationsToFeatures = (integrations: Integration[] = []): Feature => {
   const hasMultipleOpenAiProviders =
     integrations.some(
-      (integration) => integration.provider === "azure_open_ai"
-    ) && integrations.some((integration) => integration.provider === "open_ai");
+      (integration) =>
+        integration.provider === "azure_open_ai" && integration.type === "chat"
+    ) &&
+    integrations.some(
+      (integration) =>
+        integration.provider === "open_ai" && integration.type === "chat"
+    );
   const hasMultipleAnthropicProviders =
     integrations.some(
       (integration) =>
         integration.provider === "aws_bedrock" &&
-        integration.model.startsWith("anthropic")
-    ) && integrations.some((integration) => integration.provider === "claude");
+        integration.model.startsWith("anthropic") &&
+        integration.type === "chat"
+    ) &&
+    integrations.some(
+      (integration) =>
+        integration.provider === "claude" && integration.type === "chat"
+    );
 
   const chatIntegrations = integrations
     .filter((integration) => integration.type === "chat")
