@@ -637,7 +637,8 @@ const BillingSettingPanel = ({ workspaceId }: { workspaceId: string }) => {
   } = billing;
 
   const currentPlan =
-    subscription && subscription.status === "active"
+    subscription &&
+    (subscription.status === "active" || subscription.status === "trialing")
       ? plans.find((p) => p.id === subscription.tier)
       : plans[0];
   if (!currentPlan) throw new Error("Current plan not found");

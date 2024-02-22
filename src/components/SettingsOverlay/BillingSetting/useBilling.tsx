@@ -7,6 +7,7 @@ import { useEffect, useMemo } from "react";
 
 export type SubscriptionStatus =
   | "active"
+  | "trialing"
   | "canceled"
   | "past_due"
   | "unpaid"
