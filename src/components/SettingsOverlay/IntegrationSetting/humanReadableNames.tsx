@@ -28,6 +28,12 @@ export const humanReadableModel = (model: IntegrationDto["model"] | string) => {
       return "Claude v2.1";
     case model.includes("claude-instant"):
       return "Claude v1.2";
+    case model.includes("claude-3-opus"):
+      return "Claude v3 (Opus)";
+    case model.includes("claude-3-sonnet"):
+      return "Claude v3 (Sonnet)";
+    case model.includes("claude-3-haiku"):
+      return "Claude v3 (Haiku)";
     case model === "dall-e-3":
       return "DALL-E 3";
     case model === "whisper-1":

@@ -23,7 +23,13 @@ import { Input } from "../../../ui/input";
 import { humanReadableModel } from "../humanReadableNames";
 import { IntegrationDto, UpdateIntegrationDto } from "../useIntegrations";
 
-const selectableClaudeModel = ["claude-2.1", "claude-instant-1.2"];
+const selectableClaudeModel = [
+  "claude-2.1",
+  "claude-instant-1.2",
+  "claude-3-opus-20240229",
+  "claude-3-sonnet-20240229",
+  "claude-3-haiku-20240307",
+];
 const claudeConfigSchema = z.object({
   model: z.string(),
   apiKey: z.string(),
