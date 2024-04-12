@@ -124,7 +124,7 @@ export const MessageBar: FunctionComponent<MessageBarProps> = ({
           "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
             [".docx"],
           "application/msword": [".doc"],
-          "text/plain": [".txt"],
+          "text/plain": [".txt", ".md", ".mdx", ".js", ".ts", ".tsx"],
           "audio/ogg": [".ogg"],
           "audio/webm": [".webm"],
         }
