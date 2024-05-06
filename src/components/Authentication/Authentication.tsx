@@ -4,8 +4,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { config } from "@/config";
 import { useAuth } from "@/context/AuthContext";
 import { useUTMParameters } from "@/context/UTMContext";
+import { betterAxiosError } from "@/lib/errors";
 import { useMutation } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -25,89 +26,65 @@ interface RegisterData extends LoginData {
   utm_parameters?: object;
 }
 
-const postRegister = async (registerData: RegisterData) => {
-  try {
-    const res = await axios.post<{ id: string }>(
-      `${config.baseUrl}/user`,
-      registerData
-    );
-    await gtmEvent({
-      event: "register_account",
-      source: registerData.source,
-    });
-    return res.data;
-  } catch (e) {
-    if (e instanceof AxiosError) {
-      const data = e.response?.data;
-      if (data.message) {
-        throw new Error(data.message);
-      }
-    }
-    throw e;
-  }
-};
+const postRegister = betterAxiosError(async (registerData: RegisterData) => {
+  const res = await axios.post<{ id: string }>(
+    `${config.baseUrl}/user`,
+    registerData
+  );
+  await gtmEvent({
+    event: "register_account",
+    source: registerData.source,
+  });
+  return res.data;
+});
 
-const verifyEmail = async (token: string) => {
-  try {
-    const res = await axios.get<{ success: boolean }>(
-      `${config.baseUrl}/user/verify?token=${token}`
-    );
-    return res.data;
-  } catch (e) {
-    if (e instanceof AxiosError) {
-      const data = e.response?.data;
-      if (data.message) {
-        throw new Error(data.message);
-      }
-    }
-    throw e;
-  }
-};
+const verifyEmail = betterAxiosError(async (token: string) => {
+  const res = await axios.get<{ success: boolean }>(
+    `${config.baseUrl}/user/verify?token=${token}`
+  );
+  return res.data;
+});
 
-const postResendVerificationEmail = async (email: string) => {
-  try {
+const postResendVerificationEmail = betterAxiosError(async (email: string) => {
+  const res = await axios.post<{ success: boolean }>(
+    `${config.baseUrl}/user/resend-verification`,
+    { email }
+  );
+  return res.data;
+});
+
+const postLogin = betterAxiosError(async (loginData: LoginData) => {
+  const res = await axios.post<{ access_token: string }>(
+    `${config.baseUrl}/login`,
+    loginData
+  );
+  return res.data;
+});
+
+const postForgetPassword = betterAxiosError(async (email: string) => {
+  const res = await axios.post<{ success: boolean }>(
+    `${config.baseUrl}/user/initiate-password-reset`,
+    { email }
+  );
+  return res.data;
+});
+
+const postPasswordReset = betterAxiosError(
+  async (data: { token: string; password: string }) => {
     const res = await axios.post<{ success: boolean }>(
-      `${config.baseUrl}/user/resend-verification`,
-      { email }
+      `${config.baseUrl}/user/reset-password`,
+      data
     );
     return res.data;
-  } catch (e) {
-    if (e instanceof AxiosError) {
-      const data = e.response?.data;
-      if (data.message) {
-        throw new Error(data.message);
-      }
-    }
-    throw e;
   }
-};
+);
 
-const postLogin = async (loginData: LoginData) => {
-  try {
-    const res = await axios.post<{ access_token: string }>(
-      `${config.baseUrl}/login`,
-      loginData
-    );
-    return res.data;
-  } catch (e) {
-    if (e instanceof AxiosError) {
-      const data = e.response?.data;
-      if (data.message) {
-        throw new Error(data.message);
-      }
-    }
-    throw e;
-  }
-};
-
-type AppMode = "register" | "login" | "resendVerification";
-
-type SsoState =
-  | {
-      state: "pending";
-    }
-  | { state: "success"; isSsoEnabled: boolean; isSsoEnforced: boolean }
-  | { state: "error"; error: string };
+type AppMode =
+  | "register"
+  | "login"
+  | "resendVerification"
+  | "forget-password"
+  | "password-reset";
 
 const RightPanel = () => {
   const { replace, push } = useRouter();
@@ -142,15 +119,28 @@ const RightPanel = () => {
       setMode("resendVerification");
     },
   });
+  const forgetPasswordMutation = useMutation({
+    mutationFn: postForgetPassword,
+  });
+  const passwordResetMutation = useMutation({
+    mutationFn: postPasswordReset,
+    onSuccess: () => {
+      setMode("login");
+    },
+  });
   const mutateVerification = verificationMutation.mutate;
   const isLoading =
     loginMutation.isPending ||
     registerMutation.isPending ||
-    verificationMutation.isPending;
+    verificationMutation.isPending ||
+    forgetPasswordMutation.isPending ||
+    passwordResetMutation.isPending;
+
   const resendVerificationEmailMutation = useMutation({
     mutationFn: postResendVerificationEmail,
   });
   const verificationToken = searchParams.get("verification_token");
+  const passwordResetToken = searchParams.get("password_reset_token");
 
   // Handle verification when the verification token exists in the URL
   useEffect(() => {
@@ -182,8 +172,16 @@ const RightPanel = () => {
         source: searchParams.get("source") || "login_page",
         utm_parameters,
       });
-    } else {
+    } else if (mode === "resendVerification") {
       resendVerificationEmailMutation.mutate(email.toLowerCase());
+    } else if (mode === "forget-password") {
+      forgetPasswordMutation.mutate(email.toLowerCase());
+    } else {
+      if (!passwordResetToken) return alert("Password reset token not found!");
+      passwordResetMutation.mutate({
+        token: passwordResetToken,
+        password,
+      });
     }
   };
   useEffect(() => {
@@ -213,7 +211,11 @@ const RightPanel = () => {
               ? "Create an account"
               : mode === "login"
               ? "Login to your account"
-              : "Re-send Verification Email"}
+              : mode === "resendVerification"
+              ? "Re-send Verification Email"
+              : mode === "forget-password"
+              ? "Forget Password"
+              : "Reset Password"}
           </h1>
           {registerMutation.error && (
             <div className="flex w-full max-w-md items-center space-x-2 my-4">
@@ -292,6 +294,50 @@ const RightPanel = () => {
               </Alert>
             </div>
           )}
+          {forgetPasswordMutation.isSuccess && (
+            <div className="flex w-full max-w-md items-center space-x-2 my-4">
+              <Alert>
+                <CheckCircle2 className="h-4 w-4" />
+                <AlertTitle>Reset Password Email Sent</AlertTitle>
+                <AlertDescription>
+                  Please check your email for the password reset email.
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
+          {passwordResetMutation.isSuccess && (
+            <div className="flex w-full max-w-md items-center space-x-2 my-4">
+              <Alert>
+                <CheckCircle2 className="h-4 w-4" />
+                <AlertTitle>Password Reset Successfully</AlertTitle>
+                <AlertDescription>
+                  Login with your new password to proceed.
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
+          {passwordResetMutation.error && (
+            <div className="flex w-full max-w-md items-center space-x-2 my-4">
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Password Reset Error</AlertTitle>
+                <AlertDescription>
+                  {passwordResetMutation.error.message}
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
+          {forgetPasswordMutation.error && (
+            <div className="flex w-full max-w-md items-center space-x-2 my-4">
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Forget Password Error</AlertTitle>
+                <AlertDescription>
+                  {forgetPasswordMutation.error.message}
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
           {registerMutation.isSuccess && (
             <div className="flex w-full max-w-md items-center space-x-2 my-4">
               <Alert>
@@ -328,15 +374,18 @@ const RightPanel = () => {
             </div>
           )}
           <form onSubmit={onSubmit}>
-            <Input
-              className="mb-4"
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+            {mode !== "password-reset" && (
+              <Input
+                className="mb-4"
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            )}
             {!(ssoState.state === "success" && ssoState.isSsoEnforced) &&
-              mode !== "resendVerification" && (
+              mode !== "resendVerification" &&
+              mode !== "forget-password" && (
                 <Input
                   className="mb-4"
                   type="password"
@@ -358,14 +407,18 @@ const RightPanel = () => {
               <Button
                 className="w-full mt-4"
                 type="submit"
-                disabled={isLoading || ssoState.state === "pending"}
+                disabled={
+                  isLoading ||
+                  (ssoState.state === "pending" && mode === "login")
+                }
               >
                 {mode === "register" && "Sign Up"}
+                {mode === "forget-password" && "Reset Password"}
+                {mode === "password-reset" && "Reset Password"}
                 {mode === "login" &&
-                ssoState.state === "success" &&
-                ssoState.isSsoEnabled
-                  ? "Login (Password)"
-                  : "Login"}
+                  (ssoState.state === "success" && ssoState.isSsoEnabled
+                    ? "Login (Password)"
+                    : "Login")}
                 {mode === "resendVerification" && "Resend Verification Email"}
               </Button>
             )}
@@ -385,14 +438,25 @@ const RightPanel = () => {
             </div>
           )}
           {mode === "login" && (
-            <div>
-              Don&apos;t have an account?{" "}
-              <span
-                className="text-muted-foreground cursor-pointer"
-                onClick={() => setMode("register")}
-              >
-                Register
-              </span>
+            <div className="text-center">
+              <div>
+                Don&apos;t have an account?{" "}
+                <span
+                  className="text-muted-foreground cursor-pointer"
+                  onClick={() => setMode("register")}
+                >
+                  Register
+                </span>
+              </div>
+              <div>
+                Forgot your password?{" "}
+                <span
+                  className="text-muted-foreground cursor-pointer"
+                  onClick={() => setMode("forget-password")}
+                >
+                  Reset Password
+                </span>
+              </div>
             </div>
           )}
         </div>
