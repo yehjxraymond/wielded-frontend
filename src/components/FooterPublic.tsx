@@ -30,6 +30,9 @@ export const FooterPublic = () => {
 
         <div className="flex flex-col gap-2">
           <div className="font-semibold">More</div>
+          <Link href="/chatgpt-prompt" className="block">
+            ChatGPT Prompt Repository
+          </Link>
           <Link href="/privacy" className="block">
             Privacy policy
           </Link>
