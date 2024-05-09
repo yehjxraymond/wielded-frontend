@@ -1,5 +1,4 @@
 import { FaqSection } from "@/components/FaqSection";
-import { HeaderPublic } from "@/components/HeaderPublic";
 import { CtaSeparator } from "@/components/MarketingUI/CtaSeparator";
 import { FeatureHero } from "@/components/MarketingUI/FeatureHero";
 import { FeatureHighlight } from "@/components/MarketingUI/FeatureHighlight";

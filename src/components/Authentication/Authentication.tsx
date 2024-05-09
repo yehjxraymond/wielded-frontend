@@ -10,7 +10,7 @@ import axios from "axios";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { gtmEvent } from "../Analytics";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -608,7 +608,9 @@ export const Authentication = () => {
   return (
     <div className="flex">
       <LeftPanel />
-      <RightPanel />
+      <Suspense>
+        <RightPanel />
+      </Suspense>
     </div>
   );
 };

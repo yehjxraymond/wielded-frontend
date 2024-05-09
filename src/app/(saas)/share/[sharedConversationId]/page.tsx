@@ -1,4 +1,4 @@
-import { HeaderPublic } from "@/components/HeaderPublic";
+import { PublicLayout } from "@/components/PublicLayout";
 import {
   SharedConversation,
   SharedConversationDto,
@@ -40,9 +40,8 @@ export default async function ConversationPage({
 }) {
   const data = await getSharedConversationData(sharedConversationId);
   return (
-    <main>
-      <HeaderPublic />
+    <PublicLayout>
       <SharedConversation data={data} />
-    </main>
+    </PublicLayout>
   );
 }

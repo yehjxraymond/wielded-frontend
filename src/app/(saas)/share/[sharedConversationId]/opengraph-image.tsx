@@ -1,8 +1,6 @@
-import {
-  SharedConversationDto
-} from "@/components/SharedConversation";
+import { SharedConversationDto } from "@/components/SharedConversation";
 import { config } from "@/config";
-import { ImageResponse } from "next/server";
+import { ImageResponse } from "next/og";
 
 // Route segment config
 export const runtime = "edge";

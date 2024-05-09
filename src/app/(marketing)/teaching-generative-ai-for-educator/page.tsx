@@ -1,9 +1,9 @@
 import { FaqSection } from "@/components/FaqSection";
-import { HeaderPublic } from "@/components/HeaderPublic";
 import { CtaSeparator } from "@/components/MarketingUI/CtaSeparator";
 import { FeatureHero } from "@/components/MarketingUI/FeatureHero";
 import { FeatureHighlight } from "@/components/MarketingUI/FeatureHighlight";
 import { TitleSeparator } from "@/components/MarketingUI/TitleSeparator";
+import { PublicLayout } from "@/components/PublicLayout";
 import { Metadata } from "next";
 
 const faqs = [
@@ -151,8 +151,7 @@ const faqs = [
 
 const Content = () => {
   return (
-    <>
-      <HeaderPublic />
+    <PublicLayout>
       <FeatureHero
         heading="Teaching Generative AI with Wielded"
         subheading="Empower your teaching with instant access to student accounts for ChatGPT and Dall-E 3. Bring OpenAI's most powerful tools into your generative AI classroom."
@@ -194,7 +193,7 @@ const Content = () => {
         source="chatgpt-student-accounts"
       />
       <FaqSection faqs={faqs} className="my-10" />
-    </>
+    </PublicLayout>
   );
 };
 

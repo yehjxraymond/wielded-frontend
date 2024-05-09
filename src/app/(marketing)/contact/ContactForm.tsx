@@ -6,7 +6,7 @@ import { config } from "@/config";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useUTMParameters } from "@/context/UTMContext";
 
 interface FormFields {
@@ -38,7 +38,13 @@ export const useContactFormSubmit = () => {
   });
 };
 
-export const ContactForm = () => {
+export const ContactForm = () => (
+  <Suspense>
+    <ContactFormInternal />
+  </Suspense>
+);
+
+export const ContactFormInternal = () => {
   const searchParams = useSearchParams();
   const { getUTMParameters } = useUTMParameters();
 

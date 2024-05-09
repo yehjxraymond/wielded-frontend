@@ -1,3 +1,5 @@
+"use client";
+
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { Blocks, Landmark, Link, Settings, Users } from "lucide-react";
@@ -90,10 +92,10 @@ export const SettingsContent: FunctionComponent<{
 };
 
 export const SettingsOverlaySidebarTrigger = () => {
-  const { get } = useSearchParams();
+  const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
 
-  const settingSelectionFromUrl = get("settings");
+  const settingSelectionFromUrl = searchParams.get("settings");
 
   useEffect(() => {
     if (settingSelectionFromUrl) {
