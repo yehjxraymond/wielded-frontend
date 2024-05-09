@@ -1,0 +1,11 @@
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <sitemap>
+        <loc>https://wielded.com/pages/sitemap.xml</loc>
+    </sitemap>
+    <sitemap>
+        <loc>https://wielded.com/blog/sitemap.xml</loc>
+    </sitemap>
+    <sitemap>
+        <loc>https://wielded.com/tag/sitemap.xml</loc>
+    </sitemap>
+</sitemapindex>

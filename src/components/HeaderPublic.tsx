@@ -13,46 +13,8 @@ import { Menu } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 import { ThemeToggle } from "./ThemeToggle";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Button } from "./ui/button";
-
-const useCases: { title: string; href: string; description: string }[] = [
-  {
-    title: "ChatGPT for Educators",
-    description: "Elevate teaching with AI-assisted curriculum planning.",
-    href: "/for-educator",
-  },
-  {
-    title: "ChatGPT for Digital Marketers",
-    description: "Boost campaigns with AI-driven marketing insights.",
-    href: "/for-digital-marketer",
-  },
-  {
-    title: "ChatGPT for Content Creators",
-    description: "Streamline creation with AI-powered content tools.",
-    href: "/for-content-creator",
-  },
-  {
-    title: "ChatGPT for Product Managers",
-    description: "Enhance product roadmaps with AI-generated data.",
-    href: "/for-product-manager",
-  },
-  {
-    title: "ChatGPT for Product Teams",
-    description: "Empower teams with AI-fueled project collaboration.",
-    href: "/for-product-team",
-  },
-  {
-    title: "ChatGPT for Sales Teams",
-    description: "Boost sales with personalized AI engagement strategies.",
-    href: "/for-sales-team",
-  },
-  {
-    title: "ChatGPT for Customer Support",
-    description: "Revolutionize support with AI-enhanced customer service.",
-    href: "/for-customer-support",
-  },
-];
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 const productFeatures: { title: string; href: string; description: string }[] =
   [
@@ -128,25 +90,9 @@ export function NavigationDropdownMenu() {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Use Cases</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <div className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-              {useCases.map((component) => (
-                <ListItem
-                  key={component.title}
-                  title={component.title}
-                  href={component.href}
-                >
-                  {component.description}
-                </ListItem>
-              ))}
-            </div>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link href="/chatgpt-prompt" legacyBehavior passHref>
+          <Link href="/blog" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              ChatGPT Prompt Library
+              Blog
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
@@ -189,7 +135,6 @@ const ListItem = React.forwardRef<
 ListItem.displayName = "ListItem";
 
 const MobileMenu = () => {
-  const [useCasesOpen, setUseCasesOpen] = React.useState(false);
   const [productsOpen, setProductsOpen] = React.useState(false);
   return (
     <Sheet>
@@ -216,26 +161,8 @@ const MobileMenu = () => {
               ))}
             </div>
           )}
-          <div
-            className="text-lg font-medium mb-4 cursor-pointer"
-            onClick={() => setUseCasesOpen(!useCasesOpen)}
-          >
-            Use Cases
-          </div>
-          {useCasesOpen && (
-            <div className="pl-4">
-              {useCases.map((component) => (
-                <div className="font-medium mb-4" key={component.title}>
-                  <Link href={component.href}>{component.title}</Link>
-                </div>
-              ))}
-            </div>
-          )}
           <div className="text-lg font-medium mb-4">
             <Link href="/chatgpt-prompt">ChatGPT Prompt Library</Link>
-          </div>
-          <div className="text-lg font-medium mb-4">
-            <Link href="https://newsletter.wielded.com">Newsletter</Link>
           </div>
           <div className="text-lg font-medium mb-4">
             <Link href="/login?mode=login&source=navigation-mobile">Login</Link>

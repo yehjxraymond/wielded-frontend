@@ -1,14 +1,12 @@
 "use client";
-import { HeaderPublic } from "@/components/HeaderPublic";
-import { MainHero } from "./MainHero";
-import { MainFeatures } from "./MainFeatures";
-import { Pricing } from "./Pricing";
 import { BottomCTA } from "./BottomCTA";
+import { MainFeatures } from "./MainFeatures";
+import { MainHero } from "./MainHero";
+import { Pricing } from "./Pricing";
 
 export const HomeMarketing = () => {
   return (
     <>
-      <HeaderPublic />
       <MainHero />
       <MainFeatures />
       <Pricing />
