@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "ts-node-esm ./scripts/generate-sitemap.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
