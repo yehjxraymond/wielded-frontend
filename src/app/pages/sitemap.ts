@@ -13,6 +13,7 @@ const staticPaths = [
   "image-generation-with-dalle3",
   "multi-model-ai-lab-for-education",
   "teaching-generative-ai-for-educator",
+  "ai-content-mastery-course",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

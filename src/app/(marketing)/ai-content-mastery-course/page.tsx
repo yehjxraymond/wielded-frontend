@@ -253,9 +253,8 @@ const Content = () => {
 export default Content;
 
 export const metadata: Metadata = {
-  title: "Advanced AI Document Analysis for Enhanced Productivity | Wielded",
+  title: "AI Content Mastery Course by Wielded",
   description:
-    "Maximize efficiency and discover key insights with Wielded. Our AI-driven document analysis tools are designed to streamline educational, legal, and research practices. Get started today to see how Wielded can revolutionize your document workflow.",
-  keywords:
-    "AI Document Analysis, Productivity Tools, Educational AI, Legal Review AI, Legacy Code AI, Research Summarization",
+    "Learn a framework for prompting ChatGPT to produce focused, nuanced pieces that speak directly to your customers' pain points and desires - using your brand voice.",
+  keywords: "ChatGPT, AI Content Marketing, ChatGPT voice, Prompt engineering",
 };
