@@ -326,8 +326,8 @@ const Content = () => {
             learn to integrate AI into your content marketing workflow.
           </p>
           <p>
-            Once you've put the hours in, you will start seeing results in your
-            output. And others will see it too!
+            Once you&apos;ve put the hours in, you will start seeing results in
+            your output. And others will see it too!
           </p>
           <CourseCTA
             className="my-10"

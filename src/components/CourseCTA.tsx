@@ -54,7 +54,7 @@ export const CourseCTA: FunctionComponent<{
           </h2>
           <p className="text-primary-foreground/80 mx-auto mt-6 max-w-xl text-balance leading-8">
             Seating is limited, and on first come first serve basis. Put your
-            name and email below to ensure your don't lose your spot!
+            name and email below to ensure your don&apos;t lose your spot!
           </p>
           {subscriptionMutation.data?.error && (
             <Alert variant="destructive" className="mt-10 max-w-lg m-auto">
