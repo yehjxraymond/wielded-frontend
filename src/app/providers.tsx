@@ -11,8 +11,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { FunctionComponent, ReactNode, Suspense } from "react";
 import { ActiveWorkspaceProvider } from "@/context/ActiveWorkspaceContext";
 import { FlagsProvider } from "@/components/FeatureFlag/FlagsContext";
-import { PostHogProvider } from "posthog-js/react";
 import PostHogPageView from "@/components/PostHogPageView";
+import { CSPostHogProvider } from "@/components/CSPostHogProvider";
 
 export const Providers: FunctionComponent<{ children: ReactNode }> = ({
   children,
@@ -20,7 +20,7 @@ export const Providers: FunctionComponent<{ children: ReactNode }> = ({
   const [queryClient] = React.useState(() => new QueryClient());
 
   return (
-    <PostHogProvider>
+    <CSPostHogProvider>
       <Suspense>
         <PostHogPageView />
       </Suspense>
@@ -51,6 +51,6 @@ export const Providers: FunctionComponent<{ children: ReactNode }> = ({
           </ThemeProvider>
         </UTMProvider>
       </QueryClientProvider>
-    </PostHogProvider>
+    </CSPostHogProvider>
   );
 };
