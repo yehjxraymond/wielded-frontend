@@ -8,7 +8,7 @@ import { UserProvider } from "@/context/UserContext";
 import { WorkspaceProvider } from "@/context/WorkspaceContext";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import React, { FunctionComponent, ReactNode } from "react";
+import React, { FunctionComponent, ReactNode, Suspense } from "react";
 import { ActiveWorkspaceProvider } from "@/context/ActiveWorkspaceContext";
 import { FlagsProvider } from "@/components/FeatureFlag/FlagsContext";
 import { PostHogProvider } from "posthog-js/react";
@@ -21,7 +21,9 @@ export const Providers: FunctionComponent<{ children: ReactNode }> = ({
 
   return (
     <PostHogProvider>
-      <PostHogPageView />
+      <Suspense>
+        <PostHogPageView />
+      </Suspense>
       <QueryClientProvider client={queryClient}>
         <UTMProvider>
           <ThemeProvider
