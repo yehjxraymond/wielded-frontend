@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTheme } from "next-themes";
 import type { FunctionComponent } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useIsClient } from "usehooks-ts";
 import { useMutation } from "@tanstack/react-query";
+import { gtmEvent } from "./Analytics";
 
 const useSubscriptionMutation = (list: string) => {
   return useMutation({
@@ -42,6 +43,13 @@ export const CourseCTA: FunctionComponent<{
     event.preventDefault();
     subscriptionMutation.mutate({ email, name });
   };
+  useEffect(() => {
+    if (subscriptionMutation.data?.success) {
+      gtmEvent({
+        event: "ai-content-mastery-signup",
+      });
+    }
+  }, [subscriptionMutation.data]);
   if (!isClient) {
     return null;
   }
