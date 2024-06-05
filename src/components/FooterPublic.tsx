@@ -10,6 +10,9 @@ export const FooterPublic = () => {
 
         <div className="flex flex-col gap-2">
           <div className="font-semibold">Company</div>
+          <Link href="/ai-content-mastery-course" className="block">
+            AI Content Mastery Course
+          </Link>
           <Link href="/blog" className="block">
             Blog
           </Link>
