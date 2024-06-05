@@ -11,6 +11,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React, { FunctionComponent, ReactNode } from "react";
 import { ActiveWorkspaceProvider } from "@/context/ActiveWorkspaceContext";
 import { FlagsProvider } from "@/components/FeatureFlag/FlagsContext";
+import { PostHogProvider } from "posthog-js/react";
+import PostHogPageView from "@/components/PostHogPageView";
 
 export const Providers: FunctionComponent<{ children: ReactNode }> = ({
   children,
@@ -18,32 +20,35 @@ export const Providers: FunctionComponent<{ children: ReactNode }> = ({
   const [queryClient] = React.useState(() => new QueryClient());
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <UTMProvider>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AuthProvider>
-            <UserProvider>
-              <WorkspaceProvider>
-                <ActiveWorkspaceProvider>
-                  <ConversationProvider>
-                    <PersonaProvider>
-                      <FlagsProvider localStorageOverride>
-                        {children}
-                      </FlagsProvider>
-                      <Toaster />
-                    </PersonaProvider>
-                  </ConversationProvider>
-                </ActiveWorkspaceProvider>
-              </WorkspaceProvider>
-            </UserProvider>
-          </AuthProvider>
-        </ThemeProvider>
-      </UTMProvider>
-    </QueryClientProvider>
+    <PostHogProvider>
+      <PostHogPageView />
+      <QueryClientProvider client={queryClient}>
+        <UTMProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <AuthProvider>
+              <UserProvider>
+                <WorkspaceProvider>
+                  <ActiveWorkspaceProvider>
+                    <ConversationProvider>
+                      <PersonaProvider>
+                        <FlagsProvider localStorageOverride>
+                          {children}
+                        </FlagsProvider>
+                        <Toaster />
+                      </PersonaProvider>
+                    </ConversationProvider>
+                  </ActiveWorkspaceProvider>
+                </WorkspaceProvider>
+              </UserProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </UTMProvider>
+      </QueryClientProvider>
+    </PostHogProvider>
   );
 };
