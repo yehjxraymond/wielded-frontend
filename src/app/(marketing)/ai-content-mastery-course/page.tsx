@@ -1,3 +1,4 @@
+import { CourseCTA } from "@/components/CourseCTA";
 import { Metadata } from "next";
 
 const Content = () => {
@@ -254,6 +255,84 @@ const Content = () => {
             spots every month. Exact dates will be announced only to this
             waiting list!
           </p>
+          <CourseCTA className="my-10" title="Enrollment opening soon!" />
+          <h2>The AI Content Mastery Guarantee</h2>
+          <p>
+            We are confident that the AI Content Mastery course will help you
+            create better content faster and more efficiently than ever before.
+          </p>
+          <p>
+            Learning how to work with AI takes time, effort, and practice... but
+            following the process helps you learn to work with AI in a way that
+            feels natural and intuitive. Your wins might be small at first, and
+            you might have some setbacks, but with the guided practice,
+            you&apos;ll get better and better. In most cases, getting just 20%
+            right will put you ahead of your career, in front of your peers.
+          </p>
+          <p>
+            If you complete the course and implement the strategies but
+            don&apos;t see results, we will refund your investment in full.
+          </p>
+          <h2>Frequently Asked Questions</h2>
+          <h3>Is AI Content Mastery right for me?</h3>
+          <p>
+            AI Content Mastery is perfect for early-stage founders, content
+            marketers, copywriters, social media managers and marketing leaders
+            who want to leverage AI to create high-quality, audience-centric
+            content that drives engagement and sales.
+          </p>
+          <h3>What happens after I buy?</h3>
+          <p>
+            After you purchase AI Content Mastery, you&apos;ll receive an email
+            with instructions to instantly access to all course materials and
+            can start learning immediately.
+          </p>
+          <h3>
+            Will I be an expert at marketing after the AI Content Mastery
+            Course?
+          </h3>
+          <p>
+            AI Content Mastery is designed to give you a solid foundation in
+            content marketing with AI. You&apos;ll learn how to use AI to
+            generate content that resonates with your audience, but you&apos;ll
+            benefit most if you are already familiar with the basics of content
+            marketing as this is NOT a marketing course.
+          </p>
+          <h3>
+            Do I need to purchase additional tools to learn and use the
+            techniques taught in the course?
+          </h3>
+          <p>
+            During the course, you&apos;ll learn different tools and techniques
+            to help you integrate AI into your content marketing workflow. Some
+            tools are free, while others require a subscription.
+          </p>
+          <p>
+            For the tools or softwares that require a subscription, there will
+            always be a free alternative that you can use, especially for
+            learners. You do NOT have to pay for any additional tools if you do
+            not wish to, and you will NOT miss out on any learning
+            opportunities.
+          </p>
+          <h3>How much time will I need to dedicate to this course?</h3>
+          <p>
+            AI Content Mastery is a self-paced course, so you can complete it at
+            your own pace.
+          </p>
+          <p>
+            The course is designed so that you can start seeing results within
+            the first hour of work. However, to get the most out of the course,
+            we recommend dedicating time each week to complete the lessons and
+            learn to integrate AI into your content marketing workflow.
+          </p>
+          <p>
+            Once you've put the hours in, you will start seeing results in your
+            output. And others will see it too!
+          </p>
+          <CourseCTA
+            className="my-10"
+            title="Find out when you can join our next batch of students"
+          />
         </div>
       </div>
     </main>
