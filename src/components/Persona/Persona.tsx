@@ -5,6 +5,8 @@ import {
 } from "@/components/ui/collapsible";
 import {
   PersonaSuccess,
+  QuickAction,
+  ShortcutType,
   getInheritedInstructions,
   usePersona,
 } from "@/context/PersonaContext";
@@ -39,6 +41,13 @@ import { Textarea } from "../ui/textarea";
 import { PersonaInheritanceCombobox } from "./PersonaInheritanceCombobox";
 import { useDropzone } from "react-dropzone";
 import { Upload, X } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type FormType = { type: "create" } | { type: "edit"; id: string };
 
@@ -67,6 +76,9 @@ const PersonaForm: FunctionComponent<{
   isOpen,
 }) => {
   const [isInheritanceOpen, setIsInheritanceOpen] = useState(false);
+  const [shortcuts, setShortcuts] = useState<QuickAction[]>([]);
+  const [activeShortcutContent, setActiveShortcutContent] =
+    useState<string>("");
   const defaultValues =
     formType.type === "edit"
       ? personas.find((p) => p.id === formType.id)
@@ -88,7 +100,7 @@ const PersonaForm: FunctionComponent<{
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
         [".docx"],
       "application/msword": [".doc"],
-      "text/plain": [".txt"],
+      "text/plain": [".txt", ".md", ".mdx", ".js", ".ts", ".tsx"],
     },
   });
 
@@ -103,21 +115,50 @@ const PersonaForm: FunctionComponent<{
       form.setValue("name", defaultValues.name || "");
       form.setValue("description", defaultValues.description || "");
       form.setValue("content", defaultValues.content);
+      setShortcuts(defaultValues.shortcuts || []);
     } else {
       form.setValue("name", "");
       form.setValue("description", "");
       form.setValue("content", "");
+      setShortcuts([]);
     }
   }, [defaultValues, form]);
+
+  const onAddShortcut = (shortcut: QuickAction) => {
+    setShortcuts(
+      [...shortcuts, shortcut].sort((b, a) => a.type.localeCompare(b.type))
+    );
+  };
+  const onRemoveShortcut = (index: number) => {
+    setShortcuts(shortcuts.filter((_, i) => i !== index));
+  };
+  const onAddQuickAction = (
+    e: React.FormEvent<HTMLButtonElement>,
+    type: ShortcutType
+  ) => {
+    e.preventDefault();
+    onAddShortcut({
+      content: activeShortcutContent,
+      type,
+    });
+    setActiveShortcutContent("");
+  };
+
   function onSubmit(values: z.infer<typeof personaSchema>) {
     if (formType.type === "create") {
-      createPersona({ ...values, inheritedPersonaIds, files: uploadedFiles });
+      createPersona({
+        ...values,
+        inheritedPersonaIds,
+        files: uploadedFiles,
+        shortcuts: shortcuts.length > 0 ? shortcuts : undefined,
+      });
     } else {
       updatePersona({
         ...values,
         id: formType.id,
         inheritedPersonaIds,
         files: uploadedFiles,
+        shortcuts,
       });
     }
   }
@@ -278,6 +319,67 @@ const PersonaForm: FunctionComponent<{
                       )}
                     </div>
                     {/* <Upload className="h-6 w-6" onClick={() => open()} /> */}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
+              <Collapsible onOpenChange={setIsInheritanceOpen}>
+                <CollapsibleTrigger className="flex justify-between w-full items-center mb-2">
+                  <FormLabel>Quick Actions ({shortcuts.length})</FormLabel>
+                  <div>
+                    {isInheritanceOpen ? (
+                      <ChevronDown className="w-5 h-5" />
+                    ) : (
+                      <ChevronUp className="w-5 h-5" />
+                    )}
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="bg-muted p-4 rounded">
+                  {shortcuts.map((shortcut, i) => (
+                    <div
+                      key={i}
+                      className="flex justify-between items-center mb-2  "
+                    >
+                      <div>
+                        ({shortcut.type}) {shortcut.content}
+                      </div>
+                      <div
+                        className="cursor-pointer ml-2"
+                        onClick={() => onRemoveShortcut(i)}
+                      >
+                        Remove
+                      </div>
+                    </div>
+                  ))}
+                  <div className="my-4">
+                    <div className="mb-2">Add new quick action:</div>
+                    <div>
+                      <Input
+                        placeholder="Prompt"
+                        value={activeShortcutContent}
+                        onChange={(e) =>
+                          setActiveShortcutContent(e.target.value)
+                        }
+                      />
+                    </div>
+                    <div className="flex gap-2 justify-end mt-2">
+                      <Button
+                        onClick={(e) =>
+                          onAddQuickAction(e, ShortcutType.FOLLOW_UP)
+                        }
+                        size="sm"
+                      >
+                        Add Follow-up Action
+                      </Button>
+                      <Button
+                        onClick={(e) =>
+                          onAddQuickAction(e, ShortcutType.INITIAL)
+                        }
+                        size="sm"
+                      >
+                        Add Initial Action
+                      </Button>
+                    </div>
                   </div>
                 </CollapsibleContent>
               </Collapsible>

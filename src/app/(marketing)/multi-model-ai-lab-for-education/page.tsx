@@ -63,9 +63,9 @@ const faqs = [
   },
   {
     question:
-      "Why is Claude 2.1 preferred for generating reports and written content in schools?",
+      "Why is Claude 3 preferred for generating reports and written content in schools?",
     answer:
-      "Claude 2.1 provides outputs with a unique linguistic style that mimics human-like writing, making it suitable for generating coherent reports and written content without the typical 'AI-voice'.",
+      "Claude 3 provides outputs with a unique linguistic style that mimics human-like writing, making it suitable for generating coherent reports and written content without the typical 'AI-voice'.",
   },
   {
     question:
@@ -188,7 +188,7 @@ const Content = () => {
       <FeatureHighlight
         heading="Strategic Model Selection"
         subheading="Optimize the Learning Experience with Specific AI Strengths"
-        description="Tailor education by choosing the right AI model for each task. Utilize GPT-4's creative ingenuity for brainstorming and content analysis, while tapping into Claude 2.1's unique linguistic style for generating reports and persuasive writing without the 'AI-voice'. Promote critical thinking by comparing outputs and uncovering each model's distinct advantages."
+        description="Tailor education by choosing the right AI model for each task. Utilize GPT-4's creative ingenuity for brainstorming and content analysis, while tapping into Claude 3's unique linguistic style for generating reports and persuasive writing without the 'AI-voice'. Promote critical thinking by comparing outputs and uncovering each model's distinct advantages."
         imageUrl="/assets/images/selecting-different-ai-model-chatgpt.png"
         imageAlt="Selecting different AI models in ChatGPT"
       />

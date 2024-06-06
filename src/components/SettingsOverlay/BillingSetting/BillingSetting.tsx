@@ -56,7 +56,7 @@ const plans: Plan[] = [
     includes: [
       "Bring your own keys",
       "Chat with GPT-3.5 & GPT-4",
-      "Chat with Claude 1.2 & Claude 2.1",
+      "Chat with Claude 2 & Claude 3",
       "Image generation with Dall-E 3",
       "Speech-to-text input with Whisper",
       "Up to 2 team members in workspace",
@@ -67,7 +67,7 @@ const plans: Plan[] = [
       title: "Access all AI models",
       description: [
         "Upgrade to Pro to get access to all models & features without bringing your own keys.",
-        "Get instant access to GPT-4 Turbo, Claude 2.1, Image generation, and Speech-to-text input!",
+        "Get instant access to GPT-4 Turbo, Claude 3, Image generation, and Speech-to-text input!",
       ],
       ctaText: "Upgrade to Pro",
     },
@@ -105,7 +105,7 @@ const plans: Plan[] = [
     priceNumber: 20,
     includes: [
       "GPT 3.5 Turbo & GPT-4 Turbo subscription",
-      "Claude 1.2 & Claude 2.1 subscription",
+      "Claude 2 & Claude 3 subscription",
       "Dall-E 3 subscription",
       "Whisper subscription",
       "Foundation model does not train on your data",
@@ -207,7 +207,7 @@ const CurrentPlan = ({
           </Button>
 
           {eligibleForFreeTrial && (
-            <div className="text-xs mt-2">*Free trial for 30 days.</div>
+            <div className="text-xs mt-2">*Free trial for 7 days.</div>
           )}
         </div>
       )}
@@ -306,7 +306,7 @@ const SelectablePlan = ({
           </Button>
           {eligibleForFreeTrial &&
             (targetPlan.id === "team" || targetPlan.id === "team_pro") && (
-              <div className="text-xs mt-2">*Free trial for 30 days.</div>
+              <div className="text-xs mt-2">*Free trial for 7 days.</div>
             )}
         </div>
       </div>
@@ -412,7 +412,7 @@ const NewSubscription: React.FC<{
       {eligibleForFreeTrial ? (
         <>
           <div className="text-xl font-semibold mb-2 mt-10">
-            Monthly Payment (after 30 days)
+            Monthly Payment (after 7 days)
           </div>
           <div className="font-semibold text-sm">
             ${price.toFixed(2)} per month

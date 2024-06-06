@@ -48,7 +48,7 @@ const tiers = [
     description: "Access to all AI models with greater data privacy",
     features: [
       "Chat with GPT-3.5 & GPT-4 models included",
-      "Chat with Claude 1.2 & Claude 2.1 models included",
+      "Chat with Claude 2 & Claude 3 models included",
       "Image generation with Dall-E 3 included",
       "Models do not train on your data",
       "Unlimited personas",

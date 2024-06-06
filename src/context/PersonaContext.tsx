@@ -13,6 +13,15 @@ import { config } from "../config";
 import { useAuth } from "./AuthContext";
 import { useWorkspace } from "./WorkspaceContext";
 
+export enum ShortcutType {
+  INITIAL = "initial",
+  FOLLOW_UP = "follow-up",
+}
+export interface QuickAction {
+  content: string;
+  type: ShortcutType;
+}
+
 export interface Persona {
   id: string;
   name: string | null;
@@ -20,6 +29,7 @@ export interface Persona {
   content: string;
   inheritedPersonaIds?: string[];
   files?: FileStringified[];
+  shortcuts?: QuickAction[];
   created_at: string;
   updated_at: string;
 }

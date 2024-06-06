@@ -19,6 +19,7 @@ import {
 
 interface MessageBarProps {
   isPending: boolean;
+  personaIdFromConversation?: string;
   startConversation: (opts: ConversationPayload) => void;
   continueConversation: (opts: ConversationPayload) => void;
   conversationId?: string;
@@ -29,6 +30,7 @@ const MessageBarWithPersona: FunctionComponent<MessageBarProps> = ({
   startConversation,
   continueConversation,
   conversationId,
+  personaIdFromConversation,
 }) => {
   const persona = usePersona();
   const { features } = useActiveWorkspace();
@@ -54,15 +56,21 @@ const MessageBarWithPersona: FunctionComponent<MessageBarProps> = ({
     }
   };
 
+  const activePersona =
+    persona.state === "success"
+      ? personaIdFromConversation
+        ? persona.personas.find((p) => p.id === personaIdFromConversation)
+        : persona.selectedPersona
+      : undefined;
+
   return (
     <MessageBar
       acceptFiles
       isPending={isPending}
+      isNewConversation={!conversationId}
       onSubmit={handleSubmit}
       placeholder="Send a message"
-      personaId={
-        persona.state === "success" ? persona.selectedPersona?.id : undefined
-      }
+      persona={activePersona}
       acceptVoice={acceptVoice}
     />
   );
@@ -82,6 +90,7 @@ export const ChatInterfaceComponent: FunctionComponent<{
     isFetchingConversation,
     error,
     fetchMessagesMutation,
+    personaIdFromConversation,
   } = useConversationMessages(workspaceId, initialConversationId);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isScrollLocked, setScrollLocked] = useState(true);
@@ -184,6 +193,7 @@ export const ChatInterfaceComponent: FunctionComponent<{
       <div className="absolute bottom-0 left-0 right-0 w-full">
         <MessageBarWithPersona
           {...{
+            personaIdFromConversation,
             isPending,
             startConversation,
             continueConversation,

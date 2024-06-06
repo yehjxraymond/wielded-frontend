@@ -26,6 +26,7 @@ export interface ConversationDto {
   name: string;
   chatCompletionOption: ChatCompletionOptions | null;
   integrationId: string | null;
+  personaId?: string;
   visibility: "private" | "workspace" | "invited" | "public";
   created_at: string;
   updated_at: string;
@@ -179,6 +180,8 @@ export const useConversationMessages = (
   );
   const [isPending, setIsPending] = useState(false);
   const [conversationTitle, setConversationTitle] = useState<string>("");
+  const [personaIdFromConversation, setPersonaIdFromConversation] =
+    useState<string>();
   const [chatCompletionOptions, setChatCompletionOptions] =
     useState<ChatCompletionOptions | null>(null);
   const { replace } = useRouter();
@@ -196,6 +199,7 @@ export const useConversationMessages = (
     mutationFn: fetchConversation,
     mutationKey: ["conversations", token, initialConversationId],
     onSuccess: (data) => {
+      setPersonaIdFromConversation(data.personaId);
       setChatCompletionOptions(data.chatCompletionOption);
       setConversationTitle(data.name);
       if (data.integrationId) {
@@ -388,6 +392,7 @@ export const useConversationMessages = (
     setChatCompletionOptions,
     messages,
     conversationId,
+    personaIdFromConversation,
     setConversationId,
     startConversation,
     continueConversation,
