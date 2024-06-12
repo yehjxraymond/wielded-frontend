@@ -96,7 +96,7 @@ export const CourseCTA: FunctionComponent<{
                   className="dark:bg-secondary-foreground dark:text-secondary mt-3 mb-10 w-full"
                   disabled={subscriptionMutation.isPending}
                 >
-                  Get on the AI Content Mastery Waiting List
+                  Join Waiting List & Get First Chapter in Your Inbox
                 </Button>
               </div>
             </form>
