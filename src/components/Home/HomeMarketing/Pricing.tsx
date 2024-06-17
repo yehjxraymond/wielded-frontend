@@ -3,78 +3,18 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import { plans } from "@/constants/plans";
 
-const tiers = [
-  {
-    name: "Free",
-    id: "tier-free",
-    href: "#",
-    priceMonthly: "$0",
-    description:
-      "Free for individuals and teams of 2. No credit card required.",
-    features: [
-      "Bring your key from OpenAI, Azure, Anthropic, or AWS Bedrock",
-      "Chat completion with GPT3.5, GPT-4 or Claude models",
-      "Image Generation with Dall-E 3",
-      "Speech-to-text with Whisper",
-      "Unlimited conversations",
-      "Up to 5 personas",
-    ],
-    mostPopular: false,
-  },
-  {
-    name: "Lite",
-    id: "tier-team",
-    href: "#",
-    priceMonthly: "$3.50",
-    pricePostfix: "/user/month",
-    description: "Bring-your-own-key plan for teams",
-    features: [
-      "Everything in free",
-      "Unlimited personas",
-      "Email support",
-      "Unlimited image storage for Dall-E 3",
-      "Access to prompt masterclass (coming soon)",
-      "Access to prompt library (coming soon)",
-    ],
-    mostPopular: false,
-  },
-  {
-    name: "Pro",
-    id: "tier-pro",
-    href: "#",
-    priceMonthly: "$20",
-    pricePostfix: "/user/month",
-    description: "Access to all AI models with greater data privacy",
-    features: [
-      "Chat with GPT-3.5 & GPT-4 models included",
-      "Chat with Claude 2 & Claude 3 models included",
-      "Image generation with Dall-E 3 included",
-      "Models do not train on your data",
-      "Unlimited personas",
-      "Email support",
-      "Unlimited prompt templates (coming soon)",
-      "Prompt masterclass access (coming soon)",
-    ],
-    mostPopular: true,
-  },
-  {
-    name: "Enterprise",
-    id: "tier-enterprise",
-    href: "#",
-    priceMonthly: "Contact us",
-    description: "Dedicated support and infrastructure for your company.",
-    features: [
-      "Everything in Lite/Pro",
-      "Data protection alerts",
-      "Quota management",
-      "Priority support",
-      "Custom Domains",
-      "SSO",
-    ],
-    mostPopular: false,
-  },
-];
+const tiers = plans.map((plan) => ({
+  name: plan.name,
+  id: plan.id,
+  href: "#",
+  priceMonthly: plan.priceMonthly,
+  pricePostfix: plan.pricePostfix,
+  description: plan.description,
+  features: plan.includes,
+  mostPopular: plan.id === "team_pro",
+}));
 
 export const Pricing = () => {
   const { resolvedTheme } = useTheme();
