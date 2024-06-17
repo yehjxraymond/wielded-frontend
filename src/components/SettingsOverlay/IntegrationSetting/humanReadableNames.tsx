@@ -59,6 +59,11 @@ export const humanReadableChatLabels = ({
       ? `GPT-3.5 (${humanReadableProvider(provider)})`
       : "GPT-3.5";
   }
+  if (model.startsWith("gpt-4o")) {
+    return hasMultipleOpenAiProviders
+      ? `GPT-4o (${humanReadableProvider(provider)})`
+      : "GPT-4o";
+  }
   if (model.startsWith("gpt-4")) {
     return hasMultipleOpenAiProviders
       ? `GPT-4 (${humanReadableProvider(provider)})`

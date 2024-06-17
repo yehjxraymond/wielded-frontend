@@ -24,8 +24,9 @@ import { humanReadableModel } from "../humanReadableNames";
 import { IntegrationDto, UpdateIntegrationDto } from "../useIntegrations";
 
 const selectableAzureOpenAiModel = [
-  "gpt-4-1106-preview",
-  "gpt-3.5-turbo-1106",
+  "gpt-4o",
+  "gpt-4",
+  "gpt-35-turbo",
   "whisper-1",
 ];
 
