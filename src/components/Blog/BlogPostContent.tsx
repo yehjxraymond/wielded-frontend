@@ -26,6 +26,14 @@ export const PostContent = ({ content }: { content: string }) => {
             "ul",
             "ol",
             "blockquote",
+            // tables
+            "td",
+            "th",
+            "table",
+            "tr",
+            "tbody",
+            "thead",
+            "tfoot",
           ],
         }),
       }}
