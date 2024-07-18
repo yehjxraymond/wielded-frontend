@@ -9,7 +9,7 @@ export function Features() {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
   return (
-    <section className="bg-card text-card-foreground mt-24 mx-auto max-w-5xl">
+    <section className="bg-card text-card-foreground mt-24 mx-auto max-w-5xl container">
       <div className="prose prose-lg m-auto text-center opacity-90">
         <h2>Ready for a change?</h2>
         <p className="text-balance">

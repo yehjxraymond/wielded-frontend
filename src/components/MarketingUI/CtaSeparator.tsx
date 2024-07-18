@@ -17,15 +17,15 @@ export const CtaSeparator: FunctionComponent<{
       )}
     >
       <div>
-        <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+        <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-center lg:text-left">
           {title || "Ready to Elevate Your Productivity?"}
           <br />
         </h2>
-        <p className="text-xl font-bold tracking-tight sm:text-2xl mt-2">
+        <p className="text-xl font-bold tracking-tight sm:text-2xl mt-2 text-center lg:text-left">
           {subtitle || "Start with a 7-day trial today."}
         </p>
       </div>
-      <div className="mt-10 flex items-center gap-x-6 lg:mt-0 lg:flex-shrink-0">
+      <div className="mt-10 flex items-center gap-x-6 lg:mt-0 lg:flex-shrink-0 justify-center lg:justify-end">
         <Link href={`/contact?source=${source || "cta-separator"}`}>
           <Button variant="secondary">Contact Sales</Button>
         </Link>
