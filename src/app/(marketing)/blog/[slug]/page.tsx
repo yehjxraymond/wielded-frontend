@@ -4,6 +4,7 @@ import { wisp } from "@/lib/wisp";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { RelatedPosts } from "@/components/Blog/RelatedPosts";
+import { CtaSeparator } from "@/components/MarketingUI/CtaSeparator";
 
 export async function generateMetadata({
   params: { slug },
@@ -48,6 +49,7 @@ const Page = async ({ params: { slug } }: { params: Params }) => {
     <PublicLayout>
       <div className="container mx-auto max-w-4xl">
         <BlogPostContent post={result.post} />
+        <CtaSeparator source="blog-post" className="border shadow rounded-lg py-10 sm:py-20" title="Stop choosing between GPT-4o and Claude" subtitle="Leverage both for maximum productivity on Wielded's AI workspace." />
         <RelatedPosts posts={relatedPosts} />
         <Link href="/blog" className="no-underline">
           <div className="my-10 text-sm">← Back to blog</div>

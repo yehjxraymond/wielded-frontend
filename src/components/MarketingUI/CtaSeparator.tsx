@@ -1,14 +1,21 @@
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { FunctionComponent } from "react";
 
 export const CtaSeparator: FunctionComponent<{
+  className?: string;
   title?: string;
   subtitle?: string;
   source?: string;
-}> = ({ title, subtitle, source }) => {
+}> = ({ title, subtitle, source, className }) => {
   return (
-    <div className="container py-24 sm:py-32 lg:flex lg:items-center lg:justify-between">
+    <div
+      className={cn(
+        "container py-24 sm:py-32 lg:flex lg:items-center lg:justify-between",
+        className
+      )}
+    >
       <div>
         <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
           {title || "Ready to Elevate Your Team's Productivity?"}
