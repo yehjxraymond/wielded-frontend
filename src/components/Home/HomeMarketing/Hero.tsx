@@ -1,5 +1,5 @@
-import { Button } from "../ui/button";
-import { Typewriter } from "../ui/typewriter";
+import { Button } from "../../ui/button";
+import { Typewriter } from "../../ui/typewriter";
 import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
 

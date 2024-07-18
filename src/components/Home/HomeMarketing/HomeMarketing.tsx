@@ -1,16 +1,20 @@
 "use client";
-import { BottomCTA } from "./BottomCTA";
-import { MainFeatures } from "./MainFeatures";
-import { MainHero } from "./MainHero";
+import { CtaSeparator } from "@/components/MarketingUI/CtaSeparator";
+import { ChallengesFeature } from "./ChallengesFeature";
+import { Features } from "./Features";
+import { Hero } from "./Hero";
+import { PainFeature } from "./PainFeature";
 import { Pricing } from "./Pricing";
 
 export const HomeMarketing = () => {
   return (
     <>
-      <MainHero />
-      <MainFeatures />
+      <Hero />
+      <PainFeature />
+      <ChallengesFeature />
+      <Features />
       <Pricing />
-      <BottomCTA />
+      <CtaSeparator />
     </>
   );
 };
