@@ -1,3 +1,5 @@
+"use client";
+
 import { CheckIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -30,8 +32,8 @@ export const Pricing = () => {
         </p>
       </div>
       <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-muted-foreground">
-        Integrate AI into your workflow without hidden costs. Our flat fee makes
-        ChatGPT budget-friendly; just bring your OpenAI key.
+        Straight forward pricing including budget friendly bring-your-own-key
+        plans.
       </p>
       <div className="isolate mx-auto mt-16 grid max-w-md grid-cols-1 gap-y-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-4">
         {tiers.map((tier, tierIdx) => (
