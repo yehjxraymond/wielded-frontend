@@ -6,7 +6,7 @@ import React, {
   ReactNode,
 } from "react";
 import localForage from "localforage";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
 
 interface AuthContextProps {
