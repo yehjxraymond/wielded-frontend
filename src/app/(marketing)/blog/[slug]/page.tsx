@@ -1,9 +1,9 @@
 import { BlogPostContent } from "@/components/Blog/BlogPostContent";
-import { HeaderPublic } from "@/components/HeaderPublic";
 import { PublicLayout } from "@/components/PublicLayout";
 import { wisp } from "@/lib/wisp";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import { RelatedPosts } from "@/components/Blog/RelatedPosts";
 
 export async function generateMetadata({
   params: { slug },
@@ -35,6 +35,10 @@ interface Params {
 
 const Page = async ({ params: { slug } }: { params: Params }) => {
   const result = await wisp.getPost(slug);
+  const { posts: relatedPosts } = await wisp.getRelatedPosts({
+    slug,
+    limit: 5,
+  });
 
   if (!result || !result.post) {
     return notFound();
@@ -42,8 +46,12 @@ const Page = async ({ params: { slug } }: { params: Params }) => {
 
   return (
     <PublicLayout>
-      <div className="container mx-auto">
+      <div className="container mx-auto max-w-4xl">
         <BlogPostContent post={result.post} />
+        <RelatedPosts posts={relatedPosts} />
+        <Link href="/blog" className="no-underline">
+          <div className="my-10 text-sm">← Back to blog</div>
+        </Link>
       </div>
     </PublicLayout>
   );

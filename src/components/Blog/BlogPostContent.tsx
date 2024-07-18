@@ -64,9 +64,6 @@ export const BlogPostContent = ({ post }: { post: GetPostResult["post"] }) => {
         <div className="text-sm opacity-40 mt-4">
           {Intl.DateTimeFormat("en-US").format(new Date(createdAt))}
         </div>
-        <Link href="/blog" className="no-underline">
-          <div className="my-10 text-sm">← Back to blog</div>
-        </Link>
       </div>
     </div>
   );

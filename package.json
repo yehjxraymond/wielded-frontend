@@ -31,7 +31,7 @@
     "@tanstack/react-table": "^8.10.7",
     "@types/mdx": "^2.0.9",
     "@uidotdev/usehooks": "^2.4.1",
-    "@wisp-cms/client": "^0.0.5",
+    "@wisp-cms/client": "^0.0.10",
     "audio-recorder-polyfill": "^0.4.1",
     "axios": "^1.5.1",
     "class-variance-authority": "^0.7.0",
