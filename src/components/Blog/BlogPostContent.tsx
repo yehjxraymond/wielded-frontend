@@ -26,7 +26,6 @@ export const PostContent = ({ content }: { content: string }) => {
             "ul",
             "ol",
             "blockquote",
-            // tables
             "td",
             "th",
             "table",
@@ -34,7 +33,21 @@ export const PostContent = ({ content }: { content: string }) => {
             "tbody",
             "thead",
             "tfoot",
+            "small",
           ],
+          allowedAttributes: {
+            "*": ["style"],
+            a: ["href", "name", "target"],
+            img: [
+              "src",
+              "srcset",
+              "alt",
+              "title",
+              "width",
+              "height",
+              "loading",
+            ],
+          },
         }),
       }}
     ></div>
